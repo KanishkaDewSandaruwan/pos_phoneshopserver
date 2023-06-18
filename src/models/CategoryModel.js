@@ -13,9 +13,10 @@ const CategoryModel = {
     const { cat_name } = category;
     const trndate = new Date().toISOString().slice(0, 19).replace('T', ' ');
     const defaultValues = 0;
+    const activeValues = 0;
 
     const query = 'INSERT INTO category (cat_name, trndate, status, is_delete) VALUES (?, ?, ?, ?)';
-    const values = [cat_name, trndate, defaultValues, defaultValues];
+    const values = [cat_name, trndate, activeValues, defaultValues];
 
     connection.query(query, values, (error, results) => {
       if (error) {

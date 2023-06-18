@@ -10,10 +10,13 @@ const SubcategoryModel = {
   },
 
   addSubcategory(subcategory, callback) {
-    const { subcat_name, catid, trndate, status, is_delete } = subcategory;
+    const { subcat_name, catid } = subcategory;
+    const adddate = new Date().toISOString().slice(0, 19).replace('T', ' ');
+    const defaultValues = 0;
+    const activeValues = 0;
 
     const query = 'INSERT INTO subcategory (subcat_name, catid, trndate, status, is_delete) VALUES (?, ?, ?, ?, ?)';
-    const values = [subcat_name, catid, trndate, status, is_delete];
+    const values = [subcat_name, catid, adddate, activeValues, defaultValues];
 
     connection.query(query, values, (error, results) => {
       if (error) {

@@ -13,9 +13,10 @@ const SupplierModel = {
     const { supplier_name, supplier_address, supplier_email, supplier_phone } = supplier;
     const supplier_adddate = new Date().toISOString().slice(0, 19).replace('T', ' ');
     const defaultValues = 0;
+    const activeValues = 0;
 
     const query = 'INSERT INTO supplier (supplier_name, supplier_address, supplier_email, supplier_phone, supplier_adddate, supplier_status, is_delete) VALUES (?, ?, ?, ?, ?, ?, ?)';
-    const values = [supplier_name, supplier_address, supplier_email, supplier_phone, supplier_adddate, defaultValues, defaultValues];
+    const values = [supplier_name, supplier_address, supplier_email, supplier_phone, supplier_adddate, activeValues, defaultValues];
 
     connection.query(query, values, (error, results) => {
       if (error) {
