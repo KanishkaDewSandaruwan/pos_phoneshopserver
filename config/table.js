@@ -33,6 +33,47 @@ const tableInfo = [
       { name: 'is_delete', type: 'INT(5)' },
     ],
   },
+  {
+    tableName: 'item',
+    fields: [
+      { name: 'itemid', type: 'INT AUTO_INCREMENT PRIMARY KEY' },
+      { name: 'item_code', type: 'VARCHAR(255)' },
+      { name: 'item_name', type: 'VARCHAR(255)' },
+      { name: 'item_description', type: 'VARCHAR(255)' },
+      { name: 'catid', type: 'INT(255)' },
+      { name: 'item_serial', type: 'VARCHAR(255)' },
+      { name: 'item_iminumber', type: 'VARCHAR(255)' },
+      { name: 'item_color', type: 'VARCHAR(255)' },
+      { name: 'item_brand', type: 'INT(255)' },
+      { name: 'item_image', type: 'INT(255)' },
+      { name: 'item_produce_date', type: 'VARCHAR(255)' },
+      { name: 'trndate', type: 'DATETIME' },
+      { name: 'status', type: 'INT(5)' },
+      { name: 'is_delete', type: 'INT(5)' },
+    ],
+  },
+  {
+    tableName: 'category',
+    fields: [
+      { name: 'catid', type: 'INT AUTO_INCREMENT PRIMARY KEY' },
+      { name: 'cat_name', type: 'VARCHAR(255)' },
+      { name: 'trndate', type: 'DATETIME' },
+      { name: 'status', type: 'INT(5)' },
+      { name: 'is_delete', type: 'INT(5)' },
+    ],
+  },
+  {
+    tableName: 'subcategory',
+    fields: [
+      { name: 'subcatid', type: 'INT AUTO_INCREMENT PRIMARY KEY' },
+      { name: 'subcat_name', type: 'VARCHAR(255)' },
+      { name: 'catid', type: 'INT(255)' },
+      { name: 'trndate', type: 'DATETIME' },
+      { name: 'status', type: 'INT(5)' },
+      { name: 'is_delete', type: 'INT(5)' },
+    ],
+  },
+  
 ];
 
 async function checkTables() {
