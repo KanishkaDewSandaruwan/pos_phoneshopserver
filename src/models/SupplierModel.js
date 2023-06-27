@@ -30,9 +30,9 @@ const SupplierModel = {
   },
 
   updateSupplier(supplier, supplierId, callback) {
-    const { supplier_name, supplier_address, supplier_phone } = supplier;
-    const query = 'UPDATE supplier SET supplier_name = ?, supplier_address = ?, supplier_phone = ? WHERE supplier_id = ?';
-    const values = [supplier_name, supplier_address, supplier_phone, supplierId];
+    const { supplier_name, supplier_address, supplier_phone, status } = supplier;
+    const query = 'UPDATE supplier SET supplier_name = ?, supplier_address = ?, supplier_phone = ?, supplier_status = ? WHERE supplier_id = ?';
+    const values = [supplier_name, supplier_address, supplier_phone, status, supplierId];
 
     connection.query(query, values, callback);
   },

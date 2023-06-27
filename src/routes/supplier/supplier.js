@@ -7,7 +7,8 @@ const {
     updateSupplier,
     updateSupplierStatus,
     deleteSupplier,
-    permanentDeleteSupplier 
+    permanentDeleteSupplier,
+    deleteSuppliers
 } = require('../../controllers/SupplierContoller');
 
 const { authenticateToken } = require('../../middlewares/userAuth');
@@ -20,6 +21,7 @@ module.exports = (config) => {
     router.get('/:supplierId', authenticateToken, getSupplierById);
     router.put('/status/:supplierId', authenticateToken, updateSupplierStatus);
     router.put('/delete/:supplierId', authenticateToken, deleteSupplier);
+    router.put('/delete', authenticateToken, deleteSuppliers);
     router.put('/update/:supplierId', authenticateToken, updateSupplier);
 
     return router;

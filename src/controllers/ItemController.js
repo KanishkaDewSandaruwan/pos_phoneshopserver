@@ -106,10 +106,61 @@ const deleteItem = (req, res) => {
     });
 };
 
+const deleteItems = (req, res) => {
+    const { itemIds } = req.body;
+
+    if (!Array.isArray(itemIds) || itemIds.length === 0) {
+        return;
+    }
+
+    let successCount = 0;
+    let failCount = 0;
+
+    for (const itemId of itemIds) {
+        ItemModel.getItemById(itemId, (error, results) => {
+            if (error) {
+                failCount++;
+            } else if (results.length === 0) {
+                failCount++;
+            } else {
+                ItemModel.deleteItem(itemId, 1, (deleteError, deleteResult) => {
+                    if (deleteError) {
+                        failCount++;
+                    } else {
+                        successCount++;
+                    }
+
+                    // Check if all deletions have been processed
+                    if (successCount + failCount === itemIds.length) {
+                        const totalCount = itemIds.length;
+                        res.status(200).send({
+                            totalCount,
+                            successCount,
+                            failCount,
+                        });
+                    }
+                });
+            }
+
+            // Check if all items have been processed
+            if (successCount + failCount === itemIds.length) {
+                const totalCount = itemIds.length;
+                res.status(200).send({
+                    totalCount,
+                    successCount,
+                    failCount,
+                });
+            }
+        });
+    }
+};
+
+
 module.exports = {
     getAllItems,
     getItemById,
     addItem,
     updateItem,
-    deleteItem
+    deleteItem,
+    deleteItems
 };

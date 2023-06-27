@@ -7,6 +7,7 @@ const {
   updateCategoryStatus,
   deleteCategory,
   permanentDeleteCategory,
+  deleteCategories
 } = require('../../controllers/CategoryController');
 const { authenticateToken } = require('../../middlewares/userAuth');
 
@@ -18,6 +19,7 @@ module.exports = (config) => {
   router.get('/:categoryId', authenticateToken, getCategoryById);
   router.put('/status/:categoryId', authenticateToken, updateCategoryStatus);
   router.put('/delete/:categoryId', authenticateToken, deleteCategory);
+  router.put('/delete', authenticateToken, deleteCategories);
   router.put('/update/:categoryId', authenticateToken, updateCategory);
 
   return router;

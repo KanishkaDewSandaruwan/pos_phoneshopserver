@@ -51,46 +51,139 @@ const updateCategory = (req, res) => {
     const { categoryId } = req.params;
     const category = req.body;
 
-    CategoryModel.updateCategory(category, categoryId, (error, results) => {
+    CategoryModel.getCategoryById(categoryId, (error, results) => {
         if (error) {
             res.status(500).send({ error: 'Error fetching data from the database' });
             return;
         }
 
-        if (results.affectedRows === 0) {
-            res.status(404).send({ error: 'Category not found or no changes made' });
+        if (results.length === 0) {
+            res.status(404).send({ error: 'Category not found' });
             return;
         }
 
-        res.status(200).send({ message: 'Category updated successfully' });
+        CategoryModel.updateCategory(category, categoryId, (error, results) => {
+            if (error) {
+                res.status(500).send({ error: 'Error fetching data from the database' });
+                return;
+            }
+
+            if (results.affectedRows === 0) {
+                res.status(404).send({ error: 'Category not found or no changes made' });
+                return;
+            }
+
+            res.status(200).send({ message: 'Category updated successfully' });
+        });
     });
 };
+
 
 const updateCategoryStatus = (req, res) => {
     const { categoryId } = req.params;
     const { status } = req.body;
 
-    CategoryModel.updateCategoryStatus(categoryId, status, (error, results) => {
+    CategoryModel.getCategoryById(categoryId, (error, results) => {
         if (error) {
-            res.status(500).send({ error: 'Error updating status in the database' });
+            res.status(500).send({ error: 'Error fetching data from the database' });
             return;
         }
 
-        res.status(200).send({ message: 'Status updated successfully' });
+        if (results.length === 0) {
+            res.status(404).send({ error: 'Category not found' });
+            return;
+        }
+
+        CategoryModel.updateCategoryStatus(categoryId, status, (error, results) => {
+            if (error) {
+                res.status(500).send({ error: 'Error updating status in the database' });
+                return;
+            }
+
+            res.status(200).send({ message: 'Status updated successfully' });
+        });
     });
 };
+
 
 const deleteCategory = (req, res) => {
     const { categoryId } = req.params;
 
-    CategoryModel.deleteCategory(categoryId, 1, (error, results) => {
+    CategoryModel.getCategoryById(categoryId, (error, results) => {
         if (error) {
-            res.status(500).send({ error: 'Error updating deletion in the database' });
+            res.status(500).send({ error: 'Error fetching data from the database' });
             return;
         }
 
-        res.status(200).send({ message: 'Category deleted successfully' });
+        if (results.length === 0) {
+            res.status(404).send({ error: 'Category not found' });
+            return;
+        }
+
+        CategoryModel.deleteCategory(categoryId, 1, (error, results) => {
+            if (error) {
+                res.status(500).send({ error: 'Error updating deletion in the database' });
+                return;
+            }
+
+            res.status(200).send({ message: 'Category deleted successfully' });
+        });
     });
+};
+
+
+const deleteCategories = (req, res) => {
+    const { categoryIds } = req.body;
+
+    if (!Array.isArray(categoryIds) || categoryIds.length === 0) {
+        res.status(400).send({ error: 'Invalid category IDs' });
+        return;
+    }
+
+    let successCount = 0;
+    let failCount = 0;
+
+    for (const categoryId of categoryIds) {
+        CategoryModel.getCategoryById(categoryId, (error, results) => {
+            if (error) {
+                console.error(`Error fetching category with ID ${categoryId}: ${error}`);
+                failCount++;
+            } else if (results.length === 0) {
+                console.log(`Category with ID ${categoryId} not found`);
+                failCount++;
+            } else {
+                CategoryModel.deleteCategory(categoryId, 1, (deleteError, deleteResult) => {
+                    if (deleteError) {
+                        console.error(`Error deleting category with ID ${categoryId}: ${deleteError}`);
+                        failCount++;
+                    } else {
+                        successCount++;
+                        console.log(`Category with ID ${categoryId} deleted successfully`);
+                    }
+
+                    // Check if all deletions have been processed
+                    if (successCount + failCount === categoryIds.length) {
+                        const totalCount = categoryIds.length;
+                        res.status(200).send({
+                            totalCount,
+                            successCount,
+                            failCount,
+                        });
+                    }
+                });
+            }
+
+            // Check if all categories have been processed
+            if (successCount + failCount === categoryIds.length) {
+                const totalCount = categoryIds.length;
+                res.status(200).send({
+                    totalCount,
+                    successCount,
+                    failCount,
+                });
+            }
+        });
+    }
 };
 
 const permanentDeleteCategory = (req, res) => {
@@ -113,5 +206,6 @@ module.exports = {
     updateCategory,
     updateCategoryStatus,
     deleteCategory,
-    permanentDeleteCategory
+    permanentDeleteCategory,
+    deleteCategories
 };

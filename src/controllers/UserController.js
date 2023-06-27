@@ -107,20 +107,33 @@ const updateUser = (req, res) => {
     const { userid } = req.params;
     const user = req.body;
 
-    UserModel.updateUser(user, userid, (error, results) => {
+    UserModel.getUserById(userid, (error, results) => {
         if (error) {
             res.status(500).send({ error: 'Error fetching data from the database' });
             return;
         }
 
-        if (results.affectedRows === 0) {
-            res.status(404).send({ error: 'User not found or no changes made' });
+        if (results.length === 0) {
+            res.status(404).send({ error: 'User not found' });
             return;
         }
 
-        res.status(200).send({ message: 'User updated successfully' });
+        UserModel.updateUser(user, userid, (error, updateResult) => {
+            if (error) {
+                res.status(500).send({ error: 'Error updating user in the database' });
+                return;
+            }
+
+            if (updateResult.affectedRows === 0) {
+                res.status(404).send({ error: 'User not found or no changes made' });
+                return;
+            }
+
+            res.status(200).send({ message: 'User updated successfully' });
+        });
     });
 };
+
 
 const changePassword = (req, res) => {
     const { userid } = req.params;
@@ -235,10 +248,61 @@ const deleteuser = (req, res) => {
     });
 };
 
+const deleteUsers = (req, res) => {
+    const { userIds } = req.body;
+
+    if (!Array.isArray(userIds) || userIds.length === 0) {
+        res.status(400).send({ error: 'Invalid user IDs' });
+        return;
+    }
+
+    let successCount = 0;
+    let failCount = 0;
+
+    for (const userId of userIds) {
+        UserModel.getUserById(userId, (error, results) => {
+            if (error) {
+                failCount++;
+            } else if (results.length === 0) {
+                failCount++;
+            } else {
+                UserModel.deleteUser(userId, 1, (deleteError, deleteResult) => {
+                    if (deleteError) {
+                        failCount++;
+                    } else {
+                        successCount++;
+                    }
+
+                    // Check if all deletions have been processed
+                    if (successCount + failCount === userIds.length) {
+                        const totalCount = userIds.length;
+                        res.status(200).send({
+                            totalCount,
+                            successCount,
+                            failCount,
+                        });
+                    }
+                });
+            }
+
+            // Check if all users have been processed
+            if (successCount + failCount === userIds.length) {
+                const totalCount = userIds.length;
+                res.status(200).send({
+                    totalCount,
+                    successCount,
+                    failCount,
+                });
+            }
+        });
+    }
+};
+
+
 // Generate token using JWT
 function generateToken(email, userrole) {
     const payload = { email, userrole };
-    const options = { expiresIn: '5m' }; // Token expiration time
+    const options = { expiresIn: '1h' }; // Token expiration time
 
     // Sign the token with the secret key from the .env file
     const token = jwt.sign(payload, process.env.JWT_SECRET, options);
@@ -255,5 +319,6 @@ module.exports = {
     changePassword,
     changeEmail,
     changeStatus,
-    deleteuser
+    deleteuser,
+    deleteUsers
 };

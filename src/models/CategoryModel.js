@@ -30,9 +30,9 @@ const CategoryModel = {
   },
 
   updateCategory(category, categoryId, callback) {
-    const { cat_name } = category;
-    const query = 'UPDATE category SET cat_name = ? WHERE catid = ?';
-    const values = [cat_name, categoryId];
+    const { cat_name, status } = category;
+    const query = 'UPDATE category SET cat_name = ?, status = ? WHERE catid = ?';
+    const values = [cat_name, status ,categoryId];
 
     connection.query(query, values, callback);
   },

@@ -30,10 +30,10 @@ const SubcategoryModel = {
   },
 
   updateSubcategory(subcategory, subcategoryId, callback) {
-    const { subcat_name, catid, trndate, status, is_delete } = subcategory;
+    const { subcat_name, catid, status } = subcategory;
 
-    const query = 'UPDATE subcategory SET subcat_name = ?, catid = ?, trndate = ?, status = ?, is_delete = ? WHERE subcatid = ?';
-    const values = [subcat_name, catid, trndate, status, is_delete, subcategoryId];
+    const query = 'UPDATE subcategory SET subcat_name = ?, catid = ?, status = ? WHERE subcatid = ?';
+    const values = [subcat_name, catid, status, subcategoryId];
 
     connection.query(query, values, callback);
   },

@@ -5,6 +5,7 @@ const {
   addItem,
   updateItem,
   deleteItem,
+  deleteItems
 } = require('../../controllers/ItemController');
 const { authenticateToken } = require('../../middlewares/userAuth');
 
@@ -16,6 +17,7 @@ module.exports = (config) => {
   router.get('/:itemId', authenticateToken, getItemById);
   router.put('/update/:itemId', authenticateToken, updateItem);
   router.delete('/delete/:itemId', authenticateToken, deleteItem);
+  router.delete('/delete', authenticateToken, deleteItems);
 
   return router;
 };
