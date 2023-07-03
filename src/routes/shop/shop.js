@@ -14,7 +14,7 @@ module.exports = (config) => {
     router.post('/create', authenticateToken, addShop);
     router.get('/all', authenticateToken, getShop);
     router.put('/update', authenticateToken, updateShop);
-    router.put('/logo', uploadLogo.single('logo'), updateLogo);
+    router.put('/logo', uploadLogo.single('logo'), authenticateToken, updateLogo);
 
     return router;
 };
