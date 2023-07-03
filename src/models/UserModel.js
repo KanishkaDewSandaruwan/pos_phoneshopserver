@@ -17,6 +17,18 @@ const UserModel = {
     connection.query('SELECT * FROM user WHERE userid = ? AND is_delete = 0', [userid], callback);
   },
 
+  getUserByEmail(email, callback) {
+    connection.query('SELECT * FROM user WHERE email = ? AND is_delete = 0', [email], callback);
+  },
+
+  getUserByPhonenumber(phonenumber, callback) {
+    connection.query('SELECT * FROM user WHERE phonenumber = ? AND is_delete = 0', [phonenumber], callback);
+  },
+
+  getUserByUsername(username, callback) {
+    connection.query('SELECT * FROM user WHERE username = ? AND is_delete = 0', [username], callback);
+  },
+
   addUser(user, callback) {
     const { fullname, phonenumber, address, email, username, password, userrole } = user;
     const trndate = new Date().toISOString().slice(0, 19).replace('T', ' ');
@@ -37,9 +49,9 @@ const UserModel = {
   },
 
   updateUser(user, userid, callback) {
-    const { fullname, phonenumber, address, userrole } = user;
-    const query = 'UPDATE user SET fullname = ?, phonenumber = ?, address = ?, userrole = ? WHERE userid = ?';
-    const values = [fullname, phonenumber, address, userrole, userid];
+    const { fullname, phonenumber, address, userrole, status } = user;
+    const query = 'UPDATE user SET fullname = ?, phonenumber = ?, address = ?, userrole = ?, status = ? WHERE userid = ?';
+    const values = [fullname, phonenumber, address, userrole, status, userid];
 
     connection.query(query, values, callback);
   },
@@ -54,6 +66,13 @@ const UserModel = {
   changeEmail(userid, newEmail, callback) {
     const query = 'UPDATE user SET email = ? WHERE userid = ?';
     const values = [newEmail, userid];
+
+    connection.query(query, values, callback);
+  },
+
+  changeUsername(userid, username, callback) {
+    const query = 'UPDATE user SET username = ? WHERE userid = ?';
+    const values = [username, userid];
 
     connection.query(query, values, callback);
   },
@@ -82,6 +101,18 @@ const UserModel = {
   userById(userid) {
     return new Promise((resolve, reject) => {
       connection.query('SELECT * FROM user WHERE userid = ?', [userid], (error, results) => {
+        if (error) {
+          reject(error);
+        } else {
+          resolve(results);
+        }
+      });
+    });
+  },
+
+  userByEmail(email) {
+    return new Promise((resolve, reject) => {
+      connection.query('SELECT * FROM user WHERE email = ?', [email], (error, results) => {
         if (error) {
           reject(error);
         } else {

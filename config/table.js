@@ -21,6 +21,20 @@ const tableInfo = [
     ],
   },
   {
+    tableName: 'shop',
+    fields: [
+      { name: 'shopname', type: 'VARCHAR(255)' },
+      { name: 'shopnphonenumber', type: 'VARCHAR(10)' },
+      { name: 'address', type: 'VARCHAR(255)' },
+      { name: 'email', type: 'VARCHAR(255)' },
+      { name: 'website', type: 'VARCHAR(255)' },
+      { name: 'facebook', type: 'VARCHAR(255)' },
+      { name: 'instragram', type: 'VARCHAR(255)' },
+      { name: 'whatsapp', type: 'VARCHAR(255)' },
+      { name: 'logo', type: 'VARCHAR(255)' },
+    ],
+  },
+  {
     tableName: 'supplier',
     fields: [
       { name: 'supplier_id', type: 'INT AUTO_INCREMENT PRIMARY KEY' },

@@ -84,60 +84,146 @@ const findUser = (req, res) => {
 };
 
 
+
 const addUser = (req, res) => {
     const user = req.body; // Retrieve the user data from the request body
 
-    UserModel.addUser(user, (error, userId) => {
+    // Email validation regular expression
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    // Phone number validation regular expression
+    const phoneRegex = /^\d{12}$/;
+
+    // Check if email is valid
+    if (!emailRegex.test(user.email)) {
+        res.status(400).send({ error: 'Invalid email format' });
+        return;
+    }
+
+    // Check if phone number is valid
+    if (!phoneRegex.test(user.phonenumber)) {
+        res.status(400).send({ error: 'Invalid phone number format' });
+        return;
+    }
+
+    UserModel.getUserByEmail(user.email, (error, results) => {
         if (error) {
             res.status(500).send({ error: 'Error fetching data from the database' });
             return;
         }
 
-        if (!userId) {
-            res.status(404).send({ error: 'Failed to create user' });
+        if (results.length > 0) {
+            res.status(409).send({ error: 'Email already exists' });
             return;
         }
 
-        res.status(200).send({ message: 'User created successfully', userId });
+        UserModel.getUserByPhonenumber(user.phonenumber, (error, results) => {
+            if (error) {
+                res.status(500).send({ error: 'Error fetching data from the database' });
+                return;
+            }
+
+            if (results.length > 0) {
+                res.status(409).send({ error: 'Phone number already exists' });
+                return;
+            }
+
+            UserModel.addUser(user, (error, userId) => {
+                if (error) {
+                    res.status(500).send({ error: 'Error fetching data from the database' });
+                    return;
+                }
+
+                if (!userId) {
+                    res.status(500).send({ error: 'Failed to create user' });
+                    return;
+                }
+
+                res.status(200).send({ message: 'User created successfully', userId });
+            });
+        });
     });
 };
+
 
 
 const updateUser = (req, res) => {
     const { userid } = req.params;
     const user = req.body;
 
-    UserModel.getUserById(userid, (error, results) => {
+    // Phone number validation regular expression
+    const phoneRegex = /^\d{12}$/;
+
+    // Check if phone number is in the correct format
+    if (user.phonenumber && !phoneRegex.test(user.phonenumber)) {
+        res.status(400).send({ error: 'Invalid phone number format' });
+        return;
+    }
+
+    UserModel.getUserById(userid, (error, existingUser) => {
         if (error) {
             res.status(500).send({ error: 'Error fetching data from the database' });
             return;
         }
 
-        if (results.length === 0) {
+        if (!existingUser[0]) {
             res.status(404).send({ error: 'User not found' });
             return;
         }
 
-        UserModel.updateUser(user, userid, (error, updateResult) => {
+        // Check if the provided phone number is already associated with another user
+        if (user.phonenumber && user.phonenumber !== existingUser[0].phonenumber) {
+            UserModel.getUserByPhonenumber(user.phonenumber, (error, results) => {
+                if (error) {
+                    res.status(500).send({ error: 'Error fetching data from the database' });
+                    return;
+                }
+
+                if (results.length > 0) {
+                    res.status(409).send({ error: 'Phone number already exists' });
+                    return;
+                }
+
+                updateExistingUser(user, userid);
+            });
+        } else {
+            updateExistingUser(user, userid);
+        }
+    });
+
+    function updateExistingUser(user, userid) {
+        UserModel.updateUser(user, userid, (error, results) => {
             if (error) {
-                res.status(500).send({ error: 'Error updating user in the database' });
+                res.status(500).send({ error: 'Error fetching data from the database' });
                 return;
             }
 
-            if (updateResult.affectedRows === 0) {
+            if (results.affectedRows === 0) {
                 res.status(404).send({ error: 'User not found or no changes made' });
                 return;
             }
 
             res.status(200).send({ message: 'User updated successfully' });
         });
-    });
+    }
 };
 
 
 const changePassword = (req, res) => {
     const { userid } = req.params;
     const { currentPassword, newPassword } = req.body;
+
+    // Check if current password is empty
+    if (!currentPassword) {
+        res.status(400).send({ error: 'Current password is required' });
+        return;
+    }
+
+    // Check if new password is empty
+    if (!newPassword) {
+        res.status(400).send({ error: 'New password is required' });
+        return;
+    }
 
     UserModel.getUserById(userid, (error, user) => {
         if (error) {
@@ -170,6 +256,21 @@ const changeEmail = (req, res) => {
     const { userid } = req.params;
     const { currentEmail, newEmail } = req.body;
 
+    // Email validation regular expression
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    // Check if current email is empty or not in the correct format
+    if (!currentEmail || !emailRegex.test(currentEmail)) {
+        res.status(400).send({ error: 'Invalid or missing current email' });
+        return;
+    }
+
+    // Check if new email is empty or not in the correct format
+    if (!newEmail || !emailRegex.test(newEmail)) {
+        res.status(400).send({ error: 'Invalid or missing new email' });
+        return;
+    }
+
     UserModel.getUserById(userid, (error, user) => {
         if (error) {
             res.status(500).send({ error: 'Error fetching data from the database' });
@@ -197,9 +298,59 @@ const changeEmail = (req, res) => {
     });
 };
 
+const changeUsername = (req, res) => {
+    const { userid } = req.params;
+    const { newUsername } = req.body;
+
+    if (!newUsername) {
+        res.status(400).send({ error: 'New username is required' });
+        return;
+    }
+
+    UserModel.getUserById(userid, (error, user) => {
+        if (error) {
+            res.status(500).send({ error: 'Error fetching data from the database' });
+            return;
+        }
+
+        if (!user[0]) {
+            res.status(404).send({ error: 'User not found' });
+            return;
+        }
+
+        UserModel.getUserByUsername(newUsername, (error, results) => {
+            if (error) {
+                res.status(500).send({ error: 'Error fetching data from the database' });
+                return;
+            }
+
+            if (results.length > 0) {
+                res.status(409).send({ error: 'New username already exists' });
+                return;
+            }
+
+            UserModel.changeUsername(userid, newUsername, (error, results) => {
+                if (error) {
+                    res.status(500).send({ error: 'Error updating username in the database' });
+                    return;
+                }
+
+                res.status(200).send({ message: 'Username changed successfully' });
+            });
+        });
+    });
+};
+
+
 const changeStatus = (req, res) => {
     const { userid } = req.params;
     const { status } = req.body;
+
+    if (!status) {
+        res.status(400).send({ error: 'Status is required' });
+        return;
+    }
+
 
     UserModel.getUserById(userid, (error, user) => {
         if (error) {
