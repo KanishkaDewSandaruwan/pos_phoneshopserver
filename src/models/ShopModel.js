@@ -14,8 +14,8 @@ const ShopModel = {
     const trndate = new Date().toISOString().slice(0, 19).replace('T', ' ');
     const defaultValues = 0;
 
-    const query = 'INSERT INTO shop (shopname, shopnphonenumber, address, email, website, facebook, instragram, whatsapp, logo, trndate, is_delete) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
-    const values = [shopname, shopnphonenumber, address, email, website, facebook, instagram, whatsapp, logo, trndate, defaultValues];
+    const query = 'INSERT INTO shop (shopname, shopnphonenumber, address, email, website, facebook, instragram, whatsapp, logo) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)';
+    const values = [shopname, shopnphonenumber, address, email, website, facebook, instagram, whatsapp, logo];
 
     connection.query(query, values, (error, results) => {
       if (error) {
@@ -30,8 +30,8 @@ const ShopModel = {
 
   updateShop(shop, shopId, callback) {
     const { shopname, shopnphonenumber, address, email, website, facebook, instagram, whatsapp, logo } = shop;
-    const query = 'UPDATE shop SET shopname = ?, shopnphonenumber = ?, address = ?, email = ?, website = ?, facebook = ?, instragram = ?, whatsapp = ?, logo = ? WHERE shopid = ?';
-    const values = [shopname, shopnphonenumber, address, email, website, facebook, instagram, whatsapp, logo, shopId];
+    const query = 'UPDATE shop SET shopname = ?, shopnphonenumber = ?, address = ?, email = ?, website = ?, facebook = ?, instragram = ?, whatsapp = ?, logo = ?';
+    const values = [shopname, shopnphonenumber, address, email, website, facebook, instagram, whatsapp, logo];
 
     connection.query(query, values, callback);
   },
