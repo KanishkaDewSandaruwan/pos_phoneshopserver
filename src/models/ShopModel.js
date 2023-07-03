@@ -1,12 +1,9 @@
 const { connection } = require('../../config/connection');
 
 const ShopModel = {
-  getShopById(shopId, callback) {
-    connection.query('SELECT * FROM shop WHERE shopid = ? AND is_delete = 0', [shopId], callback);
-  },
 
   getAllShops(callback) {
-    connection.query('SELECT * FROM shop WHERE is_delete = 0', callback);
+    connection.query('SELECT * FROM shop', callback);
   },
 
   addShop(shop, callback) {
@@ -34,32 +31,6 @@ const ShopModel = {
     const values = [shopname, shopnphonenumber, address, email, website, facebook, instagram, whatsapp, logo];
 
     connection.query(query, values, callback);
-  },
-
-  deleteShop(shopId, value, callback) {
-    const query = 'UPDATE shop SET is_delete = ? WHERE shopid = ?';
-    const values = [value, shopId];
-
-    connection.query(query, values, callback);
-  },
-
-  permanentDeleteShop(shopId, callback) {
-    const query = 'DELETE FROM shop WHERE shopid = ?';
-    const values = [shopId];
-
-    connection.query(query, values, callback);
-  },
-
-  shopById(shopId) {
-    return new Promise((resolve, reject) => {
-      connection.query('SELECT * FROM shop WHERE shopid = ?', [shopId], (error, results) => {
-        if (error) {
-          reject(error);
-        } else {
-          resolve(results);
-        }
-      });
-    });
   },
 };
 

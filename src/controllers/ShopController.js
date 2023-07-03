@@ -12,27 +12,10 @@ const validateEmail = (email) => {
     return emailPattern.test(email);
 };
 
-const getAllShops = (req, res) => {
+const getShop = (req, res) => {
     ShopModel.getAllShops((error, results) => {
         if (error) {
             res.status(500).send({ error: 'Error fetching data from the database' });
-            return;
-        }
-
-        res.status(200).send(results);
-    });
-};
-
-const getShopById = (req, res) => {
-    const { shopId } = req.params;
-    ShopModel.getShopById(shopId, (error, results) => {
-        if (error) {
-            res.status(500).send({ error: 'Error fetching data from the database' });
-            return;
-        }
-
-        if (results.length === 0) {
-            res.status(404).send({ error: 'Shop not found' });
             return;
         }
 
@@ -84,76 +67,26 @@ const updateShop = (req, res) => {
         return;
     }
 
-    ShopModel.getShopById(shopId, (error, results) => {
+    ShopModel.updateShop(shop, shopId, (error, results) => {
         if (error) {
             res.status(500).send({ error: 'Error fetching data from the database' });
             return;
         }
 
-        if (results.length === 0) {
-            res.status(404).send({ error: 'Shop not found' });
+        if (results.affectedRows === 0) {
+            res.status(404).send({ error: 'Shop not found or no changes made' });
             return;
         }
 
-        ShopModel.updateShop(shop, shopId, (error, results) => {
-            if (error) {
-                res.status(500).send({ error: 'Error fetching data from the database' });
-                return;
-            }
-
-            if (results.affectedRows === 0) {
-                res.status(404).send({ error: 'Shop not found or no changes made' });
-                return;
-            }
-
-            res.status(200).send({ message: 'Shop updated successfully' });
-        });
+        res.status(200).send({ message: 'Shop updated successfully' });
     });
+
 };
 
-const deleteShop = (req, res) => {
-    const { shopId } = req.params;
-
-    ShopModel.getShopById(shopId, (error, results) => {
-        if (error) {
-            res.status(500).send({ error: 'Error fetching data from the database' });
-            return;
-        }
-
-        if (results.length === 0) {
-            res.status(404).send({ error: 'Shop not found' });
-            return;
-        }
-
-        ShopModel.deleteShop(shopId, 1, (error, results) => {
-            if (error) {
-                res.status(500).send({ error: 'Error updating deletion in the database' });
-                return;
-            }
-
-            res.status(200).send({ message: 'Shop deleted successfully' });
-        });
-    });
-};
-
-const permanentDeleteShop = (req, res) => {
-    const { shopId } = req.params;
-
-    ShopModel.permanentDeleteShop(shopId, (error, results) => {
-        if (error) {
-            res.status(500).send({ error: 'Error deleting shop from the database' });
-            return;
-        }
-
-        res.status(200).send({ message: 'Shop permanently deleted successfully' });
-    });
-};
 
 module.exports = {
-    getAllShops,
-    getShopById,
+    getShop,
     addShop,
     updateShop,
-    deleteShop,
-    permanentDeleteShop,
+
 };
