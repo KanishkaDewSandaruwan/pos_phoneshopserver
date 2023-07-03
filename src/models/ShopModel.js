@@ -26,9 +26,16 @@ const ShopModel = {
   },
 
   updateShop(shop, shopId, callback) {
-    const { shopname, shopnphonenumber, address, email, website, facebook, instagram, whatsapp, logo } = shop;
-    const query = 'UPDATE shop SET shopname = ?, shopnphonenumber = ?, address = ?, email = ?, website = ?, facebook = ?, instragram = ?, whatsapp = ?, logo = ?';
-    const values = [shopname, shopnphonenumber, address, email, website, facebook, instagram, whatsapp, logo];
+    const { shopname, shopnphonenumber, address, email, website, facebook, instragram, whatsapp } = shop;
+    const query = 'UPDATE shop SET shopname = ?, shopnphonenumber = ?, address = ?, email = ?, website = ?, facebook = ?, instragram = ?, whatsapp = ?';
+    const values = [shopname, shopnphonenumber, address, email, website, facebook, instragram, whatsapp];
+
+    connection.query(query, values, callback);
+  },
+
+  updateLogo(logo, callback) {
+    const query = 'UPDATE shop SET logo = ?';
+    const values = [logo];
 
     connection.query(query, values, callback);
   },

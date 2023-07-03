@@ -83,10 +83,25 @@ const updateShop = (req, res) => {
 
 };
 
+const updateLogo = (req, res) => {
+
+    const filePath = req.file.filename; // Get the uploaded file filename
+
+    ShopModel.updateLogo(filePath, (error, results) => {
+        if (error) {
+            res.status(500).send({ error: 'Error updating logo in the database' });
+            return;
+        }
+
+        res.status(200).send({ message: 'Logo updated successfully' });
+    });
+
+};
+
 
 module.exports = {
     getShop,
     addShop,
     updateShop,
-
+    updateLogo
 };
