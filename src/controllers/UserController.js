@@ -91,8 +91,6 @@ const addUser = (req, res) => {
     // Email validation regular expression
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-    // Phone number validation regular expression
-    const phoneRegex = /^\d{12}$/;
 
     // Check if email is valid
     if (!emailRegex.test(user.email)) {
@@ -100,11 +98,6 @@ const addUser = (req, res) => {
         return;
     }
 
-    // Check if phone number is valid
-    if (!phoneRegex.test(user.phonenumber)) {
-        res.status(400).send({ error: 'Invalid phone number format' });
-        return;
-    }
 
     UserModel.getUserByEmail(user.email, (error, results) => {
         if (error) {
