@@ -13,7 +13,7 @@ module.exports = (config) => {
     router.get('/:userid', authenticateToken, findUser);
     router.put('/status/:userid', authenticateToken, changeStatus);
     router.put('/delete/:userid', authenticateToken, deleteuser);
-    router.put('/delete', authenticateToken, deleteUsers);
+    router.put('/delete', authenticateToken, deleteUsers); //
 
     router.get('/me/:userid', authorizeValidateUser, getUserById);
     router.put('/update/:userid', authorizeValidateUser, updateUser);

@@ -144,15 +144,6 @@ const updateUser = (req, res) => {
     const { userid } = req.params;
     const user = req.body;
 
-    // Phone number validation regular expression
-    const phoneRegex = /^\d{12}$/;
-
-    // Check if phone number is in the correct format
-    if (user.phonenumber && !phoneRegex.test(user.phonenumber)) {
-        res.status(400).send({ error: 'Invalid phone number format' });
-        return;
-    }
-
     UserModel.getUserById(userid, (error, existingUser) => {
         if (error) {
             res.status(500).send({ error: 'Error fetching data from the database' });
@@ -392,7 +383,7 @@ const deleteuser = (req, res) => {
     });
 };
 
-const deleteUsers = (req, res) => {
+const deleteUsers = (req, res) => { //
     const { userIds } = req.body;
 
     if (!Array.isArray(userIds) || userIds.length === 0) {
