@@ -4,7 +4,7 @@ const {
     addShop,
     updateShop,
     updateLogo
-} = require('../../controllers/ShopController');
+} = require('../../controllers/shop/ShopController');
 const { authenticateToken } = require('../../middlewares/userAuth');
 const { uploadLogo } = require('../../../config/fileUpload');
 

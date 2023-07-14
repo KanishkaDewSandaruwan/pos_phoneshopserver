@@ -6,7 +6,7 @@ const {
   updateItem,
   deleteItem,
   deleteItems
-} = require('../../controllers/ItemController');
+} = require('../../controllers/item/ItemController');
 const { authenticateToken } = require('../../middlewares/userAuth');
 
 module.exports = (config) => {

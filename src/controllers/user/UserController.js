@@ -1,5 +1,5 @@
-const UserModel = require('../models/UserModel');
-const userView = require('../views/userView');
+const UserModel = require('../../models/user/UserModel');
+const userView = require('../../views/userView');
 const jwt = require('jsonwebtoken');
 require('dotenv').config(); // Load environment variables
 
@@ -17,7 +17,7 @@ const login = (req, res) => {
             const user = results[0];
 
             if (user.status === 1) {
-                const token = generateToken(user.email, user.userrole);
+                const token = generateToken(user.email, user.userrole, user.branchid);
 
                 if (token) {
                     userView.renderUser(res, user, token);
@@ -436,7 +436,7 @@ const deleteUsers = (req, res) => { //
 
 // Generate token using JWT
 function generateToken(email, userrole) {
-    const payload = { email, userrole };
+    const payload = { email, userrole, branchid };
     const options = { expiresIn: '1h' }; // Token expiration time
 
     // Sign the token with the secret key from the .env file

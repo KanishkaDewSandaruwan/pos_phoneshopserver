@@ -1,5 +1,5 @@
-const SupplierModel = require('../models/SupplierModel');
-const supplierView = require('../views/supplierView');
+const SupplierModel = require('../../models/supplier/SupplierModel');
+const supplierView = require('../../views/supplierView');
 
 const getAllSuppliers = (req, res) => {
     SupplierModel.getAllSuppliers((error, results) => {

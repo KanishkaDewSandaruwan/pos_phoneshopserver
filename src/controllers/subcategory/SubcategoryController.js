@@ -1,4 +1,4 @@
-const SubcategoryModel = require('../models/SubcategoryModel');
+const SubcategoryModel = require('../../models/subcategory/SubcategoryModel');
 // const subcategoryView = require('../views/subcategoryView');
 
 const getAllSubcategories = (req, res) => {

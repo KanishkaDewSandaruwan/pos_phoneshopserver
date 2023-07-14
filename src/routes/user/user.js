@@ -1,6 +1,6 @@
 const express = require('express');
 
-const { login, getAll, getUserById, addUser, updateUser, deleteUsers, findUser, changePassword, changeStatus, deleteuser } = require('../../controllers/UserController');
+const { login, getAll, getUserById, addUser, updateUser, deleteUsers, findUser, changePassword, changeStatus, deleteuser } = require('../../controllers/user/UserController');
 const { authenticateToken, authorizeValidateUser, authorizeAccessControll } = require('../../middlewares/userAuth');
 
 module.exports = (config) => {
@@ -16,11 +16,11 @@ module.exports = (config) => {
     router.put('/delete', authenticateToken, deleteUsers); //
 
     router.get('/me/:userid', authorizeValidateUser, getUserById);
-    router.put('/update/:userid', authorizeValidateUser, updateUser);
+    router.put('/me/update/:userid', authorizeValidateUser, updateUser);
 
-    router.put('/changePassword/:userid', authorizeValidateUser, changePassword);
-    router.put('/changeEmail/:userid', authorizeValidateUser, updateUser);
-    router.put('/deleteme/:userid', authorizeValidateUser, deleteuser);
+    router.put('/me/changePassword/:userid', authorizeValidateUser, changePassword);
+    router.put('/me/changeEmail/:userid', authorizeValidateUser, updateUser);
+    router.put('/me/deleteme/:userid', authorizeValidateUser, deleteuser);
 
     return router;
 };

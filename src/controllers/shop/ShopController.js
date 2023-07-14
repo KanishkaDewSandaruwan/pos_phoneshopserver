@@ -1,4 +1,4 @@
-const ShopModel = require('../models/ShopModel');
+const ShopModel = require('../../models/shop/ShopModel');
 
 // Regular expression patterns for mobile number and email validation
 const mobileNumberPattern = /^[0-9]{10}$/;

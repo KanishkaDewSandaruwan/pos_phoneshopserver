@@ -8,7 +8,7 @@ const {
   deleteSubcategory,
   permanentDeleteSubcategory,
   deleteSubcategories
-} = require('../../controllers/SubcategoryController');
+} = require('../../controllers/subcategory/SubcategoryController');
 const { authenticateToken } = require('../../middlewares/userAuth');
 
 module.exports = (config) => {

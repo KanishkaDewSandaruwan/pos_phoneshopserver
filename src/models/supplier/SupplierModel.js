@@ -1,4 +1,4 @@
-const { connection } = require('../../config/connection');
+const { connection } = require('../../../config/connection');
 
 const SupplierModel = {
   getSupplierById(supplierId, callback) {

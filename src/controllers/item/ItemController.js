@@ -1,4 +1,4 @@
-const ItemModel = require('../models/ItemModel');
+const ItemModel = require('../../models/item/ItemModel');
 
 const getAllItems = (req, res) => {
     ItemModel.getAllItems((error, results) => {
