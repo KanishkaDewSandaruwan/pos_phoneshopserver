@@ -30,12 +30,12 @@ const UserModel = {
   },
 
   addUser(user, callback) {
-    const { fullname, phonenumber, address, email, username, password, userrole, branchid } = user;
+    const { fullname, phonenumber, address, email, username, password, userroleid, branchid } = user;
     const trndate = new Date().toISOString().slice(0, 19).replace('T', ' ');
     const defaultvalues = 0;
 
-    const query = 'INSERT INTO user (fullname, phonenumber, address, email, username, password, userrole, trndate, status, is_delete, branchid) VALUES (?, ?, ?, ?, ?, ?, ?, ?,?,?,?)';
-    const values = [fullname, phonenumber, address, email, username, password, userrole, trndate, defaultvalues, defaultvalues, branchid];
+    const query = 'INSERT INTO user (fullname, phonenumber, address, email, username, password, userroleid, trndate, status, is_delete, branchid) VALUES (?, ?, ?, ?, ?, ?, ?, ?,?,?,?)';
+    const values = [fullname, phonenumber, address, email, username, password, userroleid, trndate, defaultvalues, defaultvalues, branchid];
 
     connection.query(query, values, (error, results) => {
       if (error) {
@@ -49,9 +49,9 @@ const UserModel = {
   },
 
   updateUser(user, userid, callback) {
-    const { fullname, phonenumber, address, userrole, status, branchid } = user;
-    const query = 'UPDATE user SET fullname = ?, phonenumber = ?, address = ?, userrole = ?, status = ?, branchid = ? WHERE userid = ?';
-    const values = [fullname, phonenumber, address, userrole, status, branchid, userid];
+    const { fullname, phonenumber, address, userroleid, status, branchid } = user;
+    const query = 'UPDATE user SET fullname = ?, phonenumber = ?, address = ?, userroleid = ?, status = ?, branchid = ? WHERE userid = ?';
+    const values = [fullname, phonenumber, address, userroleid, status, branchid, userid];
 
     connection.query(query, values, callback);
   },
