@@ -435,7 +435,7 @@ const deleteUsers = (req, res) => { //
 
 
 // Generate token using JWT
-function generateToken(email, userrole) {
+function generateToken(email, userrole, branchid) {
     const payload = { email, userrole, branchid };
     const options = { expiresIn: '1h' }; // Token expiration time
 

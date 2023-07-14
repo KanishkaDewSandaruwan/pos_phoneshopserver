@@ -57,7 +57,7 @@ const tableInfo = [
       { name: 'item_description', type: 'VARCHAR(255)' },
       { name: 'catid', type: 'INT(255)' },
       { name: 'subcatid', type: 'INT(255)' },
-      { name: 'colorid', type: 'VARCHAR(255)' },
+      { name: 'colorid', type: 'INT(255)' },
       { name: 'brandid', type: 'INT(255)' },
       { name: 'item_image', type: 'INT(255)' },
       { name: 'trndate', type: 'DATETIME' },
@@ -102,6 +102,27 @@ const tableInfo = [
     fields: [
       { name: 'userroleid', type: 'INT AUTO_INCREMENT PRIMARY KEY' },
       { name: 'role', type: 'VARCHAR(255)' },
+      { name: 'trndate', type: 'DATETIME' },
+      { name: 'status', type: 'INT(5)' },
+      { name: 'is_delete', type: 'INT(5)' },
+    ],
+  },
+  {
+    tableName: 'colors',
+    fields: [
+      { name: 'colorid', type: 'INT AUTO_INCREMENT PRIMARY KEY' },
+      { name: 'colorname', type: 'VARCHAR(255)' },
+      { name: 'colorcode', type: 'VARCHAR(255)' },
+      { name: 'trndate', type: 'DATETIME' },
+      { name: 'status', type: 'INT(5)' },
+      { name: 'is_delete', type: 'INT(5)' },
+    ],
+  },
+  {
+    tableName: 'brands',
+    fields: [
+      { name: 'brandid', type: 'INT AUTO_INCREMENT PRIMARY KEY' },
+      { name: 'brandname', type: 'VARCHAR(255)' },
       { name: 'trndate', type: 'DATETIME' },
       { name: 'status', type: 'INT(5)' },
       { name: 'is_delete', type: 'INT(5)' },

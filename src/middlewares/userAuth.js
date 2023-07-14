@@ -100,6 +100,7 @@ async function authorizeAccessControll(req, res, next) {
     return res.status(500).json({ error: 'Internal Server Error' });
   }
 }
+
 async function authorizeBranchControll(req, res, next) {
   try {
     const token = req.headers['x-token'];
