@@ -10,17 +10,18 @@ const {
   deleteSubcategories
 } = require('../../controllers/subcategory/SubcategoryController');
 const { authenticateToken } = require('../../middlewares/userAuth');
+const { authorizeAccessControll } = require('../../middlewares/userAccess');
 
 module.exports = (config) => {
   const router = express.Router();
 
-  router.post('/create', authenticateToken, addSubcategory);
-  router.get('/all', authenticateToken, getAllSubcategories);
-  router.get('/:subcategoryId', authenticateToken, getSubcategoryById);
-  router.put('/status/:subcategoryId', authenticateToken, updateSubcategoryStatus);
-  router.put('/delete/:subcategoryId', authenticateToken, deleteSubcategory);
-  router.put('/delete', authenticateToken, deleteSubcategories);
-  router.put('/update/:subcategoryId', authenticateToken, updateSubcategory);
+  router.post('/create', authorizeAccessControll, addSubcategory);
+  router.get('/all', authorizeAccessControll, getAllSubcategories);
+  router.get('/:subcategoryId', authorizeAccessControll, getSubcategoryById);
+  router.put('/status/:subcategoryId', authorizeAccessControll, updateSubcategoryStatus);
+  router.put('/delete/:subcategoryId', authorizeAccessControll, deleteSubcategory);
+  router.put('/delete', authorizeAccessControll, deleteSubcategories);
+  router.put('/update/:subcategoryId', authorizeAccessControll, updateSubcategory);
 
   return router;
 };

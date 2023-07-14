@@ -1,7 +1,8 @@
 const express = require('express');
 
 const { login, getAll, getUserById, addUser, updateUser, deleteUsers, findUser, changePassword, changeStatus, deleteuser } = require('../../controllers/user/UserController');
-const { authenticateToken, authorizeValidateUser, authorizeAccessControll } = require('../../middlewares/userAuth');
+const { authenticateToken, authorizeValidateUser } = require('../../middlewares/userAuth');
+const { authorizeAccessControll } = require('../../middlewares/userAccess');
 
 module.exports = (config) => {
     const router = express.Router();
@@ -17,7 +18,6 @@ module.exports = (config) => {
     router.put('/delete/:userid', authorizeAccessControll, deleteuser);
     router.put('/delete', authorizeAccessControll, deleteUsers); 
     router.put('/update/:userid', authorizeAccessControll, updateUser);
-
 
     //profile
     router.get('/me/:userid', authorizeValidateUser, getUserById);

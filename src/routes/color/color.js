@@ -10,17 +10,18 @@ const {
   deleteColors
 } = require('../../controllers/colors/ColorController');
 const { authenticateToken } = require('../../middlewares/userAuth');
+const { authorizeAccessControll } = require('../../middlewares/userAccess');
 
 module.exports = (config) => {
   const router = express.Router();
 
-  router.post('/create', authenticateToken, addColor);
-  router.get('/all', authenticateToken, getAllColors);
-  router.get('/:colorId', authenticateToken, getColorById);
-  router.put('/status/:colorId', authenticateToken, updateColorStatus);
-  router.put('/delete/:colorId', authenticateToken, deleteColor);
-  router.put('/delete', authenticateToken, deleteColors);
-  router.put('/update/:colorId', authenticateToken, updateColor);
+  router.post('/create', authorizeAccessControll, addColor);
+  router.get('/all', authorizeAccessControll, getAllColors);
+  router.get('/:colorId', authorizeAccessControll, getColorById);
+  router.put('/status/:colorId', authorizeAccessControll, updateColorStatus);
+  router.put('/delete/:colorId', authorizeAccessControll, deleteColor);
+  router.put('/delete', authorizeAccessControll, deleteColors);
+  router.put('/update/:colorId', authorizeAccessControll, updateColor);
 
   return router;
 };

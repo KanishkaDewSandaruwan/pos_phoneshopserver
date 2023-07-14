@@ -10,17 +10,19 @@ const {
   deleteBranches
 } = require('../../controllers/branch/BranchController');
 const { authenticateToken } = require('../../middlewares/userAuth');
+const { authorizeAccessControll } = require('../../middlewares/userAccess');
 
 module.exports = (config) => {
   const router = express.Router();
 
-  router.post('/create', authenticateToken, addBranch);
-  router.get('/all', authenticateToken, getAllBranches);
-  router.get('/:branchId', authenticateToken, getBranchById);
-  router.put('/status/:branchId', authenticateToken, updateBranchStatus);
-  router.put('/delete/:branchId', authenticateToken, deleteBranch);
-  router.put('/delete', authenticateToken, deleteBranches);
-  router.put('/update/:branchId', authenticateToken, updateBranch);
+  //admin only
+  router.post('/create', authorizeAccessControll, addBranch);
+  router.get('/all', authorizeAccessControll, getAllBranches);
+  router.get('/:branchId', authorizeAccessControll, getBranchById);
+  router.put('/status/:branchId', authorizeAccessControll, updateBranchStatus);
+  router.put('/delete/:branchId', authorizeAccessControll, deleteBranch);
+  router.put('/delete', authorizeAccessControll, deleteBranches);
+  router.put('/update/:branchId', authorizeAccessControll, updateBranch);
 
   return router;
 };

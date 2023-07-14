@@ -10,17 +10,18 @@ const {
   deleteBrands
 } = require('../../controllers/brands/BrandController');
 const { authenticateToken } = require('../../middlewares/userAuth');
+const { authorizeAccessControll } = require('../../middlewares/userAccess');
 
 module.exports = (config) => {
   const router = express.Router();
 
-  router.post('/create', authenticateToken, addBrand);
-  router.get('/all', authenticateToken, getAllBrands);
-  router.get('/:brandId', authenticateToken, getBrandById);
-  router.put('/status/:brandId', authenticateToken, updateBrandStatus);
-  router.put('/delete/:brandId', authenticateToken, deleteBrand);
-  router.put('/delete', authenticateToken, deleteBrands);
-  router.put('/update/:brandId', authenticateToken, updateBrand);
+  router.post('/create', authorizeAccessControll, addBrand);
+  router.get('/all', authorizeAccessControll, getAllBrands);
+  router.get('/:brandId', authorizeAccessControll, getBrandById);
+  router.put('/status/:brandId', authorizeAccessControll, updateBrandStatus);
+  router.put('/delete/:brandId', authorizeAccessControll, deleteBrand);
+  router.put('/delete', authorizeAccessControll, deleteBrands);
+  router.put('/update/:brandId', authorizeAccessControll, updateBrand);
 
   return router;
 };

@@ -7,14 +7,16 @@ const {
 } = require('../../controllers/shop/ShopController');
 const { authenticateToken } = require('../../middlewares/userAuth');
 const { uploadLogo } = require('../../../config/fileUpload');
+const { authorizeAccessControll } = require('../../middlewares/userAccess');
 
 module.exports = (config) => {
     const router = express.Router();
 
-    router.post('/create', authenticateToken, addShop);
-    router.get('/all', authenticateToken, getShop);
-    router.put('/update', authenticateToken, updateShop);
-    router.put('/logo', uploadLogo.single('logo'), authenticateToken, updateLogo);
+    //admin only
+    router.post('/create', authorizeAccessControll, addShop);
+    router.get('/all', authorizeAccessControll, getShop);
+    router.put('/update', authorizeAccessControll, updateShop);
+    router.put('/logo', uploadLogo.single('logo'), authorizeAccessControll, updateLogo);
 
     return router;
 };

@@ -17,7 +17,7 @@ const login = (req, res) => {
             const user = results[0];
 
             if (user.status === 1) {
-                const token = generateToken(user.email, user.userrole, user.branchid);
+                const token = generateToken(user.email, user.userroleid, user.branchid);
 
                 if (token) {
                     userView.renderUser(res, user, token);
@@ -435,8 +435,8 @@ const deleteUsers = (req, res) => { //
 
 
 // Generate token using JWT
-function generateToken(email, userrole, branchid) {
-    const payload = { email, userrole, branchid };
+function generateToken(email, userroleid, branchid) {
+    const payload = { email, userroleid, branchid };
     const options = { expiresIn: '1h' }; // Token expiration time
 
     // Sign the token with the secret key from the .env file

@@ -14,20 +14,21 @@ module.exports = (config) => {
   const router = express.Router();
 
   //access control routes
-  router.use('/user', userRoute(config));
-  router.use('/branch', branchRoute(config));
-  router.use('/shop', shopRoute(config));
-  router.use('/userrole', userroleRoute(config));
+  router.use('/user', userRoute(config)); //admin user only
+  router.use('/branch', branchRoute(config)); //admin user only
+  router.use('/shop', shopRoute(config)); //admin user only
+  
+  router.use('/userrole', userroleRoute(config)); //super admin only
   
   //need routes
-  router.use('/supplier', supplierRoute(config));
-  router.use('/item', itemRoute(config));
+  router.use('/supplier', supplierRoute(config));   //any user
+  router.use('/item', itemRoute(config));   //any user
   
   //filter routes
-  router.use('/category', categoryRoute(config));
-  router.use('/subcategory', subcategoryRoute(config));
-  router.use('/color', colorRoute(config));
-  router.use('/brand', brandRoute(config));
+  router.use('/category', categoryRoute(config)); //admin user only
+  router.use('/subcategory', subcategoryRoute(config)); //admin user only
+  router.use('/color', colorRoute(config)); //admin user only
+  router.use('/brand', brandRoute(config)); //admin user only
 
   return router;
 };
