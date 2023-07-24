@@ -9,6 +9,10 @@ const CategoryModel = {
     connection.query('SELECT * FROM category WHERE is_delete = 0', callback);
   },
 
+  getCategoryByName(cat_name, callback) {
+    connection.query('SELECT * FROM category WHERE cat_name = ? AND is_delete = 0', [cat_name], callback);
+  },
+
   addCategory(category, cat_image, callback) {
     const { cat_name } = category;
     const trndate = new Date().toISOString().slice(0, 19).replace('T', ' ');

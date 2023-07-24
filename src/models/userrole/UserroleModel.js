@@ -9,6 +9,14 @@ const UserRoleModel = {
     connection.query('SELECT * FROM userrole WHERE is_delete = 0', callback);
   },
 
+  getUserPermission(userroleid, callback) {
+    connection.query('SELECT * FROM assign_permission WHERE userroleid = ? AND is_delete = 0', [userroleid], callback);
+  },
+
+  getUserById(userid, callback) {
+    connection.query('SELECT * FROM user WHERE userid = ? AND is_delete = 0 AND userroleid != 1', [userid], callback);
+  },
+
   addUserRole(userRole, callback) {
     const { role } = userRole;
     const trndate = new Date().toISOString().slice(0, 19).replace('T', ' ');

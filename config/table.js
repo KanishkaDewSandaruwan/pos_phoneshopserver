@@ -130,6 +130,26 @@ const tableInfo = [
       { name: 'is_delete', type: 'INT(5)' },
     ],
   },
+  {
+    tableName: 'permission',
+    fields: [
+      { name: 'permissionid', type: 'INT AUTO_INCREMENT PRIMARY KEY' },
+      { name: 'permission_code', type: 'VARCHAR(255)' },
+      { name: 'permission_description', type: 'VARCHAR(255)' },
+      { name: 'trndate', type: 'DATETIME' },
+    ],
+  },
+  {
+    tableName: 'assign_permission',
+    fields: [
+      { name: 'assignpermissionid', type: 'INT AUTO_INCREMENT PRIMARY KEY' },
+      { name: 'permission_code', type: 'VARCHAR(255)' },
+      { name: 'userroleid', type: 'VARCHAR(255)' },
+      { name: 'status', type: 'INT(5)' },
+      { name: 'trndate', type: 'DATETIME' },
+      { name: 'is_delete', type: 'INT(5)' },
+    ],
+  },
   
 ];
 

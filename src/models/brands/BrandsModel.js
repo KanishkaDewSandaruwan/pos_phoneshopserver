@@ -9,6 +9,10 @@ const BrandModel = {
     connection.query('SELECT * FROM brands WHERE is_delete = 0', callback);
   },
 
+  getBrandByName(brandname, callback) {
+    connection.query('SELECT * FROM brands WHERE brandname = ? AND is_delete = 0', [brandname], callback);
+  },
+
   addBrand(brand, callback) {
     const { brandname } = brand;
     const trndate = new Date().toISOString().slice(0, 19).replace('T', ' ');

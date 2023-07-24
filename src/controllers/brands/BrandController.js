@@ -31,18 +31,30 @@ const getBrandById = (req, res) => {
 const addBrand = (req, res) => {
   const brand = req.body;
 
-  BrandModel.addBrand(brand, (error, brandId) => {
+  BrandModel.getBrandByName(brand.brandname, (error, results) => {
     if (error) {
       res.status(500).send({ error: 'Error fetching data from the database' });
       return;
     }
 
-    if (!brandId) {
-      res.status(404).send({ error: 'Failed to create brand' });
+    if (results.length > 0) {
+      res.status(409).send({ error: 'This Brand already exists' });
       return;
     }
 
-    res.status(200).send({ message: 'Brand created successfully', brandId });
+    BrandModel.addBrand(brand, (error, brandId) => {
+      if (error) {
+        res.status(500).send({ error: 'Error fetching data from the database' });
+        return;
+      }
+
+      if (!brandId) {
+        res.status(404).send({ error: 'Failed to create brand' });
+        return;
+      }
+
+      res.status(200).send({ message: 'Brand created successfully', brandId });
+    });
   });
 };
 
@@ -61,18 +73,30 @@ const updateBrand = (req, res) => {
       return;
     }
 
-    BrandModel.updateBrand(brand, brandId, (error, results) => {
+    BrandModel.getBrandByName(brand.brandname, (error, results) => {
       if (error) {
         res.status(500).send({ error: 'Error fetching data from the database' });
         return;
       }
 
-      if (results.affectedRows === 0) {
-        res.status(404).send({ error: 'Brand not found or no changes made' });
+      if (results.length > 0) {
+        res.status(409).send({ error: 'This Brand already exists' });
         return;
       }
 
-      res.status(200).send({ message: 'Brand updated successfully' });
+      BrandModel.updateBrand(brand, brandId, (error, results) => {
+        if (error) {
+          res.status(500).send({ error: 'Error fetching data from the database' });
+          return;
+        }
+
+        if (results.affectedRows === 0) {
+          res.status(404).send({ error: 'Brand not found or no changes made' });
+          return;
+        }
+
+        res.status(200).send({ message: 'Brand updated successfully' });
+      });
     });
   });
 };
@@ -135,7 +159,7 @@ const deleteBrands = (req, res) => {
     res.status(400).send({ error: 'Invalid brand IDs' });
     return;
   }
-  
+
   let successCount = 0;
   let failCount = 0;
 

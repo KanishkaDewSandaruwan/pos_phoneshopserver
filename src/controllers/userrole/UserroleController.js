@@ -11,6 +11,37 @@ const getAllUserRoles = (req, res) => {
   });
 };
 
+const getUserRole = (req, res) => {
+  const { userid } = req.params;
+  const userRole = req.body;
+
+  UserRoleModel.getUserById(userid, (error, results) => {
+    if (error) {
+      res.status(500).send({ error: 'Error fetching data from the database' });
+      return;
+    }
+
+    if (results.length === 0) {
+      res.status(404).send({ error: 'UserRole not found' });
+      return;
+    }
+
+    if (results.userroleid !== userRole.userroleid) {
+      res.status(404).send({ error: 'UserRole is Wrong. This user dont have this role' });
+      return;
+    }
+
+    UserRoleModel.getUserPermission(userRole.userroleid, userid, (error, results) => {
+      if (error) {
+        res.status(500).send({ error: 'Error fetching data from the database' });
+        return;
+      }
+
+      res.status(200).send(results);
+    });
+  });
+};
+
 const getUserRoleById = (req, res) => {
   const { userRoleId } = req.params;
   UserRoleModel.getUserRoleById(userRoleId, (error, results) => {
@@ -204,4 +235,5 @@ module.exports = {
   deleteUserRole,
   permanentDeleteUserRole,
   deleteRoles,
+  getUserRole
 };

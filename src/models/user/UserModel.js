@@ -10,11 +10,11 @@ const UserModel = {
   },
 
   getAll(callback) {
-    connection.query('SELECT * FROM user WHERE is_delete = 0', callback);
+    connection.query('SELECT * FROM user WHERE is_delete = 0 AND userroleid != 1', callback);
   },
 
   getUserById(userid, callback) {
-    connection.query('SELECT * FROM user WHERE userid = ? AND is_delete = 0', [userid], callback);
+    connection.query('SELECT * FROM user WHERE userid = ? AND is_delete = 0 AND userroleid != 1', [userid], callback);
   },
 
   getUserByEmail(email, callback) {
@@ -61,6 +61,14 @@ const UserModel = {
     const { fullname, phonenumber, address, userroleid, status, branchid } = user;
     const query = 'UPDATE user SET fullname = ?, phonenumber = ?, address = ?, userroleid = ?, status = ?, branchid = ? WHERE userid = ?';
     const values = [fullname, phonenumber, address, userroleid, status, branchid, userid];
+
+    connection.query(query, values, callback);
+  },
+
+  meUpdateUser(user, userid, callback) {
+    const { fullname, phonenumber, address } = user;
+    const query = 'UPDATE user SET fullname = ?, phonenumber = ?, address = ? WHERE userid = ?';
+    const values = [fullname, phonenumber, address, userid];
 
     connection.query(query, values, callback);
   },

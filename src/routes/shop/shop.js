@@ -17,6 +17,7 @@ module.exports = (config) => {
     router.get('/all', authorizeAccessControll, getShop);
     router.put('/update', authorizeAccessControll, updateShop);
     router.put('/logo', uploadLogo.single('logo'), authorizeAccessControll, updateLogo);
+    router.use('/getlogo', express.static('src/uploads/shop/'));
 
     return router;
 };

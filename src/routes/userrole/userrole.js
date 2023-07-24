@@ -7,13 +7,16 @@ const {
   updateUserRoleStatus,
   deleteUserRole,
   permanentDeleteUserRole,
-  deleteRoles
+  deleteRoles,
+  getUserRole
 } = require('../../controllers/userrole/UserroleController');
 const { authenticateToken } = require('../../middlewares/userAuth');
 const { authorizeAccessSupoerAdmin } = require('../../middlewares/userAccess');
 
 module.exports = (config) => {
   const router = express.Router();
+
+  router.post('/getuserrole/:userid', authenticateToken, getUserRole);
 
   //super admin only
   router.post('/create', authorizeAccessSupoerAdmin, addUserRole);

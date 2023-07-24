@@ -18,6 +18,7 @@ module.exports = (config) => {
   const router = express.Router();
 
   router.post('/create', uploadCategory.single('catimage'), authorizeAccessControll, addCategory);
+  router.use('/image', express.static('src/uploads/category/'));
   router.get('/all', authorizeAccessControll, getAllCategories);
   router.get('/:categoryId', authorizeAccessControll, getCategoryById);
   router.put('/status/:categoryId', authorizeAccessControll, updateCategoryStatus);

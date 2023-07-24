@@ -31,18 +31,30 @@ const getBranchById = (req, res) => {
 const addBranch = (req, res) => {
   const branch = req.body;
 
-  BranchModel.addBranch(branch, (error, branchId) => {
+  BranchModel.getBranchByName(branch.branch_name, (error, results) => {
     if (error) {
       res.status(500).send({ error: 'Error fetching data from the database' });
       return;
     }
 
-    if (!branchId) {
-      res.status(404).send({ error: 'Failed to create branch' });
+    if (results.length > 0) {
+      res.status(409).send({ error: 'This Branch is already exists' });
       return;
     }
 
-    res.status(200).send({ message: 'Branch created successfully', branchId });
+    BranchModel.addBranch(branch, (error, branchId) => {
+      if (error) {
+        res.status(500).send({ error: 'Error fetching data from the database' });
+        return;
+      }
+
+      if (!branchId) {
+        res.status(404).send({ error: 'Failed to create branch' });
+        return;
+      }
+
+      res.status(200).send({ message: 'Branch created successfully', branchId });
+    });
   });
 };
 
@@ -61,18 +73,35 @@ const updateBranch = (req, res) => {
       return;
     }
 
-    BranchModel.updateBranch(branch, branchId, (error, results) => {
+    if (results.branch_name === branch.branch_name) {
+      res.status(404).send({ error: 'This is the same branch. Branch is already exists' });
+      return;
+    }
+
+    BranchModel.getBranchByName(branch.branch_name, (error, results) => {
       if (error) {
         res.status(500).send({ error: 'Error fetching data from the database' });
         return;
       }
 
-      if (results.affectedRows === 0) {
-        res.status(404).send({ error: 'Branch not found or no changes made' });
+      if (results.length > 0) {
+        res.status(409).send({ error: 'This Branch is already exists' });
         return;
       }
 
-      res.status(200).send({ message: 'Branch updated successfully' });
+      BranchModel.updateBranch(branch, branchId, (error, results) => {
+        if (error) {
+          res.status(500).send({ error: 'Error fetching data from the database' });
+          return;
+        }
+
+        if (results.affectedRows === 0) {
+          res.status(404).send({ error: 'Branch not found or no changes made' });
+          return;
+        }
+
+        res.status(200).send({ message: 'Branch updated successfully' });
+      });
     });
   });
 };

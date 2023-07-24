@@ -9,6 +9,10 @@ const BranchModel = {
     connection.query('SELECT * FROM branch WHERE is_delete = 0', callback);
   },
 
+  getBranchByName(branchName, callback) {
+    connection.query('SELECT * FROM branch WHERE branch_name = ? AND is_delete = 0', [branchName], callback);
+  },
+
   addBranch(branch, callback) {
     const { branch_name, branch_location } = branch;
     const trndate = new Date().toISOString().slice(0, 19).replace('T', ' ');
