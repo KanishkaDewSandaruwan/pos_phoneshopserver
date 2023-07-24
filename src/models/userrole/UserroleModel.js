@@ -14,7 +14,7 @@ const UserRoleModel = {
   },
 
   getUserById(userid, callback) {
-    connection.query('SELECT * FROM user WHERE userid = ? AND is_delete = 0 AND userroleid != 1', [userid], callback);
+    connection.query('SELECT * FROM user WHERE userid = ? AND is_delete = 0', [userid], callback);
   },
 
   addUserRole(userRole, callback) {
