@@ -41,10 +41,12 @@ const UserModel = {
     const { fullname, phonenumber, address, email, username, password, userroleid, branchid } = user;
     const trndate = new Date().toISOString().slice(0, 19).replace('T', ' ');
     const defaultvalues = 0;
+    const activevalues=1;
+
     const updateEmpty = "";
 
     const query = 'INSERT INTO user (fullname, phonenumber, address, email, username, password, userroleid, trndate, status, is_delete, branchid, profileimage) VALUES (?, ?, ?, ?, ?, ?, ?, ?,?,?,?,?)';
-    const values = [fullname, phonenumber, address, email, username, password, userroleid, trndate, defaultvalues, defaultvalues, branchid, profileimage];
+    const values = [fullname, phonenumber, address, email, username, password, userroleid, trndate, activevalues, defaultvalues, branchid, profileimage];
 
     connection.query(query, values, (error, results) => {
       if (error) {
