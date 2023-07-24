@@ -10,11 +10,11 @@ const UserModel = {
   },
 
   getAll(callback) {
-    connection.query('SELECT * FROM user WHERE is_delete = 0 AND userroleid != 1', callback);
+    connection.query('SELECT * FROM user WHERE is_delete = 0', callback);
   },
 
   getUserById(userid, callback) {
-    connection.query('SELECT * FROM user WHERE userid = ? AND is_delete = 0 AND userroleid != 1', [userid], callback);
+    connection.query('SELECT * FROM user WHERE userid = ? AND is_delete = 0', [userid], callback);
   },
 
   getUserByEmail(email, callback) {
