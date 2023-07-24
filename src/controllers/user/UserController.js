@@ -87,6 +87,7 @@ const findUser = (req, res) => {
 
 const addUser = (req, res) => {
     const user = req.body; // Retrieve the user data from the request body
+    const filePath = req.file.filename;
 
     // Email validation regular expression
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -110,29 +111,66 @@ const addUser = (req, res) => {
             return;
         }
 
-        UserModel.getUserByPhonenumber(user.phonenumber, (error, results) => {
+        UserModel.getSupplierByEmail(user.email, (error, results) => {
             if (error) {
                 res.status(500).send({ error: 'Error fetching data from the database' });
                 return;
             }
 
             if (results.length > 0) {
-                res.status(409).send({ error: 'Phone number already exists' });
+                res.status(409).send({ error: 'Email already exists' });
                 return;
             }
 
-            UserModel.addUser(user, (error, userId) => {
+            UserModel.getUserByPhonenumber(user.phonenumber, (error, results) => {
+
                 if (error) {
                     res.status(500).send({ error: 'Error fetching data from the database' });
                     return;
                 }
 
-                if (!userId) {
-                    res.status(500).send({ error: 'Failed to create user' });
+                if (results.length > 0) {
+                    res.status(409).send({ error: 'Phone number already exists' });
                     return;
                 }
 
-                res.status(200).send({ message: 'User created successfully', userId });
+                UserModel.getUserByPhonenumber(user.phonenumber, (error, results) => {
+                    if (error) {
+                        res.status(500).send({ error: 'Error fetching data from the database' });
+                        return;
+                    }
+
+                    if (results.length > 0) {
+                        res.status(409).send({ error: 'Phone number already exists' });
+                        return;
+                    }
+
+                    UserModel.getUserByUsername(user.username, (error, results) => {
+                        if (error) {
+                            res.status(500).send({ error: 'Error fetching data from the database' });
+                            return;
+                        }
+
+                        if (results.length > 0) {
+                            res.status(409).send({ error: 'Username is already exists' });
+                            return;
+                        }
+
+                        UserModel.addUser(user, filePath, (error, userId) => {
+                            if (error) {
+                                res.status(500).send({ error: 'Error fetching data from the database' });
+                                return;
+                            }
+
+                            if (!userId) {
+                                res.status(500).send({ error: 'Failed to create user' });
+                                return;
+                            }
+
+                            res.status(200).send({ message: 'User created successfully', userId });
+                        });
+                    });
+                });
             });
         });
     });
@@ -157,7 +195,7 @@ const updateUser = (req, res) => {
 
         // Check if the provided phone number is already associated with another user
         if (user.phonenumber && user.phonenumber !== existingUser[0].phonenumber) {
-            
+
             UserModel.getUserByPhonenumber(user.phonenumber, (error, results) => {
                 if (error) {
                     res.status(500).send({ error: 'Error fetching data from the database' });
@@ -191,6 +229,38 @@ const updateUser = (req, res) => {
             res.status(200).send({ message: 'User updated successfully' });
         });
     }
+};
+
+const updateUserProfile = (req, res) => {
+    const { userid } = req.params;
+    const filePath = req.file.filename;
+
+    UserModel.getUserById(userid, (error, existingUser) => {
+        if (error) {
+            res.status(500).send({ error: 'Error fetching data from the database' });
+            return;
+        }
+
+        if (!existingUser[0]) {
+            res.status(404).send({ error: 'User not found' });
+            return;
+        }
+
+        UserModel.updateUserProfile(userid, filePath, (error, results) => {
+            if (error) {
+                res.status(500).send({ error: 'Error fetching data from the database' });
+                return;
+            }
+
+            if (results.affectedRows === 0) {
+                res.status(404).send({ error: 'User not found or no changes made' });
+                return;
+            }
+
+            res.status(200).send({ message: 'User updated successfully' });
+        });
+      
+    });
 };
 
 
@@ -425,7 +495,7 @@ const deleteUsers = (req, res) => {
             if (successCount + failCount === userIds.length) {
                 const totalCount = userIds.length;
 
-                
+
                 res.status(200).send({
                     totalCount,
                     successCount,
@@ -458,5 +528,6 @@ module.exports = {
     changeEmail,
     changeStatus,
     deleteuser,
-    deleteUsers
+    deleteUsers,
+    updateUserProfile
 };

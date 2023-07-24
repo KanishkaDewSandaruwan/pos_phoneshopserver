@@ -13,7 +13,7 @@ module.exports = (config) => {
     const router = express.Router();
 
     //admin only
-    router.post('/create', authorizeAccessControll, addShop);
+    // router.post('/create', authorizeAccessControll, addShop);
     router.get('/all', authorizeAccessControll, getShop);
     router.put('/update', authorizeAccessControll, updateShop);
     router.put('/logo', uploadLogo.single('logo'), authorizeAccessControll, updateLogo);

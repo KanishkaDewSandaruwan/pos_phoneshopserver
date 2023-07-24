@@ -31,8 +31,9 @@ const getCategoryById = (req, res) => {
 
 const addCategory = (req, res) => {
     const category = req.body;
+    const filePath = req.file.filename;
 
-    CategoryModel.addCategory(category, (error, categoryId) => {
+    CategoryModel.addCategory(category, filePath, (error, categoryId) => {
         if (error) {
             res.status(500).send({ error: 'Error fetching data from the database' });
             return;
@@ -49,6 +50,37 @@ const addCategory = (req, res) => {
 
 const updateCategory = (req, res) => {
     const { categoryId } = req.params;
+    const filePath = req.file.filename;
+
+    CategoryModel.getCategoryById(categoryId, (error, results) => {
+        if (error) {
+            res.status(500).send({ error: 'Error fetching data from the database' });
+            return;
+        }
+
+        if (results.length === 0) {
+            res.status(404).send({ error: 'Category not found' });
+            return;
+        }
+
+        CategoryModel.updateCategory(categoryId, filePath, (error, results) => {
+            if (error) {
+                res.status(500).send({ error: 'Error fetching data from the database' });
+                return;
+            }
+
+            if (results.affectedRows === 0) {
+                res.status(404).send({ error: 'Category not found or no changes made' });
+                return;
+            }
+
+            res.status(200).send({ message: 'Category updated successfully' });
+        });
+    });
+};
+
+const updateCategoryImage = (req, res) => {
+    const { categoryId } = req.params;
     const category = req.body;
 
     CategoryModel.getCategoryById(categoryId, (error, results) => {
@@ -62,7 +94,7 @@ const updateCategory = (req, res) => {
             return;
         }
 
-        CategoryModel.updateCategory(category, categoryId, (error, results) => {
+        CategoryModel.updateCategoryImage(category, categoryId, (error, results) => {
             if (error) {
                 res.status(500).send({ error: 'Error fetching data from the database' });
                 return;
@@ -207,5 +239,6 @@ module.exports = {
     updateCategoryStatus,
     deleteCategory,
     permanentDeleteCategory,
-    deleteCategories
+    deleteCategories,
+    updateCategoryImage
 };

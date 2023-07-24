@@ -9,14 +9,15 @@ const CategoryModel = {
     connection.query('SELECT * FROM category WHERE is_delete = 0', callback);
   },
 
-  addCategory(category, callback) {
+  addCategory(category, cat_image, callback) {
     const { cat_name } = category;
     const trndate = new Date().toISOString().slice(0, 19).replace('T', ' ');
     const defaultValues = 0;
     const activeValues = 1;
+    const updateEmpty = "";
 
-    const query = 'INSERT INTO category (cat_name, trndate, status, is_delete) VALUES (?, ?, ?, ?)';
-    const values = [cat_name, trndate, activeValues, defaultValues];
+    const query = 'INSERT INTO category (cat_name, trndate, status, is_delete, cat_image) VALUES (?, ?, ?, ?, ?)';
+    const values = [cat_name, trndate, activeValues, defaultValues, cat_image];
 
     connection.query(query, values, (error, results) => {
       if (error) {
@@ -33,6 +34,14 @@ const CategoryModel = {
     const { cat_name, status } = category;
     const query = 'UPDATE category SET cat_name = ?, status = ? WHERE catid = ?';
     const values = [cat_name, status ,categoryId];
+
+    connection.query(query, values, callback);
+  },
+
+  updateCategoryImage(categoryId, cat_image, callback) {
+ 
+    const query = 'UPDATE category SET cat_image = ? WHERE catid = ?';
+    const values = [cat_image, categoryId];
 
     connection.query(query, values, callback);
   },

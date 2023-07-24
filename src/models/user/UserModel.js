@@ -25,17 +25,26 @@ const UserModel = {
     connection.query('SELECT * FROM user WHERE phonenumber = ? AND is_delete = 0', [phonenumber], callback);
   },
 
+  getSupplierByPhonenumber(phonenumber, callback) {
+    connection.query('SELECT * FROM supplier WHERE supplier_phone = ? AND is_delete = 0', [phonenumber], callback);
+  },
+
+  getSupplierByEmail(email, callback) {
+    connection.query('SELECT * FROM supplier WHERE supplier_email = ? AND is_delete = 0', [email], callback);
+  },
+
   getUserByUsername(username, callback) {
     connection.query('SELECT * FROM user WHERE username = ? AND is_delete = 0', [username], callback);
   },
 
-  addUser(user, callback) {
+  addUser(user, profileimage, callback) {
     const { fullname, phonenumber, address, email, username, password, userroleid, branchid } = user;
     const trndate = new Date().toISOString().slice(0, 19).replace('T', ' ');
     const defaultvalues = 0;
+    const updateEmpty = "";
 
-    const query = 'INSERT INTO user (fullname, phonenumber, address, email, username, password, userroleid, trndate, status, is_delete, branchid) VALUES (?, ?, ?, ?, ?, ?, ?, ?,?,?,?)';
-    const values = [fullname, phonenumber, address, email, username, password, userroleid, trndate, defaultvalues, defaultvalues, branchid];
+    const query = 'INSERT INTO user (fullname, phonenumber, address, email, username, password, userroleid, trndate, status, is_delete, branchid, profileimage) VALUES (?, ?, ?, ?, ?, ?, ?, ?,?,?,?,?)';
+    const values = [fullname, phonenumber, address, email, username, password, userroleid, trndate, defaultvalues, defaultvalues, branchid, profileimage];
 
     connection.query(query, values, (error, results) => {
       if (error) {
@@ -52,6 +61,13 @@ const UserModel = {
     const { fullname, phonenumber, address, userroleid, status, branchid } = user;
     const query = 'UPDATE user SET fullname = ?, phonenumber = ?, address = ?, userroleid = ?, status = ?, branchid = ? WHERE userid = ?';
     const values = [fullname, phonenumber, address, userroleid, status, branchid, userid];
+
+    connection.query(query, values, callback);
+  },
+
+  updateUserProfile(userid, profileimage, callback) {
+    const query = 'UPDATE user SET profileimage = ? WHERE userid = ?';
+    const values = [profileimage, userid];
 
     connection.query(query, values, callback);
   },
