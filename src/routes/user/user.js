@@ -39,7 +39,7 @@ module.exports = (config) => {
     router.get('/me/:userid', authorizeValidateUser, getUserById);
     router.get('/me/profilechange/:userid', uploadProfile.single('profile'), authorizeValidateUser, updateUserProfile);
     router.use('/me/getprofile', express.static('src/uploads/profile/'));
-    router.put('/me/update/:userid', authorizeValidateUser, updateUser);
+    router.put('/me/update/:userid', authorizeValidateUser, meUpdateUser);
     router.put('/me/changePassword/:userid', authorizeValidateUser, changePassword);
     router.put('/me/changeEmail/:userid', authorizeValidateUser, changeEmail);
     router.put('/me/changeUsername/:userid', authorizeValidateUser, changeUsername);
