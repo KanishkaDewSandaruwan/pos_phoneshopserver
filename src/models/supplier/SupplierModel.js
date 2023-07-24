@@ -13,7 +13,7 @@ const SupplierModel = {
     const { supplier_name, supplier_address, supplier_email, supplier_phone } = supplier;
     const supplier_adddate = new Date().toISOString().slice(0, 19).replace('T', ' ');
     const defaultValues = 0;
-    const activeValues = 0;
+    const activeValues =1;
 
     const query = 'INSERT INTO supplier (supplier_name, supplier_address, supplier_email, supplier_phone, supplier_adddate, supplier_status, is_delete) VALUES (?, ?, ?, ?, ?, ?, ?)';
     const values = [supplier_name, supplier_address, supplier_email, supplier_phone, supplier_adddate, activeValues, defaultValues];
@@ -30,11 +30,12 @@ const SupplierModel = {
   },
 
   updateSupplier(supplier, supplierId, callback) {
-    const { supplier_name, supplier_address, supplier_phone, status } = supplier;
+    
+    const { supplier_name, supplier_address, supplier_phone, supplier_status } = supplier;
     const query = 'UPDATE supplier SET supplier_name = ?, supplier_address = ?, supplier_phone = ?, supplier_status = ? WHERE supplier_id = ?';
-    const values = [supplier_name, supplier_address, supplier_phone, status, supplierId];
-
+    const values = [supplier_name, supplier_address, supplier_phone, supplier_status, supplierId];
     connection.query(query, values, callback);
+    
   },
 
   updateSupplierStatus(supplierId, status, callback) {
@@ -51,7 +52,52 @@ const SupplierModel = {
     connection.query(query, values, callback);
   },
 
-  permanentDeleteSupplier(supplierId, callback) {
+  deleteSuppliers(supplierIds, callback) {
+    if (!Array.isArray(supplierIds)) {
+      supplierIds = [supplierIds]; // Convert to array if it's a single user ID
+    }
+  
+    let successCount = 0;
+    let failCount = 0;
+  
+    for (const supplierId of supplierIds) {
+      SupplierModel.getSupplierById(supplierId, (error, results) => {
+        if (error || results.length === 0) {
+          failCount++;
+          checkCompletion();
+        } else {
+          SupplierModel.deleteSupplier(supplierId, 1, (deleteError, deleteResult) => {
+            if (deleteError) {
+              failCount++;
+            } else {
+              successCount++;
+            }
+  
+            checkCompletion();
+          });
+        }
+      });
+    }
+  
+    function checkCompletion() {
+      const totalCount = supplierIds.length;
+      if (successCount + failCount === totalCount) {
+        if (typeof callback === 'function') { // Check if callback is provided and is a function
+          callback(null, {
+            totalCount,
+            successCount,
+            failCount,
+          });
+        }
+      }
+    }
+  }
+  
+  ,
+
+  
+
+  permanentDeleteSupplier(supplierId, callback) { 
     const query = 'DELETE FROM supplier WHERE supplier_id = ?';
     const values = [supplierId];
 

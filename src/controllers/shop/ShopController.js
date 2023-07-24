@@ -43,10 +43,10 @@ const addShop = (req, res) => {
             return;
         }
 
-        if (!shopId) {
-            res.status(404).send({ error: 'Failed to create shop' });
-            return;
-        }
+        // if (!shopId) {
+        //     res.status(404).send({ error: 'Failed to create shop' });
+        //     return;
+        // }
 
         res.status(200).send({ message: 'Shop created successfully', shopId });
     });

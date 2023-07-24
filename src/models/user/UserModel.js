@@ -91,6 +91,51 @@ const UserModel = {
     connection.query(query, values, callback);
   },
 
+  deleteUsers(userIds, callback) {
+    if (!Array.isArray(userIds)) {
+      userIds = [userIds]; // Convert to array if it's a single user ID
+    }
+  
+    let successCount = 0;
+    let failCount = 0;
+  
+    for (const userId of userIds) {
+      UserModel.getUserById(userId, (error, results) => {
+        if (error || results.length === 0) {
+          failCount++;
+          checkCompletion();
+        } else {
+          UserModel.deleteuser(userId, 1, (deleteError, deleteResult) => {
+            if (deleteError) {
+              failCount++;
+            } else {
+              successCount++;
+            }
+  
+            checkCompletion();
+          });
+        }
+      });
+    }
+  
+    function checkCompletion() {
+      const totalCount = userIds.length;
+      if (successCount + failCount === totalCount) {
+        if (typeof callback === 'function') { // Check if callback is provided and is a function
+          callback(null, {
+            totalCount,
+            successCount,
+            failCount,
+          });
+        }
+      }
+    }
+  }
+  
+  ,
+  
+  
+
   perma_deleteuser(userid, callback) {
     const query = 'DELETE FROM user WHERE userid = ?';
     const values = [userid];

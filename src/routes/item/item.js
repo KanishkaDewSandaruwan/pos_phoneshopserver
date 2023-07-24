@@ -16,8 +16,8 @@ module.exports = (config) => {
   router.get('/all', authenticateToken, getAllItems);
   router.get('/:itemId', authenticateToken, getItemById);
   router.put('/update/:itemId', authenticateToken, updateItem);
-  router.delete('/delete/:itemId', authenticateToken, deleteItem);
-  router.delete('/delete', authenticateToken, deleteItems);
+  router.put('/delete/:itemId', authenticateToken, deleteItem);
+  router.put('/delete', authenticateToken, deleteItems);
 
   return router;
 };

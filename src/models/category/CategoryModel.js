@@ -13,7 +13,7 @@ const CategoryModel = {
     const { cat_name } = category;
     const trndate = new Date().toISOString().slice(0, 19).replace('T', ' ');
     const defaultValues = 0;
-    const activeValues = 0;
+    const activeValues = 1;
 
     const query = 'INSERT INTO category (cat_name, trndate, status, is_delete) VALUES (?, ?, ?, ?)';
     const values = [cat_name, trndate, activeValues, defaultValues];
@@ -50,6 +50,49 @@ const CategoryModel = {
 
     connection.query(query, values, callback);
   },
+
+  deleteCategories(categoryIds, callback) {
+    if (!Array.isArray(categoryIds)) {
+      categoryIds = [categoryIds]; // Convert to array if it's a single user ID
+    }
+  
+    let successCount = 0;
+    let failCount = 0;
+  
+    for (const categoryId of categoryIds) {
+      CategoryModel.getCategoryById(categoryId, (error, results) => {
+        if (error || results.length === 0) {
+          failCount++;
+          checkCompletion();
+        } else {
+          CategoryModel.deleteCategory(categoryId, 1, (deleteError, deleteResult) => {
+            if (deleteError) {
+              failCount++;
+            } else {
+              successCount++;
+            }
+  
+            checkCompletion();
+          });
+        }
+      });
+    }
+  
+    function checkCompletion() {
+      const totalCount = categoryIds.length;
+      if (successCount + failCount === totalCount) {
+        if (typeof callback === 'function') { // Check if callback is provided and is a function
+          callback(null, {
+            totalCount,
+            successCount,
+            failCount,
+          });
+        }
+      }
+    }
+  }
+  
+  ,
 
   permanentDeleteCategory(categoryId, callback) {
     const query = 'DELETE FROM category WHERE catid = ?';

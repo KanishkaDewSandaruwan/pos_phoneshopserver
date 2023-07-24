@@ -13,7 +13,7 @@ const BranchModel = {
     const { branch_name, branch_location } = branch;
     const trndate = new Date().toISOString().slice(0, 19).replace('T', ' ');
     const defaultValues = 0;
-    const activeValues = 0;
+    const activeValues = 1;
 
     const query = 'INSERT INTO branch (branch_name, branch_location, trndate, status, is_delete) VALUES (?, ?, ?, ?, ?)';
     const values = [branch_name, branch_location, trndate, activeValues, defaultValues];
@@ -50,6 +50,51 @@ const BranchModel = {
 
     connection.query(query, values, callback);
   },
+
+  deleteBranches(branchIds, callback) {
+    if (!Array.isArray(branchIds)) {
+      branchIds = [branchIds]; // Convert to array if it's a single user ID
+    }
+  
+    let successCount = 0;
+    let failCount = 0;
+  
+    for (const branchId of branchIds) {
+      BranchModel.getBranchById(branchId, (error, results) => {
+        if (error || results.length === 0) {
+          failCount++;
+          checkCompletion();
+        } else {
+          BranchModel.deleteBranch(branchId, 1, (deleteError, deleteResult) => {
+            if (deleteError) {
+              failCount++;
+            } else {
+              successCount++;
+            }
+  
+            checkCompletion();
+          });
+        }
+      });
+    }
+  
+    function checkCompletion() {
+      const totalCount = branchIds.length;
+      if (successCount + failCount === totalCount) {
+        if (typeof callback === 'function') { // Check if callback is provided and is a function
+          callback(null, {
+            totalCount,
+            successCount,
+            failCount,
+          });
+        }
+      }
+    }
+  }
+  
+  ,
+
+
 
   permanentDeleteBranch(branchId, callback) {
     const query = 'DELETE FROM branch WHERE branchid = ?';

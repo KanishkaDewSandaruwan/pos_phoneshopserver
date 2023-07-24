@@ -135,7 +135,7 @@ const deleteBrands = (req, res) => {
     res.status(400).send({ error: 'Invalid brand IDs' });
     return;
   }
-
+  
   let successCount = 0;
   let failCount = 0;
 

@@ -1,6 +1,7 @@
 const jwt = require('jsonwebtoken');
 require('dotenv').config(); // Load environment variables
 const UserModel = require('../models/user/UserModel');
+const user = require('../routes/user/user');
 
 function authenticateToken(req, res, next) {
   try {
@@ -45,8 +46,10 @@ async function authorizeValidateUser(req, res, next) {
     req.decoded = decoded; // Save the decoded payload for further use
 
     const user = await UserModel.userById(userIdFromBody);
+    
 
     if (!user[0]) {
+      
       return res.status(401).json({ error: 'Unauthorized access' });
     }
 
@@ -61,6 +64,7 @@ async function authorizeValidateUser(req, res, next) {
     }
     return res.status(500).json({ error: 'Internal Server Error' });
   }
+  
 }
 
 module.exports = {

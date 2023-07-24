@@ -157,6 +157,7 @@ const updateUser = (req, res) => {
 
         // Check if the provided phone number is already associated with another user
         if (user.phonenumber && user.phonenumber !== existingUser[0].phonenumber) {
+            
             UserModel.getUserByPhonenumber(user.phonenumber, (error, results) => {
                 if (error) {
                     res.status(500).send({ error: 'Error fetching data from the database' });
@@ -383,7 +384,7 @@ const deleteuser = (req, res) => {
     });
 };
 
-const deleteUsers = (req, res) => { //
+const deleteUsers = (req, res) => {
     const { userIds } = req.body;
 
     if (!Array.isArray(userIds) || userIds.length === 0) {
@@ -401,7 +402,7 @@ const deleteUsers = (req, res) => { //
             } else if (results.length === 0) {
                 failCount++;
             } else {
-                UserModel.deleteUser(userId, 1, (deleteError, deleteResult) => {
+                UserModel.deleteuser(userId, 1, (deleteError, deleteResult) => {
                     if (deleteError) {
                         failCount++;
                     } else {
@@ -420,9 +421,11 @@ const deleteUsers = (req, res) => { //
                 });
             }
 
-            // Check if all users have been processed
+            // Check if all suppliers have been processed
             if (successCount + failCount === userIds.length) {
                 const totalCount = userIds.length;
+
+                
                 res.status(200).send({
                     totalCount,
                     successCount,

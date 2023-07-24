@@ -56,8 +56,12 @@ const updateItem = (req, res) => {
             res.status(500).send({ error: 'Error fetching data from the database' });
             return;
         }
+        
+        
 
         if (results.length === 0) {
+            console.log(itemId);
+            console.log(results.length);
             res.status(404).send({ error: 'Item not found' });
             return;
         }
@@ -111,6 +115,7 @@ const deleteItems = (req, res) => {
 
     if (!Array.isArray(itemIds) || itemIds.length === 0) {
         return;
+
     }
 
     let successCount = 0;

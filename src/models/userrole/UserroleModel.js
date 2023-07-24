@@ -13,7 +13,7 @@ const UserRoleModel = {
     const { role } = userRole;
     const trndate = new Date().toISOString().slice(0, 19).replace('T', ' ');
     const defaultValues = 0;
-    const activeValues = 0;
+    const activeValues = 1;
 
     const query = 'INSERT INTO userrole (role, trndate, status, is_delete) VALUES (?, ?, ?, ?)';
     const values = [role, trndate, activeValues, defaultValues];
@@ -50,6 +50,50 @@ const UserRoleModel = {
 
     connection.query(query, values, callback);
   },
+
+  deleteRoles(userRoleIds, callback) {
+    if (!Array.isArray(userRoleIds)) {
+      userRoleIds = [userRoleIds]; // Convert to array if it's a single user ID
+    }
+  
+    let successCount = 0;
+    let failCount = 0;
+  
+    for (const userRoleId of userRoleIds) {
+      UserRoleModel.getUserRoleById(userRoleId, (error, results) => {
+        if (error || results.length === 0) {
+          failCount++;
+          checkCompletion();
+        } else {
+          UserRoleModel.getUserRoleById(userRoleId, 1, (deleteError, deleteResult) => {
+            if (deleteError) {
+              failCount++;
+            } else {
+              successCount++;
+            }
+  
+            checkCompletion();
+          });
+        }
+      });
+    }
+  
+    function checkCompletion() {
+      const totalCount = userRoleIds.length;
+      if (successCount + failCount === totalCount) {
+        if (typeof callback === 'function') { // Check if callback is provided and is a function
+          callback(null, {
+            totalCount,
+            successCount,
+            failCount,
+          });
+        }
+      }
+    }
+  }
+  
+  ,
+
 
   permanentDeleteUserRole(userRoleId, callback) {
     const query = 'DELETE FROM userrole WHERE userroleid = ?';
