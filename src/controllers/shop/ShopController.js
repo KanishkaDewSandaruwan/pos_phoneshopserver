@@ -12,6 +12,19 @@ const validateEmail = (email) => {
     return emailPattern.test(email);
 };
 
+const getshopData = (req, res) => {
+    ShopModel.getShopNameandLogo((error, results) => {
+        if (error) {
+            res.status(500).send({ error: 'Error fetching data from the database' });
+            return;
+        }
+
+        res.status(200).send(results);
+    });
+};
+
+
+
 const getShop = (req, res) => {
     ShopModel.getAllShops((error, results) => {
         if (error) {
@@ -103,5 +116,6 @@ module.exports = {
     getShop,
     addShop,
     updateShop,
-    updateLogo
+    updateLogo,
+    getshopData
 };

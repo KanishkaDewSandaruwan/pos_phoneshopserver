@@ -2,6 +2,11 @@ const { connection } = require('../../../config/connection');
 
 const ShopModel = {
 
+  getShopNameandLogo(callback) {
+    connection.query('SELECT shopname,logo FROM shop', callback);
+  },
+
+
   getAllShops(callback) {
     connection.query('SELECT * FROM shop', callback);
   },
