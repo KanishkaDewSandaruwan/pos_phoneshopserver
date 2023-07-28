@@ -23,7 +23,7 @@ module.exports = (config) => {
     const router = express.Router();
 
     //login and create
-    router.post('/create', uploadProfile.single('profile'), addUser);
+    router.post('/create', addUser);
     router.post('/login', login);
 
     //admin controls
@@ -37,7 +37,7 @@ module.exports = (config) => {
 
     //profile
     router.get('/me/:userid', authorizeValidateUser, getUserById);
-    router.get('/me/profilechange/:userid', uploadProfile.single('profile'), authorizeValidateUser, updateUserProfile);
+    router.put('/me/profilechange/:userid', uploadProfile.single('profile'), authorizeValidateUser, updateUserProfile);
     router.use('/me/getprofile', express.static('src/uploads/profile/'));
     router.put('/me/update/:userid', authorizeValidateUser, meUpdateUser);
     router.put('/me/changePassword/:userid', authorizeValidateUser, changePassword);

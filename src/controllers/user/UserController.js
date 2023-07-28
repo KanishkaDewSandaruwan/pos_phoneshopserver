@@ -87,7 +87,6 @@ const findUser = (req, res) => {
 
 const addUser = (req, res) => {
     const user = req.body; // Retrieve the user data from the request body
-    const filePath = req.file.filename;
 
     // Email validation regular expression
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -156,7 +155,7 @@ const addUser = (req, res) => {
                             return;
                         }
 
-                        UserModel.addUser(user, filePath, (error, userId) => {
+                        UserModel.addUser(user, (error, userId) => {
                             if (error) {
                                 res.status(500).send({ error: 'Error fetching data from the database' });
                                 return;
@@ -195,6 +194,7 @@ const updateUser = (req, res) => {
 
         // Check if the provided phone number is already associated with another user
         if (user.phonenumber && user.phonenumber !== existingUser[0].phonenumber) {
+
 
             UserModel.getUserByPhonenumber(user.phonenumber, (error, results) => {
                 if (error) {

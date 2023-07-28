@@ -71,7 +71,6 @@ const tableInfo = [
     fields: [
       { name: 'catid', type: 'INT AUTO_INCREMENT PRIMARY KEY' },
       { name: 'cat_name', type: 'VARCHAR(255)' },
-      { name: 'cat_image', type: 'VARCHAR(255)' },
       { name: 'trndate', type: 'DATETIME' },
       { name: 'status', type: 'INT(5)' },
       { name: 'is_delete', type: 'INT(5)' },

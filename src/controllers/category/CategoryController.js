@@ -31,7 +31,6 @@ const getCategoryById = (req, res) => {
 
 const addCategory = (req, res) => {
     const category = req.body;
-    const filePath = req.file.filename;
 
     CategoryModel.getCategoryByName(category.cat_name, (error, results) => {
         if (error) {
@@ -44,7 +43,7 @@ const addCategory = (req, res) => {
             return;
         }
 
-        CategoryModel.addCategory(category, filePath, (error, categoryId) => {
+        CategoryModel.addCategory(category, (error, categoryId) => {
             if (error) {
                 res.status(500).send({ error: 'Error fetching data from the database' });
                 return;
@@ -60,36 +59,6 @@ const addCategory = (req, res) => {
     });
 };
 
-const updateCategoryImage = (req, res) => {
-    const { categoryId } = req.params;
-    const filePath = req.file.filename;
-
-    CategoryModel.getCategoryById(categoryId, (error, results) => {
-        if (error) {
-            res.status(500).send({ error: 'Error fetching data from the database' });
-            return;
-        }
-
-        if (results.length === 0) {
-            res.status(404).send({ error: 'Category not found' });
-            return;
-        }
-
-        CategoryModel.updateCategoryImage(categoryId, filePath, (error, results) => {
-            if (error) {
-                res.status(500).send({ error: 'Error fetching data from the database' });
-                return;
-            }
-
-            if (results.affectedRows === 0) {
-                res.status(404).send({ error: 'Category not found or no changes made' });
-                return;
-            }
-
-            res.status(200).send({ message: 'Category updated successfully' });
-        });
-    });
-};
 
 const updateCategory = (req, res) => {
     const { categoryId } = req.params;
@@ -264,6 +233,5 @@ module.exports = {
     updateCategoryStatus,
     deleteCategory,
     permanentDeleteCategory,
-    deleteCategories,
-    updateCategoryImage
+    deleteCategories
 };
