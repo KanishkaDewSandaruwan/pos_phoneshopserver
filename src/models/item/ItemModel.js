@@ -9,14 +9,14 @@ const ItemModel = {
     connection.query('SELECT * FROM item WHERE itemid = ? AND is_delete = 0', [itemId], callback);
   },
 
-  addItem(item, callback) {
-    const { item_code, item_name, item_description, catid, subcatid, colorid, brandid, item_image } = item;
+  addItem(item, itemimage, callback) {
+    const { item_code, item_name, item_description, catid, subcatid, colorid, brandid, serial} = item;
     const trndate = new Date().toISOString().slice(0, 19).replace('T', ' ');
     const defaultValues = 0;
     const activeValues = 1;
 
-    const query = 'INSERT INTO item (item_code, item_name, item_description, catid, subcatid, colorid, brandid, item_image, trndate, status, is_delete) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
-    const values = [item_code, item_name, item_description, catid, subcatid, colorid, brandid, item_image, trndate, activeValues, defaultValues];
+    const query = 'INSERT INTO item (item_code, item_name, item_description, catid, subcatid, colorid, brandid, serial_status, item_image, trndate, status, is_delete) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? ,?)';
+    const values = [item_code, item_name, item_description, catid, subcatid, colorid, brandid, serial, itemimage, trndate, activeValues, defaultValues];
 
     connection.query(query, values, (error, results) => {
       if (error) {
@@ -29,12 +29,12 @@ const ItemModel = {
     });
   },
 
-  updateItem(item, itemId, callback) {
+  updateItem(item, itemId, itemimage, callback) {
     
-    const { item_code, item_name, item_description, catid, subcatid, colorid, brandid, item_image, status } = item;
+    const { item_code, item_name, item_description, catid, subcatid, colorid, brandid,serial, status } = item;
     const trndate = new Date().toISOString().slice(0, 19).replace('T', ' ');
-    const query = 'UPDATE item SET item_code = ?, item_name = ?, item_description = ?, catid = ?, subcatid = ?, colorid = ?, brandid = ?, item_image = ?, trndate = ?, status = ? WHERE itemid = ?';
-    const values = [item_code, item_name, item_description, catid, subcatid, colorid, brandid, item_image, trndate, status, itemId];
+    const query = 'UPDATE item SET item_code = ?, item_name = ?, item_description = ?, catid = ?, subcatid = ?, colorid = ?, brandid = ?, serial_status = ?, item_image = ?, trndate = ?, status = ? WHERE itemid = ?';
+    const values = [item_code, item_name, item_description, catid, subcatid, colorid, brandid, serial, itemimage, trndate, status, itemId];
     connection.query(query, values, callback);
     
   },

@@ -30,8 +30,9 @@ const getItemById = (req, res) => {
 
 const addItem = (req, res) => {
     const item = req.body; // Retrieve the item data from the request body
+    const filePath = req.file.filename;
 
-    ItemModel.addItem(item, (error, itemId) => {
+    ItemModel.addItem(item, filePath, (error, itemId) => {
         if (error) {
             res.status(500).send({ error: 'Error fetching data from the database' });
             return;
@@ -48,6 +49,7 @@ const addItem = (req, res) => {
 
 const updateItem = (req, res) => {
     const { itemId } = req.params;
+    const filePath = req.file.filename;
     const item = req.body;
 
     // Check if the item exists before updating
@@ -67,7 +69,7 @@ const updateItem = (req, res) => {
         }
 
         // Item exists, proceed with the update
-        ItemModel.updateItem(item, itemId, (updateError, updateResults) => {
+        ItemModel.updateItem(item, itemId, filePath, (updateError, updateResults) => {
             if (updateError) {
                 res.status(500).send({ error: 'Error updating item in the database' });
                 return;
