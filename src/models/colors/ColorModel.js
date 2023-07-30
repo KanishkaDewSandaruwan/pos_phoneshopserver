@@ -10,13 +10,13 @@ const ColorModel = {
   },
 
   addColor(color, callback) {
-    const { colorname, colorcode } = color;
+    const { colorname} = color;
     const trndate = new Date().toISOString().slice(0, 19).replace('T', ' ');
     const defaultValues = 0;
     const activeValues = 1;
 
-    const query = 'INSERT INTO colors (colorname, colorcode, trndate, status, is_delete) VALUES (?, ?, ?, ?, ?)';
-    const values = [colorname, colorcode, trndate, activeValues, defaultValues];
+    const query = 'INSERT INTO colors (colorname,trndate, status, is_delete) VALUES (?, ?, ?, ?)';
+    const values = [colorname, trndate, activeValues, defaultValues];
 
     connection.query(query, values, (error, results) => {
       if (error) {
@@ -30,9 +30,9 @@ const ColorModel = {
   },
 
   updateColor(color, colorId, callback) {
-    const { colorname, colorcode, status } = color;
-    const query = 'UPDATE colors SET colorname = ?, colorcode = ?, status = ? WHERE colorid = ?';
-    const values = [colorname, colorcode, status, colorId];
+    const { colorname, status } = color;
+    const query = 'UPDATE colors SET colorname = ?,status = ? WHERE colorid = ?';
+    const values = [colorname,status, colorId];
 
     connection.query(query, values, callback);
   },

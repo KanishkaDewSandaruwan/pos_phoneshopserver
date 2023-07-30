@@ -114,7 +114,6 @@ const tableInfo = [
     fields: [
       { name: 'colorid', type: 'INT AUTO_INCREMENT PRIMARY KEY' },
       { name: 'colorname', type: 'VARCHAR(255)' },
-      { name: 'colorcode', type: 'VARCHAR(255)' },
       { name: 'trndate', type: 'DATETIME' },
       { name: 'status', type: 'INT(5)' },
       { name: 'is_delete', type: 'INT(5)' },
