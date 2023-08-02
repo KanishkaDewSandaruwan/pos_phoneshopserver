@@ -149,7 +149,60 @@ const tableInfo = [
       { name: 'is_delete', type: 'INT(5)' },
     ],
   },
-  
+  {
+    tableName: 'grn',
+    fields: [
+      { name: 'grnno', type: 'INT AUTO_INCREMENT PRIMARY KEY' },
+      { name: 'supplier_id', type: 'INT(255)' },
+      { name: 'reference_number', type: 'VARCHAR(255)' },
+      { name: 'branch_id', type: 'INT(255)' },
+      { name: 'status', type: 'INT(5)' },
+      { name: 'trndate', type: 'DATETIME' },
+      { name: 'is_delete', type: 'INT(5)' },
+    ],
+  },
+  {
+    tableName: 'grn_temp',
+    fields: [
+      { name: 'grntempid', type: 'INT AUTO_INCREMENT PRIMARY KEY' },
+      { name: 'itemid', type: 'INT(255)' },
+      { name: 'sell_price', type: 'VARCHAR(255)' },
+      { name: 'purchase_price', type: 'VARCHAR(255)' },
+      { name: 'wholesale_price', type: 'VARCHAR(255)' },
+      { name: 'discount', type: 'VARCHAR(255)' },
+      { name: 'grnqty', type: 'VARCHAR(255)' },
+      { name: 'branch_id', type: 'INT(255)' },
+      { name: 'status', type: 'INT(5)' },
+      { name: 'trndate', type: 'DATETIME' },
+      { name: 'is_delete', type: 'INT(5)' },
+    ],
+  },
+  {
+    tableName: 'item_price',
+    fields: [
+      { name: 'item_priceid', type: 'INT AUTO_INCREMENT PRIMARY KEY' },
+      { name: 'itemid', type: 'INT(255)' },
+      { name: 'sell_price', type: 'FLOAT(255)' },
+      { name: 'purchase_price', type: 'FLOAT(255)' },
+      { name: 'wholesale_price', type: 'FLOAT(255)' },
+      { name: 'discount', type: 'FLOAT(255)' },
+      { name: 'branch_id', type: 'INT(255)' },
+      { name: 'status', type: 'INT(5)' },
+      { name: 'trndate', type: 'DATETIME' },
+      { name: 'is_delete', type: 'INT(5)' },
+    ],
+  },
+  {
+    tableName: 'stock',
+    fields: [
+      { name: 'stockid', type: 'INT AUTO_INCREMENT PRIMARY KEY' },
+      { name: 'itemid', type: 'INT(255)' },
+      { name: 'qty', type: 'INT(255)' },
+      { name: 'branch_id', type: 'INT(255)' },
+      { name: 'trndate', type: 'DATETIME' },
+      { name: 'is_delete', type: 'INT(5)' },
+    ],
+  },
 ];
 
 async function checkTables() {
