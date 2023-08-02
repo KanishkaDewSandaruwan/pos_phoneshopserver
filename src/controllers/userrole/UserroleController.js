@@ -1,4 +1,5 @@
 const UserRoleModel = require('../../models/userrole/UserroleModel');
+const PermissionGroupView = require('../../views/PermissionGroupView');
 
 const getAllUserRoles = (req, res) => {
   UserRoleModel.getAllUserRoles((error, results) => {
@@ -17,6 +18,7 @@ const getUserRole = (req, res) => {
 
   UserRoleModel.getUserById(userid, (error, results) => {
     if (error) {
+      console.error('Error fetching data from the database:', error);
       res.status(500).send({ error: 'Error fetching data from the database' });
       return;
     }
@@ -26,21 +28,52 @@ const getUserRole = (req, res) => {
       return;
     }
 
-    if (results.userroleid !== userRole.userroleid) {
-      res.status(404).send({ error: 'UserRole is Wrong. This user dont have this role' });
+    // Access the user role ID from the results object
+    const userRoleId = results[0].userroleid;
+
+    // Check if the user has the correct user role
+    if (userRoleId !== userRole.userroleid) {
+      res.status(404).send({ error: 'UserRole is wrong. This user does not have this role' });
       return;
     }
 
-    UserRoleModel.getUserPermission(userRole.userroleid, userid, (error, results) => {
+    UserRoleModel.getUserPermission(userRoleId, userid, (error, permissionResults) => {
       if (error) {
+        console.error('Error fetching data from the database:', error);
         res.status(500).send({ error: 'Error fetching data from the database' });
         return;
       }
 
-      res.status(200).send(results);
+      if (permissionResults.length === 0) {
+        res.status(404).send({ error: 'User permissions not found' });
+        return;
+      }
+
+      if (Array.isArray(permissionResults) && permissionResults.length > 0) {
+        const permissions = permissionResults[0];
+        if (permissions.status === 1) {
+          PermissionGroupView.renderPermission(res, permissions);
+          return;
+        }
+
+        res.status(401).send({ error: 'Account is not active' });
+        return;
+      }
+
+      // // Assuming you want to render and send the first permission in the results
+      // const userPermission = permissionResults[0];
+      // console.log(userPermission);
+
+      // // Render the permission using the PermissionGroupView
+      // const permissionData = PermissionGroupView.renderPermission(userPermission);
+
+      // // Instead of sending directly, use a view to respond with the data
+      // PermissionGroupView.renderPermission(res, permissionData);
     });
   });
 };
+
+
 
 const getUserRoleById = (req, res) => {
   const { userRoleId } = req.params;
