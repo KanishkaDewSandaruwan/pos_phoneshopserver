@@ -16,7 +16,7 @@ const { authorizeAccessSupoerAdmin } = require('../../middlewares/userAccess');
 module.exports = (config) => {
   const router = express.Router();
 
-  router.post('/getuserrole/:userid', authenticateToken, getUserRole);
+  router.get('/getuserrole/:userid', authenticateToken, getUserRole);
 
   //super admin only
   router.post('/create', authorizeAccessSupoerAdmin, addUserRole);

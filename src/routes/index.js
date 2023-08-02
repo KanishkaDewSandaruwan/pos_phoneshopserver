@@ -9,7 +9,8 @@ const branchRoute = require('./branch/branch');
 const userroleRoute = require('./userrole/userrole');
 const colorRoute = require('./color/color');
 const brandRoute = require('./brands/brands');
-const permissionRoute = require('./brands/brands');
+const permissionRoute = require('./permission/permission');
+const permissionGroupRoute = require('./permission_group/permission_group');
 
 module.exports = (config) => {
   const router = express.Router();
@@ -32,6 +33,7 @@ module.exports = (config) => {
   router.use('/brand', brandRoute(config)); //admin user only
 
   router.use('/permission', permissionRoute(config)); //super admin only
+  router.use('/permission_group', permissionGroupRoute(config)); //super admin only
 
   return router;
 };

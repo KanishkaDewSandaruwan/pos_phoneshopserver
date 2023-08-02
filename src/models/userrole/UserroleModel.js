@@ -9,8 +9,11 @@ const UserRoleModel = {
     connection.query('SELECT * FROM userrole WHERE is_delete = 0', callback);
   },
 
-  getUserPermission(userroleid, callback) {
-    connection.query('SELECT * FROM assign_permission WHERE userroleid = ? AND is_delete = 0', [userroleid], callback);
+  getUserPermission(userRoleId, userId, callback) {
+    const query = 'SELECT * FROM assign_permission WHERE userroleid = ? AND is_delete = 0';
+    const values = [userRoleId];
+
+    connection.query(query, values, callback);
   },
 
   getUserById(userid, callback) {
@@ -63,10 +66,10 @@ const UserRoleModel = {
     if (!Array.isArray(userRoleIds)) {
       userRoleIds = [userRoleIds]; // Convert to array if it's a single user ID
     }
-  
+
     let successCount = 0;
     let failCount = 0;
-  
+
     for (const userRoleId of userRoleIds) {
       UserRoleModel.getUserRoleById(userRoleId, (error, results) => {
         if (error || results.length === 0) {
@@ -79,13 +82,13 @@ const UserRoleModel = {
             } else {
               successCount++;
             }
-  
+
             checkCompletion();
           });
         }
       });
     }
-  
+
     function checkCompletion() {
       const totalCount = userRoleIds.length;
       if (successCount + failCount === totalCount) {
@@ -99,7 +102,7 @@ const UserRoleModel = {
       }
     }
   }
-  
+
   ,
 
 
