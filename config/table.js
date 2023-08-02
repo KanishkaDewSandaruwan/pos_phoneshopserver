@@ -138,6 +138,7 @@ const tableInfo = [
       { name: 'trndate', type: 'DATETIME' },
     ],
   },
+
   {
     tableName: 'assign_permission',
     fields: [
@@ -149,6 +150,20 @@ const tableInfo = [
       { name: 'is_delete', type: 'INT(5)' },
     ],
   },
+
+  {
+    tableName: 'customer',
+    fields: [
+      { name: 'customer_id', type: 'INT AUTO_INCREMENT PRIMARY KEY' },
+      { name: 'customer_name', type: 'VARCHAR(255)' },
+      { name: 'customer_phone', type: 'VARCHAR(10)' },
+      { name: 'customer_email', type: 'VARCHAR(255)' },
+      { name: 'trndate', type: 'DATETIME' },
+      { name: 'status', type: 'INT(5)' },
+      { name: 'is_delete', type: 'INT(5)' },
+    ],
+  }
+
   
 ];
 

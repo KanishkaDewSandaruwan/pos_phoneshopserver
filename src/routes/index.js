@@ -10,6 +10,7 @@ const userroleRoute = require('./userrole/userrole');
 const colorRoute = require('./color/color');
 const brandRoute = require('./brands/brands');
 const permissionRoute = require('./brands/brands');
+const customerRoute = require('./customer/customer')
 
 module.exports = (config) => {
   const router = express.Router();
@@ -24,6 +25,7 @@ module.exports = (config) => {
   //need routes
   router.use('/supplier', supplierRoute(config));   //any user
   router.use('/item', itemRoute(config));   //any user
+  router.use('/customer', customerRoute(config));   //any user
   
   //filter routes
   router.use('/category', categoryRoute(config)); //admin user only

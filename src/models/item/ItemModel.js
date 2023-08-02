@@ -9,6 +9,14 @@ const ItemModel = {
     connection.query('SELECT * FROM item WHERE itemid = ? AND is_delete = 0', [itemId], callback);
   },
 
+  getItemByName(item_name, callback) {
+    connection.query('SELECT * FROM item WHERE item_name = ? AND is_delete = 0', [item_name], callback);
+  },
+
+  getItemByCode(item_code, callback) {
+    connection.query('SELECT * FROM item WHERE item_code = ? AND is_delete = 0', [item_code], callback);
+  },
+
   addItem(item, itemimage, callback) {
     const { item_code, item_name, item_description, catid, subcatid, colorid, brandid, serial} = item;
     const trndate = new Date().toISOString().slice(0, 19).replace('T', ' ');

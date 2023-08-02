@@ -32,18 +32,41 @@ const addItem = (req, res) => {
     const item = req.body; // Retrieve the item data from the request body
     const filePath = req.file.filename;
 
-    ItemModel.addItem(item, filePath, (error, itemId) => {
+    ItemModel.getItemByName(item.item_name, (error, results) => {
         if (error) {
-            res.status(500).send({ error: 'Error fetching data from the database' });
-            return;
+          res.status(500).send({ error: 'Error fetching data from the database' });
+          return;
         }
-
-        if (!itemId) {
-            res.status(404).send({ error: 'Failed to create item' });
-            return;
+    
+        if (results.length > 0) {
+          res.status(409).send({ error: 'This item name is already exists' });
+          return;
         }
+        ItemModel.getItemByCode(item.item_code, (error, results) => {
+            if (error) {
+              res.status(500).send({ error: 'Error fetching data from the database' });
+              return;
+            }
+        
+            if (results.length > 0) {
+              res.status(409).send({ error: 'This item code is already exists' });
+              return;
+            }
 
-        res.status(200).send({ message: 'Item created successfully', itemId });
+            ItemModel.addItem(item, filePath, (error, itemId) => {
+                if (error) {
+                    res.status(500).send({ error: 'Error fetching data from the database' });
+                    return;
+                }
+
+                if (!itemId) {
+                    res.status(404).send({ error: 'Failed to create item' });
+                    return;
+                }
+
+                res.status(200).send({ message: 'Item created successfully', itemId });
+            });
+        });
     });
 };
 
