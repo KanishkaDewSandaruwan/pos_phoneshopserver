@@ -104,7 +104,7 @@ const updatePermission = (req, res) => {
     });
 };
 
-const deletePermission = (req, res) => {
+const permanentDeletePermission = (req, res) => {
     const { permissionId } = req.params;
 
     PermissionModel.getPermissionById(permissionId, (error, results) => {
@@ -129,24 +129,11 @@ const deletePermission = (req, res) => {
     });
 };
 
-const permanentDeletePermission = (req, res) => {
-    const { permissionId } = req.params;
-
-    PermissionModel.permanentDeletePermission(permissionId, (error, results) => {
-        if (error) {
-            res.status(500).send({ error: 'Error deleting permission from the database' });
-            return;
-        }
-
-        res.status(200).send({ message: 'Permission permanently deleted successfully' });
-    });
-};
 
 module.exports = {
     getAllPermissions,
     getPermissionById,
     addPermission,
     updatePermission,
-    deletePermission,
     permanentDeletePermission,
 };

@@ -9,13 +9,9 @@ const branchRoute = require('./branch/branch');
 const userroleRoute = require('./userrole/userrole');
 const colorRoute = require('./color/color');
 const brandRoute = require('./brands/brands');
-<<<<<<< HEAD
-const permissionRoute = require('./brands/brands');
-const customerRoute = require('./customer/customer')
-=======
 const permissionRoute = require('./permission/permission');
 const permissionGroupRoute = require('./permission_group/permission_group');
->>>>>>> 26dc34c016b08ecb4b991a72d9e05d3f3913dcd4
+const customerRoute = require('./customer/customer');
 
 module.exports = (config) => {
   const router = express.Router();
