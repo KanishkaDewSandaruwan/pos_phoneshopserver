@@ -5,6 +5,10 @@ const ColorModel = {
     connection.query('SELECT * FROM colors WHERE colorid = ? AND is_delete = 0', [colorId], callback);
   },
 
+  getColorByName(colorname, callback) {
+    connection.query('SELECT * FROM colors WHERE colorname = ? AND is_delete = 0', [colorname], callback);
+  },
+
   getAllColors(callback) {
     connection.query('SELECT * FROM colors WHERE is_delete = 0', callback);
   },

@@ -29,7 +29,19 @@ const getColorById = (req, res) => {
 };
 
 const addColor = (req, res) => {
+
   const color = req.body;
+
+  ColorModel.getColorByName(color.colorname, (error, results) => {
+    if (error) {
+        res.status(500).send({ error: 'Error fetching data from the database' });
+        return;
+    }
+
+    if (results.length > 0) {
+        res.status(409).send({ error: 'This Color is already exists' });
+        return;
+    }
 
   ColorModel.addColor(color, (error, colorId) => {
     if (error) {
@@ -44,7 +56,9 @@ const addColor = (req, res) => {
 
     res.status(200).send({ message: 'Color created successfully', colorId });
   });
+});
 };
+
 
 const updateColor = (req, res) => {
   const { colorId } = req.params;

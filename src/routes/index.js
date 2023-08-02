@@ -12,6 +12,7 @@ const brandRoute = require('./brands/brands');
 const permissionRoute = require('./permission/permission');
 const permissionGroupRoute = require('./permission_group/permission_group');
 const GRNRoute = require('./grn/grn');
+const customerRoute = require('./customer/customer');
 
 module.exports = (config) => {
   const router = express.Router();
@@ -27,6 +28,7 @@ module.exports = (config) => {
   router.use('/supplier', supplierRoute(config));   //any user
   router.use('/item', itemRoute(config));   //any user
   router.use('/grn', GRNRoute(config));   //any user
+  router.use('/customer', customerRoute(config));   //any user
   
   //filter routes
   router.use('/category', categoryRoute(config)); //admin user only
