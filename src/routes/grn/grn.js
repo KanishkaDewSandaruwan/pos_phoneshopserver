@@ -16,7 +16,7 @@ const {
   deleteGrnTemp,
   permanentDeleteGrnTemp,
   deleteGrnTemps,
-} = require('../../controllers/grns/GrnController');
+} = require('../../controllers/grn/GRNController');
 
 const { authenticateToken } = require('../../middlewares/userAuth');
 const { authorizeAccessControll } = require('../../middlewares/userAccess');
