@@ -51,6 +51,7 @@ const getUserRole = (req, res) => {
 
       if (Array.isArray(permissionResults) && permissionResults.length > 0) {
         const permissions = permissionResults[0];
+        console.log(permissions)
         if (permissions.status === 1) {
           PermissionGroupView.renderPermission(res, permissions);
           return;
