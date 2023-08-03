@@ -56,9 +56,6 @@ const getUserRole = (req, res) => {
           PermissionGroupView.renderPermission(res, permissions);
           return;
         }
-
-        res.status(401).send({ error: 'Account is not active' });
-        return;
       }
 
       // // Assuming you want to render and send the first permission in the results
