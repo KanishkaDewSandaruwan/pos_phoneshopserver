@@ -29,7 +29,7 @@ module.exports = (config) => {
   router.get('/:grnId', authenticateToken, getGrnById);
   router.post('/create', authenticateToken, addGrn);
 //   router.put('/update/:grnId', authenticateToken, updateGrn);
-//   router.put('/update/:grnId/status', authenticateToken, updateGrnStatus);
+  router.put('/update/status/:grnId', authenticateToken, updateGrnStatus);
 //   router.put('/delete/:grnId', authorizeAccessControll, deleteGrn);
 //   router.put('/delete', authorizeAccessControll, deleteGrns);
 //   router.delete('/permanent-delete/:grnId', authorizeAccessControll, permanentDeleteGrn);
