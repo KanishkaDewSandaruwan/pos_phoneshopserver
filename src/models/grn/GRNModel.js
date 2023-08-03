@@ -13,10 +13,9 @@ const GrnModel = {
     const { supplier_id, reference_number, branch_id } = grn;
     const trndate = new Date().toISOString().slice(0, 19).replace('T', ' ');
     const defaultValues = 0;
-    const defaultActiveValues = 0;
 
     const query = 'INSERT INTO grn (supplier_id, reference_number, branch_id, status, trndate, is_delete) VALUES (?, ?, ?, ?, ?, ?)';
-    const values = [supplier_id, reference_number, branch_id, defaultActiveValues, trndate, defaultValues];
+    const values = [supplier_id, reference_number, branch_id, defaultValues, trndate, defaultValues];
 
     connection.query(query, values, (error, results) => {
       if (error) {
