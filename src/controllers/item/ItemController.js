@@ -81,7 +81,6 @@ const addItem = (req, res) => {
 
 const updateItem = (req, res) => {
     const { itemId } = req.params;
-    const filePath = req.file.filename;
     const item = req.body;
 
     // Check if the item exists before updating

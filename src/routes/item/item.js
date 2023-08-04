@@ -17,7 +17,7 @@ module.exports = (config) => {
   router.use('/getitem', express.static('src/uploads/item/'));
   router.get('/all', authenticateToken, getAllItems);
   router.get('/:itemId', authenticateToken, getItemById);
-  router.put('/update/:itemId', uploadItem.single('item'),authenticateToken, updateItem);
+  router.put('/update/:itemId', authenticateToken, updateItem);
   router.put('/delete/:itemId', authenticateToken, deleteItem);
   router.put('/delete', authenticateToken, deleteItems);
   
