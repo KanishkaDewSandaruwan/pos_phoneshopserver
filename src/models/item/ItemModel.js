@@ -2,7 +2,7 @@ const { connection } = require('../../../config/connection');
 
 const ItemModel = {
   getAllItems(callback) {
-    connection.query('SELECT * FROM item WHERE is_delete = 0', callback);
+    connection.query('SELECT * FROM item JOIN category ON category.catid = item.catid JOIN subcategory ON subcategory.subcatid = item.subcatid JOIN colors ON colors.colorid = item.colorid JOIN brands ON brands.brandid = item.brandid WHERE item.is_delete = 0 ', callback);
   },
 
   getItemById(itemId, callback) {

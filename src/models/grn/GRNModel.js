@@ -6,7 +6,7 @@ const GrnModel = {
   },
 
   getAllGrns(callback) {
-    connection.query('SELECT * FROM grn WHERE is_delete = 0', callback);
+    connection.query('SELECT * FROM grn WHERE is_delete = 0 AND status = 1', callback);
   },
 
   addGrn(grn, callback) {

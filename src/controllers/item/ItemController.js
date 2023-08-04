@@ -1,4 +1,5 @@
 const ItemModel = require('../../models/item/ItemModel');
+const ItemView = require('../../views/ItemView');
 
 const getAllItems = (req, res) => {
     ItemModel.getAllItems((error, results) => {
@@ -7,7 +8,15 @@ const getAllItems = (req, res) => {
             return;
         }
 
-        res.status(200).send(results); // Modify the response as per your requirement
+        if (Array.isArray(results) && results.length > 0) {
+            const items = results[0];
+            ItemView.renderItems(res, items);
+            return;
+        }
+
+        // console.log(results)
+
+        // res.status(200).send(results); // Modify the response as per your requirement
     });
 };
 
@@ -34,23 +43,23 @@ const addItem = (req, res) => {
 
     ItemModel.getItemByName(item.item_name, (error, results) => {
         if (error) {
-          res.status(500).send({ error: 'Error fetching data from the database' });
-          return;
+            res.status(500).send({ error: 'Error fetching data from the database' });
+            return;
         }
-    
+
         if (results.length > 0) {
-          res.status(409).send({ error: 'This item name is already exists' });
-          return;
+            res.status(409).send({ error: 'This item name is already exists' });
+            return;
         }
         ItemModel.getItemByCode(item.item_code, (error, results) => {
             if (error) {
-              res.status(500).send({ error: 'Error fetching data from the database' });
-              return;
+                res.status(500).send({ error: 'Error fetching data from the database' });
+                return;
             }
-        
+
             if (results.length > 0) {
-              res.status(409).send({ error: 'This item code is already exists' });
-              return;
+                res.status(409).send({ error: 'This item code is already exists' });
+                return;
             }
 
             ItemModel.addItem(item, filePath, (error, itemId) => {
@@ -81,8 +90,8 @@ const updateItem = (req, res) => {
             res.status(500).send({ error: 'Error fetching data from the database' });
             return;
         }
-        
-        
+
+
 
         if (results.length === 0) {
             console.log(itemId);
