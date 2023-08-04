@@ -100,7 +100,7 @@ const updateItem = (req, res) => {
         }
 
         // Item exists, proceed with the update
-        ItemModel.updateItem(item, itemId, filePath, (updateError, updateResults) => {
+        ItemModel.updateItem(item, itemId, (updateError, updateResults) => {
             if (updateError) {
                 res.status(500).send({ error: 'Error updating item in the database' });
                 return;
