@@ -58,7 +58,7 @@ const ItemView = {
     renderItemsArray(items) {
         const renderedItems = items.map(item => this.renderItem(item));
         return {
-            items: renderedItems
+            renderedItems
         };
     }
 };
