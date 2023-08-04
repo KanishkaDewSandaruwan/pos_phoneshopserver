@@ -9,14 +9,13 @@ const getAllItems = (req, res) => {
         }
 
         if (Array.isArray(results) && results.length > 0) {
-            const items = results[0];
-            ItemView.renderItems(res, items);
+            const renderedItemsArray = ItemView.renderItemsArray(results);
+            res.status(200).send(renderedItemsArray);
             return;
         }
 
-        // console.log(results)
-
-        // res.status(200).send(results); // Modify the response as per your requirement
+        // Handle empty results case
+        res.status(200).send({ items: [] });
     });
 };
 
