@@ -39,12 +39,18 @@ const ItemModel = {
 
   updateItem(item, itemId, callback) {
     
-    const { item_code, item_name, item_description, catid, subcatid, colorid, brandid,serial, status } = item;
+    const { item_code, item_name, item_description, catid, subcatid, colorid, brandid, serial, status } = item;
     const trndate = new Date().toISOString().slice(0, 19).replace('T', ' ');
     const query = 'UPDATE item SET item_code = ?, item_name = ?, item_description = ?, catid = ?, subcatid = ?, colorid = ?, brandid = ?, serial_status = ?, status = ? WHERE itemid = ?';
     const values = [item_code, item_name, item_description, catid, subcatid, colorid, brandid, serial, status, itemId];
     connection.query(query, values, callback);
     
+  },
+
+  updateItemImage(itemimage, itemId, callback) {
+    const query = 'UPDATE item SET item_image = ? WHERE itemid = ?';
+    const values = [itemimage, itemId];
+    connection.query(query, values, callback);
   },
 
   deleteItem(itemId, is_delete, callback) {

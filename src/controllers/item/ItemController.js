@@ -115,6 +115,43 @@ const updateItem = (req, res) => {
     });
 };
 
+const updateItemImage = (req, res) => {
+    const { itemId } = req.params;
+    const filePath = req.file.filename;
+
+    // Check if the item exists before updating
+    ItemModel.getItemById(itemId, (error, results) => {
+        if (error) {
+            res.status(500).send({ error: 'Error fetching data from the database' });
+            return;
+        }
+
+
+
+        if (results.length === 0) {
+            console.log(itemId);
+            console.log(results.length);
+            res.status(404).send({ error: 'Item not found' });
+            return;
+        }
+
+        // Item exists, proceed with the update
+        ItemModel.updateItemImage(filePath, itemId, (updateError, updateResults) => {
+            if (updateError) {
+                res.status(500).send({ error: 'Error updating item in the database' });
+                return;
+            }
+
+            if (updateResults.affectedRows === 0) {
+                res.status(404).send({ error: 'Item not found or no changes made' });
+                return;
+            }
+
+            res.status(200).send({ message: 'Item Image Uploaded successfully' });
+        });
+    });
+};
+
 const deleteItem = (req, res) => {
     const { itemId } = req.params;
 
@@ -199,5 +236,6 @@ module.exports = {
     addItem,
     updateItem,
     deleteItem,
-    deleteItems
+    deleteItems,
+    updateItemImage
 };

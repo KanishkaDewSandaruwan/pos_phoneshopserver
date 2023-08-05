@@ -5,7 +5,8 @@ const {
   addItem,
   updateItem,
   deleteItem,
-  deleteItems
+  deleteItems,
+  updateItemImage
 } = require('../../controllers/item/ItemController');
 const { authenticateToken } = require('../../middlewares/userAuth');
 const { uploadItem } = require('../../../config/fileUpload');
@@ -14,6 +15,7 @@ module.exports = (config) => {
   const router = express.Router();
 
   router.post('/create', uploadItem.single('item'), authenticateToken, addItem);
+  router.post('/upload/:itemId', uploadItem.single('item'), authenticateToken, updateItemImage);
   router.use('/getitem', express.static('src/uploads/item/'));
   router.get('/all', authenticateToken, getAllItems);
   router.get('/:itemId', authenticateToken, getItemById);
