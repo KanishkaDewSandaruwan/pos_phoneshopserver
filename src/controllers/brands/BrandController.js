@@ -62,45 +62,54 @@ const updateBrand = (req, res) => {
   const { brandId } = req.params;
   const brand = req.body;
 
-  BrandModel.getBrandById(brandId, (error, results) => {
+  BrandModel.getBrandById(brandId, (error, existingBrand) => {
     if (error) {
       res.status(500).send({ error: 'Error fetching data from the database' });
       return;
     }
 
-    if (results.length === 0) {
+    if (!existingBrand[0]) {
       res.status(404).send({ error: 'Brand not found' });
       return;
     }
 
-    BrandModel.getBrandByName(brand.brandname, (error, results) => {
+    if (brand.brandname && brand.brandname !== existingBrand[0].brandname) { 
+
+
+      BrandModel.getBrandByName(brand.brandname, (error, results) => {
+          if (error) {
+              res.status(500).send({ error: 'Error fetching data from the database' });
+              return;
+          }
+
+          if (results.length > 0) {
+              res.status(409).send({ error: 'this brand name is already exists' });
+              return;
+          }
+
+          updateExistingBrand(brand, brandId);
+      });
+  } else {
+      updateExistingBrand(brand, brandId);
+  }
+});
+
+function updateExistingBrand(brand, brandId) {
+  BrandModel.updateBrand(brand, brandId, (error, results) => {
       if (error) {
-        res.status(500).send({ error: 'Error fetching data from the database' });
-        return;
-      }
-
-      if (results.length > 0) {
-        res.status(409).send({ error: 'This Brand already exists' });
-        return;
-      }
-
-      BrandModel.updateBrand(brand, brandId, (error, results) => {
-        if (error) {
           res.status(500).send({ error: 'Error fetching data from the database' });
           return;
-        }
+      }
 
-        if (results.affectedRows === 0) {
-          res.status(404).send({ error: 'Brand not found or no changes made' });
+      if (results.affectedRows === 0) {
+          res.status(404).send({ error: 'brand not found or no changes made' });
           return;
-        }
+      }
 
-        res.status(200).send({ message: 'Brand updated successfully' });
-      });
-    });
+      res.status(200).send({ message: 'brand updated successfully' });
   });
+}
 };
-
 const updateBrandStatus = (req, res) => {
   const { brandId } = req.params;
   const { status } = req.body;

@@ -99,27 +99,54 @@ const updateSupplier = (req, res) => {
     const { supplierId } = req.params;
     const supplier = req.body;
 
-    SupplierModel.getSupplierById(supplierId, (error, results) => {
+    SupplierModel.getSupplierById(supplierId, (error, existingSuplier) => {
         if (error) {
             res.status(500).send({ error: 'Error fetching data from the database' });
             return;
         }
 
-        if (results.length === 0) {
+        if (!existingSuplier[0]) {
             res.status(404).send({ error: 'Supplier not found' });
             return;
         }
 
-        SupplierModel.updateSupplier(supplier, supplierId, (error, updateResult) => {
+        if (supplier.supplier_phone && supplier.supplier_phone !== existingSuplier[0].supplier_phone) { 
+
+
+            SupplierModel.getSupplierByPhonenumber(supplier.supplier_phone, (error, results) => {
+                if (error) {
+                    res.status(500).send({ error: 'Error fetching data from the database' });
+                    return;
+                }
+      
+                if (results.length > 0) {
+                    res.status(409).send({ error: 'This supplier phone number is already exists' });
+                    return;
+                }
+      
+                updateExistingSuplier(supplier, supplierId);
+            });
+        } else {
+            updateExistingSuplier(supplier, supplierId);
+        }
+      });
+      
+      function updateExistingSuplier(supplier, supplierId) {
+        SupplierModel.updateSupplier(supplier, supplierId, (error, results) => {
             if (error) {
-                res.status(500).send({ error: 'Error updating supplier in the database' });
+                res.status(500).send({ error: 'Error fetching data from the database' });
                 return;
             }
-
-            res.status(200).send({ message: 'Supplier updated successfully' });
+      
+            if (results.affectedRows === 0) {
+                res.status(404).send({ error: 'supllier not found or no changes made' });
+                return;
+            }
+      
+            res.status(200).send({ message: 'supllier updated successfully' });
         });
-    });
-};
+      }
+      };
 
 
 const updateSupplierStatus = (req, res) => {

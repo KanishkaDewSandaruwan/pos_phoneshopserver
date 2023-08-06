@@ -193,7 +193,7 @@ const updateUser = (req, res) => {
         }
 
         // Check if the provided phone number is already associated with another user
-        if (user.phonenumber && user.phonenumber !== existingUser[0].phonenumber) {
+        if (user.phonenumber && user.phonenumber !== existingUser[0].phonenumber) { 
 
 
             UserModel.getUserByPhonenumber(user.phonenumber, (error, results) => {

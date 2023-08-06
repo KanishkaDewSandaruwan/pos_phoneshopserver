@@ -1,8 +1,9 @@
 const { connection } = require('../../../config/connection');
 
 const BranchModel = {
-  getBranchById(branchId, callback) {
-    connection.query('SELECT * FROM branch WHERE branchid = ? AND is_delete = 0', [branchId], callback);
+  
+  getBranchById(branchid, callback) {
+    connection.query('SELECT * FROM branch WHERE branchid = ? AND is_delete = 0', [branchid], callback);
   },
 
   getAllBranches(callback) {

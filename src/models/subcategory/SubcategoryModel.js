@@ -9,6 +9,10 @@ const SubcategoryModel = {
     connection.query('SELECT * FROM subcategory WHERE subcatid = ? AND is_delete = 0', [subcategoryId], callback);
   },
 
+  getSubcathByName(subcat_name, callback) {
+    connection.query('SELECT * FROM subcategory WHERE subcat_name = ? AND is_delete = 0', [subcat_name], callback);
+  },
+
   addSubcategory(subcategory, callback) {
     const { subcat_name, catid } = subcategory;
     const adddate = new Date().toISOString().slice(0, 19).replace('T', ' ');

@@ -64,31 +64,53 @@ const updateColor = (req, res) => {
   const { colorId } = req.params;
   const color = req.body;
 
-  ColorModel.getColorById(colorId, (error, results) => {
+  ColorModel.getColorById(colorId, (error, existingColor) => {
     if (error) {
       res.status(500).send({ error: 'Error fetching data from the database' });
       return;
     }
 
-    if (results.length === 0) {
+    if (!existingColor[0]) {
       res.status(404).send({ error: 'Color not found' });
       return;
     }
 
-    ColorModel.updateColor(color, colorId, (error, results) => {
+    if (color.colorname && color.colorname !== existingColor[0].colorname) { 
+
+
+      ColorModel.getColorByName(color.colorname, (error, results) => {
+          if (error) {
+              res.status(500).send({ error: 'Error fetching data from the database' });
+              return;
+          }
+
+          if (results.length > 0) {
+              res.status(409).send({ error: 'this color name is already exists' });
+              return;
+          }
+
+          updateExistingColor(color, colorId);
+      });
+  } else {
+    updateExistingColor(color, colorId);
+  }
+});
+
+function updateExistingColor(color, colorId) {
+  ColorModel.updateColor(color, colorId, (error, results) => {
       if (error) {
-        res.status(500).send({ error: 'Error fetching data from the database' });
-        return;
+          res.status(500).send({ error: 'Error fetching data from the database' });
+          return;
       }
 
       if (results.affectedRows === 0) {
-        res.status(404).send({ error: 'Color not found or no changes made' });
-        return;
+          res.status(404).send({ error: 'color not found or no changes made' });
+          return;
       }
 
-      res.status(200).send({ message: 'Color updated successfully' });
-    });
+      res.status(200).send({ message: 'color updated successfully' });
   });
+}
 };
 
 const updateColorStatus = (req, res) => {

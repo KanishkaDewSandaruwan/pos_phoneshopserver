@@ -9,8 +9,8 @@ const AssignPermissionModel = {
     connection.query('SELECT * FROM assign_permission WHERE assignpermissionid = ? AND is_delete = 0', [assignPermissionId], callback);
   },
 
-  getPermissionByCode(permissionCode, callback) {
-    connection.query('SELECT * FROM permission WHERE permission_code = ?', [permissionCode], callback);
+  getPermissionByCode(permission_code, callback) {
+    connection.query('SELECT * FROM assign_permission WHERE permission_code = ?', [permission_code], callback);
   },
 
   getUserRoleById(userRoleId, callback) {

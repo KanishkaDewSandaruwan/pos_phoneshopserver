@@ -114,31 +114,54 @@ const updateUserRole = (req, res) => {
   const { userRoleId } = req.params;
   const userRole = req.body;
 
-  UserRoleModel.getUserRoleById(userRoleId, (error, results) => {
+  UserRoleModel.getUserRoleById(userRoleId, (error, existingUserrole) => {
     if (error) {
       res.status(500).send({ error: 'Error fetching data from the database' });
       return;
     }
 
-    if (results.length === 0) {
+    if (!existingUserrole[0]) {
       res.status(404).send({ error: 'UserRole not found' });
       return;
     }
 
-    UserRoleModel.updateUserRole(userRole, userRoleId, (error, results) => {
+    if (userRole.role && userRole.role !== existingUserrole[0].role) { 
+
+
+      UserRoleModel.getUserByname(userRole.role, (error, results) => {
+
+          if (error) {
+              res.status(500).send({ error: 'Error fetching data from the database' });
+              return;
+          }
+
+          if (results.length > 0) {
+              res.status(409).send({ error: 'this user role is already exists' });
+              return;
+          }
+
+          updateExistingUserrole(userRole, userRoleId);
+      });
+  } else {
+      updateExistingUserrole(userRole, userRoleId);
+  }
+});
+
+function updateExistingUserrole(userRole, userRoleId) {
+  UserRoleModel.updateUserRole(userRole, userRoleId, (error, results) => {
       if (error) {
-        res.status(500).send({ error: 'Error fetching data from the database' });
-        return;
+          res.status(500).send({ error: 'Error fetching data from the database' });
+          return;
       }
 
       if (results.affectedRows === 0) {
-        res.status(404).send({ error: 'UserRole not found or no changes made' });
-        return;
+          res.status(404).send({ error: 'user role not found or no changes made' });
+          return;
       }
 
-      res.status(200).send({ message: 'UserRole updated successfully' });
-    });
+      res.status(200).send({ message: 'user role updated successfully' });
   });
+}
 };
 
 const updateUserRoleStatus = (req, res) => {

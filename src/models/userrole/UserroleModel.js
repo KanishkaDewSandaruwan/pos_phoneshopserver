@@ -20,6 +20,10 @@ const UserRoleModel = {
     connection.query('SELECT * FROM user WHERE userid = ? AND is_delete = 0', [userid], callback);
   },
 
+  getUserByname(role, callback) {
+    connection.query('SELECT * FROM userrole WHERE role = ? AND is_delete = 0', [role], callback);
+  },
+
   addUserRole(userRole, callback) {
     const { role } = userRole;
     const trndate = new Date().toISOString().slice(0, 19).replace('T', ' ');

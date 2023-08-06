@@ -51,32 +51,54 @@ const updateSubcategory = (req, res) => {
     const { subcategoryId } = req.params;
     const subcategory = req.body;
 
-    SubcategoryModel.getSubcategoryById(subcategoryId, (error, results) => {
+    SubcategoryModel.getSubcategoryById(subcategoryId, (error, existigsubcat) => {
         if (error) {
             res.status(500).send({ error: 'Error fetching data from the database' });
             return;
         }
 
-        if (results.length === 0) {
+        if (!existigsubcat[0]) {
             res.status(404).send({ error: 'Subcategory not found' });
             return;
         }
 
-        SubcategoryModel.updateSubcategory(subcategory, subcategoryId, (error, updateResult) => {
+        if (subcategory.subcat_name && subcategory.subcat_name !== existigsubcat[0].subcat_name) { 
+
+
+            SubcategoryModel.getSubcathByName(subcategory.subcat_name, (error, results) => {
+                if (error) {
+                    res.status(500).send({ error: 'Error fetching data from the database' });
+                    return;
+                }
+      
+                if (results.length > 0) {
+                    res.status(409).send({ error: 'this branch name is already exists' });
+                    return;
+                }
+      
+                updateExistingsubCat(subcategory, subcategoryId);
+            });
+        } else {
+            updateExistingsubCat(subcategory, subcategoryId);
+        }
+      });
+      
+      function updateExistingsubCat(subcategory, subcategoryId) {
+        SubcategoryModel.updateSubcategory(subcategory, subcategoryId, (error, results) => {
             if (error) {
-                res.status(500).send({ error: 'Error updating subcategory in the database' });
+                res.status(500).send({ error: 'Error fetching data from the database' });
                 return;
             }
-
-            if (updateResult.affectedRows === 0) {
-                res.status(404).send({ error: 'Subcategory not found or no changes made' });
+      
+            if (results.affectedRows === 0) {
+                res.status(404).send({ error: 'subcategorry not found or no changes made' });
                 return;
             }
-
-            res.status(200).send({ message: 'Subcategory updated successfully' });
+      
+            res.status(200).send({ message: 'subcategorry updated successfully' });
         });
-    });
-};
+      }
+      };
 
 
 const updateSubcategoryStatus = (req, res) => {

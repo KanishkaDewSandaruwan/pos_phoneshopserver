@@ -31,80 +31,90 @@ const getAssignPermissionById = (req, res) => {
 
 
 const addAssignPermission = (req, res) => {
-  const assignPermission = req.body;
+  const assignpermission = req.body;
 
-  // Check if the permission code already exists in the database
-  AssignPermissionModel.getPermissionByCode(assignPermission.permission_code, (error, results) => {
+  AssignPermissionModel.getPermissionByCode(assignpermission.permission_code, (error, results) => {
+    
     if (error) {
       res.status(500).send({ error: 'Error fetching data from the database' });
       return;
     }
 
-    if (results.length === 0) {
-      res.status(409).send({ error: 'Permission code is not found' });
+    if (results.length > 0) {
+      res.status(409).send({ error: 'This permission is already exists' });
       return;
     }
 
-    // If the permission code is unique, proceed to check the user role
-    AssignPermissionModel.getUserRoleById(assignPermission.userroleid, (error, userRoleResults) => {
+    AssignPermissionModel.addAssignPermission(assignpermission, (error, assignPermissionId) => {
       if (error) {
         res.status(500).send({ error: 'Error fetching data from the database' });
         return;
       }
 
-      if (userRoleResults.length === 0) {
-        res.status(404).send({ error: 'User role not found' });
+      if (!assignPermissionId) {
+        res.status(404).send({ error: 'Failed to create permission' });
         return;
       }
 
-      // If the user role exists, add the assign permission
-      AssignPermissionModel.addAssignPermission(assignPermission, (error, assignPermissionId) => {
-        if (error) {
-          res.status(500).send({ error: 'Error fetching data from the database' });
-          return;
-        }
-
-        if (!assignPermissionId) {
-          res.status(404).send({ error: 'Failed to create assign permission' });
-          return;
-        }
-
-        res.status(200).send({ message: 'Assign permission created successfully', assignPermissionId });
-      });
+      res.status(200).send({ message: 'permission created successfully', assignPermissionId });
     });
   });
 };
-
+//fghidslflhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh
 const updateAssignPermission = (req, res) => {
   const { assignPermissionId } = req.params;
   const assignPermission = req.body;
 
-  AssignPermissionModel.getAssignPermissionById(assignPermissionId, (error, results) => {
+  AssignPermissionModel.getAssignPermissionById(assignPermissionId, (error, existingPermission) => {
     if (error) {
       res.status(500).send({ error: 'Error fetching data from the database' });
       return;
     }
 
-    if (results.length === 0) {
+    if (!existingPermission[0]) {
       res.status(404).send({ error: 'Assign permission not found' });
       return;
     }
 
-    AssignPermissionModel.updateAssignPermission(assignPermission, assignPermissionId, (error, updateResult) => {
+    if (assignPermission.permission_code && assignPermission.permission_code !== existingPermission[0].permission_code) { 
+
+
+      AssignPermissionModel.getPermissionByCode(assignPermission.permission_code, (error, results) => {
+          if (error) {
+              res.status(500).send({ error: 'Error fetching data from the database' });
+              return;
+          }
+
+          if (results.length > 0) {
+              res.status(409).send({ error: 'this permission name is already exists' });
+              return;
+          }
+
+          updateExistingPermission(assignPermission, assignPermissionId);
+      });
+  } else {
+      updateExistingPermission(assignPermission, assignPermissionId);
+  }
+});
+
+function updateExistingPermission(assignPermission, assignPermissionId) {
+  AssignPermissionModel.updateAssignPermission(assignPermission, assignPermissionId, (error, results) => {
       if (error) {
-        res.status(500).send({ error: 'Error updating assign permission in the database' });
-        return;
+          res.status(500).send({ error: 'Error fetching data from the database' });
+          return;
       }
 
-      if (updateResult.affectedRows === 0) {
-        res.status(404).send({ error: 'Assign permission not found or no changes made' });
-        return;
+      if (results.affectedRows === 0) {
+          res.status(404).send({ error: 'permission not found or no changes made' });
+          return;
       }
 
-      res.status(200).send({ message: 'Assign permission updated successfully' });
-    });
+      res.status(200).send({ message: 'permission updated successfully' });
   });
+}
 };
+
+//////////////////////////////////////////////////////////////
 
 const updateAssignPermissionStatus = (req, res) => {
   const { assignPermissionId } = req.params;

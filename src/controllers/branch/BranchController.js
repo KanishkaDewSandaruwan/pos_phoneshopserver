@@ -62,49 +62,57 @@ const updateBranch = (req, res) => {
   const { branchId } = req.params;
   const branch = req.body;
 
-  BranchModel.getBranchById(branchId, (error, results) => {
+  BranchModel.getBranchById(branchId, (error, existingBranch) => {
+
     if (error) {
       res.status(500).send({ error: 'Error fetching data from the database' });
       return;
     }
 
-    if (results.length === 0) {
-      res.status(404).send({ error: 'Branch not found' });
+    if (!existingBranch[0]) {
+      res.status(404).send({ error: 'branch not found' });
       return;
     }
 
-    if (results.branch_name === branch.branch_name) {
-      res.status(404).send({ error: 'This is the same branch. Branch is already exists' });
-      return;
-    }
+    // Check if the provided phone number is already associated with another user
+    if (branch.branch_name && branch.branch_name !== existingBranch[0].branch_name) { 
 
-    BranchModel.getBranchByName(branch.branch_name, (error, results) => {
+
+      BranchModel.getBranchByName(branch.branch_name, (error, results) => {
+          if (error) {
+              res.status(500).send({ error: 'Error fetching data from the database' });
+              return;
+          }
+
+          if (results.length > 0) {
+              res.status(409).send({ error: 'this branch name is already exists' });
+              return;
+          }
+
+          updateExistingBranch(branch, branchId);
+      });
+  } else {
+      updateExistingBranch(branch, branchId);
+  }
+});
+
+function updateExistingBranch(branch, branchId) {
+  BranchModel.updateBranch(branch, branchId, (error, results) => {
       if (error) {
-        res.status(500).send({ error: 'Error fetching data from the database' });
-        return;
-      }
-
-      if (results.length > 0) {
-        res.status(409).send({ error: 'This Branch is already exists' });
-        return;
-      }
-
-      BranchModel.updateBranch(branch, branchId, (error, results) => {
-        if (error) {
           res.status(500).send({ error: 'Error fetching data from the database' });
           return;
-        }
+      }
 
-        if (results.affectedRows === 0) {
-          res.status(404).send({ error: 'Branch not found or no changes made' });
+      if (results.affectedRows === 0) {
+          res.status(404).send({ error: 'branch not found or no changes made' });
           return;
-        }
+      }
 
-        res.status(200).send({ message: 'Branch updated successfully' });
-      });
-    });
+      res.status(200).send({ message: 'branch updated successfully' });
   });
+}
 };
+
 
 const updateBranchStatus = (req, res) => {
   const { branchId } = req.params;

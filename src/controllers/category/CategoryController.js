@@ -64,45 +64,54 @@ const updateCategory = (req, res) => {
     const { categoryId } = req.params;
     const category = req.body;
 
-    CategoryModel.getCategoryById(categoryId, (error, results) => {
+    CategoryModel.getCategoryById(categoryId, (error,existingcategory) => {
         if (error) {
             res.status(500).send({ error: 'Error fetching data from the database' });
             return;
         }
 
-        if (results.length === 0) {
+        if (!existingcategory[0]) {
             res.status(404).send({ error: 'Category not found' });
             return;
         }
 
-        CategoryModel.getCategoryByName(category.cat_name, (error, results) => {
-            if (error) {
-                res.status(500).send({ error: 'Error fetching data from the database' });
-                return;
-            }
-
-            if (results.length > 0) {
-                res.status(409).send({ error: 'This Category is already exists' });
-                return;
-            }
+        if (category.cat_name && category.cat_name  !== existingcategory[0].cat_name) { 
 
 
-            CategoryModel.updateCategory(category, categoryId, (error, results) => {
+            CategoryModel.getCategoryByName(category.cat_name, (error, results) => {
                 if (error) {
                     res.status(500).send({ error: 'Error fetching data from the database' });
                     return;
                 }
-
-                if (results.affectedRows === 0) {
-                    res.status(404).send({ error: 'Category not found or no changes made' });
+      
+                if (results.length > 0) {
+                    res.status(409).send({ error: 'this category name is already exists' });
                     return;
                 }
-
-                res.status(200).send({ message: 'Category updated successfully' });
+      
+                updateExistingCategory(category, categoryId);
             });
+        } else {
+            updateExistingCategory(category, categoryId);
+        }
+      });
+      
+      function updateExistingCategory(category, categoryId) {
+        CategoryModel.updateCategory(category, categoryId, (error, results) => {
+            if (error) {
+                res.status(500).send({ error: 'Error fetching data from the database' });
+                return;
+            }
+      
+            if (results.affectedRows === 0) {
+                res.status(404).send({ error: 'category not found or no changes made' });
+                return;
+            }
+      
+            res.status(200).send({ message: 'category updated successfully' });
         });
-    });
-};
+      }
+      };
 
 
 const updateCategoryStatus = (req, res) => {

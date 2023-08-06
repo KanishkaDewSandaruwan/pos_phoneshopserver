@@ -44,11 +44,13 @@ const customerModel = {
       },
 
       deleteCustomer(customer_id, value, callback) {
-        const query = 'UPDATE brands SET is_delete = ? WHERE brandid = ?';
+        const query = 'UPDATE customer SET is_delete = ? WHERE customer_id = ?';
         const values = [value, customer_id];
     
         connection.query(query, values, callback);
       },
+
+
 
       deleteCustomers(customer_id, callback) {
         if (!Array.isArray(customer_id)) {
@@ -57,7 +59,7 @@ const customerModel = {
       
         let successCount = 0;
         let failCount = 0;
-      
+        
         for (const brandId of brandIds) {
           BrandModel.getBrandById(brandId, (error, results) => {
             if (error || results.length === 0) {
