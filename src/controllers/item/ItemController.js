@@ -1,4 +1,5 @@
 const ItemModel = require('../../models/item/ItemModel');
+const ItemView = require('../../views/ItemView');
 
 const getAllItems = (req, res) => {
     ItemModel.getAllItems((error, results) => {
@@ -7,7 +8,14 @@ const getAllItems = (req, res) => {
             return;
         }
 
-        res.status(200).send(results); // Modify the response as per your requirement
+        if (Array.isArray(results) && results.length > 0) {
+            const renderedItemsArray = ItemView.renderItemsArray(results);
+            res.status(200).send(renderedItemsArray);
+            return;
+        }
+
+        // Handle empty results case
+        res.status(200).send({ items: [] });
     });
 };
 
@@ -34,23 +42,23 @@ const addItem = (req, res) => {
 
     ItemModel.getItemByName(item.item_name, (error, results) => {
         if (error) {
-          res.status(500).send({ error: 'Error fetching data from the database' });
-          return;
+            res.status(500).send({ error: 'Error fetching data from the database' });
+            return;
         }
-    
+
         if (results.length > 0) {
-          res.status(409).send({ error: 'This item name is already exists' });
-          return;
+            res.status(409).send({ error: 'This item name is already exists' });
+            return;
         }
         ItemModel.getItemByCode(item.item_code, (error, results) => {
             if (error) {
-              res.status(500).send({ error: 'Error fetching data from the database' });
-              return;
+                res.status(500).send({ error: 'Error fetching data from the database' });
+                return;
             }
-        
+
             if (results.length > 0) {
-              res.status(409).send({ error: 'This item code is already exists' });
-              return;
+                res.status(409).send({ error: 'This item code is already exists' });
+                return;
             }
 
             ItemModel.addItem(item, filePath, (error, itemId) => {
@@ -72,7 +80,6 @@ const addItem = (req, res) => {
 
 const updateItem = (req, res) => {
     const { itemId } = req.params;
-    const filePath = req.file.filename;
     const item = req.body;
 
     // Check if the item exists before updating
@@ -81,8 +88,8 @@ const updateItem = (req, res) => {
             res.status(500).send({ error: 'Error fetching data from the database' });
             return;
         }
-        
-        
+
+
 
         if (results.length === 0) {
             console.log(itemId);
@@ -92,7 +99,7 @@ const updateItem = (req, res) => {
         }
 
         // Item exists, proceed with the update
-        ItemModel.updateItem(item, itemId, filePath, (updateError, updateResults) => {
+        ItemModel.updateItem(item, itemId, (updateError, updateResults) => {
             if (updateError) {
                 res.status(500).send({ error: 'Error updating item in the database' });
                 return;
@@ -104,6 +111,43 @@ const updateItem = (req, res) => {
             }
 
             res.status(200).send({ message: 'Item updated successfully' });
+        });
+    });
+};
+
+const updateItemImage = (req, res) => {
+    const { itemId } = req.params;
+    const filePath = req.file.filename;
+
+    // Check if the item exists before updating
+    ItemModel.getItemById(itemId, (error, results) => {
+        if (error) {
+            res.status(500).send({ error: 'Error fetching data from the database' });
+            return;
+        }
+
+
+
+        if (results.length === 0) {
+            console.log(itemId);
+            console.log(results.length);
+            res.status(404).send({ error: 'Item not found' });
+            return;
+        }
+
+        // Item exists, proceed with the update
+        ItemModel.updateItemImage(filePath, itemId, (updateError, updateResults) => {
+            if (updateError) {
+                res.status(500).send({ error: 'Error updating item in the database' });
+                return;
+            }
+
+            if (updateResults.affectedRows === 0) {
+                res.status(404).send({ error: 'Item not found or no changes made' });
+                return;
+            }
+
+            res.status(200).send({ message: 'Item Image Uploaded successfully' });
         });
     });
 };
@@ -192,5 +236,6 @@ module.exports = {
     addItem,
     updateItem,
     deleteItem,
-    deleteItems
+    deleteItems,
+    updateItemImage
 };
