@@ -210,7 +210,7 @@ const tableInfo = [
     fields: [
       { name: 'customer_id', type: 'INT AUTO_INCREMENT PRIMARY KEY' },
       { name: 'customer_name', type: 'VARCHAR(255)' },
-      { name: 'customer_phone', type: 'VARCHAR(10)' },
+      { name: 'customer_phone', type: 'VARCHAR(15)' },
       { name: 'customer_email', type: 'VARCHAR(255)' },
       { name: 'trndate', type: 'DATETIME' },
       { name: 'status', type: 'INT(5)' },

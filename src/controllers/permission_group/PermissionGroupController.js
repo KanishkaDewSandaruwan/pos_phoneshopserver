@@ -33,18 +33,6 @@ const getAssignPermissionById = (req, res) => {
 const addAssignPermission = (req, res) => {
   const assignpermission = req.body;
 
-  AssignPermissionModel.getPermissionByCode(assignpermission.permission_code, (error, results) => {
-    
-    if (error) {
-      res.status(500).send({ error: 'Error fetching data from the database' });
-      return;
-    }
-
-    if (results.length > 0) {
-      res.status(409).send({ error: 'This permission is already exists' });
-      return;
-    }
-
     AssignPermissionModel.addAssignPermission(assignpermission, (error, assignPermissionId) => {
       if (error) {
         res.status(500).send({ error: 'Error fetching data from the database' });
@@ -52,13 +40,13 @@ const addAssignPermission = (req, res) => {
       }
 
       if (!assignPermissionId) {
-        res.status(404).send({ error: 'Failed to create permission' });
+        res.status(404).send({ error: 'Failed to assign permission' });
         return;
       }
 
-      res.status(200).send({ message: 'permission created successfully', assignPermissionId });
+      res.status(200).send({ message: 'permission assign successfully', assignPermissionId });
     });
-  });
+
 };
 //fghidslflhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh
 const updateAssignPermission = (req, res) => {

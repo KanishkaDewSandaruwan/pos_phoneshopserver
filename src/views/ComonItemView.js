@@ -1,5 +1,6 @@
-const ItemView = {
-    renderItem(item) {
+const ComonItemView
+ = {
+    renderComonItem(item) {
         const {
             item_code,
             itemid,
@@ -9,11 +10,6 @@ const ItemView = {
             item_image,
             trndate,
             status,
-            sell_price,
-            purchase_price,
-            wholesale_price,
-            discount,
-            branch_id
 
         } = item;
 
@@ -26,20 +22,15 @@ const ItemView = {
             item_image,
             trndate,
             status,
-            sell_price,
-            purchase_price,
-            wholesale_price,
-            discount,
-            branch_id
 
         };
 
         return data;
     },
 
-    renderItemsArray(items) {
-        return items.map(item => this.renderItem(item));
+    renderComonItemsArray(items) {
+        return items.map(item => this.renderComonItem(item));
     }
 };
 
-module.exports = ItemView;
+module.exports = ComonItemView;

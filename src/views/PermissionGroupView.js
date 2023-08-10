@@ -1,5 +1,5 @@
 const permissionGroupView = {
-    renderPermission(res, permission_group) { // <-- Make sure 'permission_group' is valid
+    renderPermission(permission_group) { // <-- Make sure 'permission_group' is valid
 
         const { permission_code, assignpermissionid } = permission_group;
 
@@ -8,8 +8,12 @@ const permissionGroupView = {
             permission_code
         };
 
-        res.send(data);
+        return data;
     },
+
+    renderpermissionGroup(permissions) {
+        return permissions.map(permissions => this.renderPermission(permissions));
+    }
 };
 
 module.exports = permissionGroupView;

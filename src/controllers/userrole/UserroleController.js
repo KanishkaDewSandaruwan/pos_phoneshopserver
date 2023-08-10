@@ -12,7 +12,7 @@ const getAllUserRoles = (req, res) => {
   });
 };
 
-const getUserRole = (req, res) => {
+const permissionByroleid = (req, res) => {
   const { userid } = req.params;
   const userRole = req.body;
 
@@ -24,7 +24,7 @@ const getUserRole = (req, res) => {
     }
 
     if (results.length === 0) {
-      res.status(404).send({ error: 'UserRole not found' });
+      res.status(404).send({ error: 'User not found' });
       return;
     }
 
@@ -50,10 +50,13 @@ const getUserRole = (req, res) => {
       }
 
       if (Array.isArray(permissionResults) && permissionResults.length > 0) {
-        const permissions = permissionResults[0];
-        PermissionGroupView.renderPermission(res, permissions);
+        const renderpermissionGroupArray = PermissionGroupView.renderpermissionGroup(permissionResults);
+        res.status(200).send(renderpermissionGroupArray);
         return;
-      }
+    }
+    
+
+      res.status(200).send({ message: "not found" });
 
       // // Assuming you want to render and send the first permission in the results
       // const userPermission = permissionResults[0];
@@ -286,5 +289,5 @@ module.exports = {
   deleteUserRole,
   permanentDeleteUserRole,
   deleteRoles,
-  getUserRole
+  permissionByroleid,
 };

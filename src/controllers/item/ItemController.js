@@ -1,8 +1,10 @@
 const ItemModel = require('../../models/item/ItemModel');
 const ItemView = require('../../views/ItemView');
+const ComonItemView = require('../../views/ComonItemView');
 
-const getAllItems = (req, res) => {
-    ItemModel.getAllItems((error, results) => {
+const getAllItemsBybranch = (req, res) => {
+    const items = req.body;
+    ItemModel.getAllItemsBybranch(items.branch_id, (error, results) => {
         if (error) {
             res.status(500).send({ error: 'Error fetching data from the database' });
             return;
@@ -15,7 +17,26 @@ const getAllItems = (req, res) => {
         }
 
         // Handle empty results case
-        res.status(200).send({ items: [] });
+        res.status(200).send({ message: "not found" });
+    });
+};
+
+const getAllItems = (req, res) => {
+    const items = req.body;
+    ItemModel.getAllItems((error, results) => {
+        if (error) {
+            res.status(500).send({ error: 'Error fetching data from the database' });
+            return;
+        }
+
+        if (Array.isArray(results) && results.length > 0) {
+            const renderedComonItemsArray = ComonItemView.renderComonItemsArray(results);
+            res.status(200).send(renderedComonItemsArray);
+            return;
+        }
+
+        // Handle empty results case
+        res.status(200).send({ message: "not found" });
     });
 };
 
@@ -35,6 +56,30 @@ const getItemById = (req, res) => {
         res.status(200).send(results);
     });
 };
+
+const getPriceBybranchId = (req, res) => {
+    const price = req.body;
+    console.log(price.itemId);
+
+    ItemModel.getPriceBybranchId(price.itemId, price.branch_id, (error, results) => {
+        if (error) {
+            res.status(500).send({ error: 'Error fetching data from the database' });
+            return;
+        }
+        console.log(results.length);
+
+        if (results.length === 0) {
+            console.log(results.length);
+            res.status(404).send({ error: 'Item not found sfd sdjjjjjjjjj' });
+            return;
+        }
+
+        res.status(200).send(results);
+    });
+};
+
+
+
 
 const addItem = (req, res) => {
     const item = req.body; // Retrieve the item data from the request body
@@ -77,6 +122,43 @@ const addItem = (req, res) => {
         });
     });
 };
+
+const addNewitemPrice = (req, res) => {
+    const price = req.body;
+    console.log(price.branch_id);
+    console.log(price.itemid);
+
+
+    ItemModel.getPriceBybranchId(price.itemid, price.branch_id, (error, results) => {
+       
+        if (error) {
+            res.status(500).send({ error: 'Error fetching data from the database' });
+            return;
+        }
+
+        console.log(results.length);
+
+        if (results.length > 0) {
+            res.status(409).send({ error: 'This item price is already exists' });
+            return;
+        }
+        
+            ItemModel.addNewitemPrice(price, (error,item_priceid) => {
+                if (error) {
+                    res.status(500).send({ error: 'Error fetching data from the database' });
+                    return;
+                }
+
+                if (!item_priceid) {
+                    res.status(404).send({ error: 'Failed to create item price' });
+                    return;
+                }
+
+                res.status(200).send({ message: 'Item price created successfully', item_priceid });
+            });
+        });
+};
+
 
 const updateItem = (req, res) => {
     const { itemId } = req.params;
@@ -231,11 +313,15 @@ const deleteItems = (req, res) => {
 
 
 module.exports = {
-    getAllItems,
+
     getItemById,
     addItem,
+    getPriceBybranchId,
+    getAllItemsBybranch,
     updateItem,
+    addNewitemPrice,
     deleteItem,
+    getAllItems,
     deleteItems,
     updateItemImage
 };

@@ -45,6 +45,7 @@ const addGrn = (req, res) => {
     if (!grnId) {
       res.status(404).send({ error: 'Failed to create grn' });
       return;
+      
     }
 
     res.status(200).send({ message: 'Grn created successfully', grnId });

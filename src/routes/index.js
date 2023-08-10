@@ -3,7 +3,7 @@ const userRoute = require('./user/user');
 const supplierRoute = require('./supplier/supplier');
 const categoryRoute = require('./category/category');
 const subcategoryRoute = require('./subcategory/subcategory');
-const itemRoute = require('./item/item');
+const itemRoute = require('./item/item'); 
 const shopRoute = require('./shop/shop');
 const branchRoute = require('./branch/branch');
 const userroleRoute = require('./userrole/userrole');
@@ -13,6 +13,7 @@ const permissionRoute = require('./permission/permission');
 const permissionGroupRoute = require('./permission_group/permission_group');
 const GRNRoute = require('./grn/grn');
 const customerRoute = require('./customer/customer');
+
 
 module.exports = (config) => {
   const router = express.Router();
