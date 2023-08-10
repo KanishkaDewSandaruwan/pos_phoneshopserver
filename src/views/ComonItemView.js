@@ -11,6 +11,7 @@ const ComonItemView
             colorid,
             brandid,
             item_image,
+            serial_status,
             trndate,
             status,
             is_delete
@@ -27,6 +28,7 @@ const ComonItemView
             colorid,
             brandid,
             item_image,
+            serial_status,
             trndate,
             status,
             is_delete
