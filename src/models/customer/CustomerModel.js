@@ -9,9 +9,13 @@ const customerModel = {
       getAllCustomers(callback) {
         connection.query('SELECT * FROM customer WHERE is_delete = 0', callback);
       },
-    
-      getCustomerByPhone(customer_phone, callback) {
+
+      getCustomerByphone(customer_phone, callback) {
         connection.query('SELECT * FROM customer WHERE customer_phone = ? AND is_delete = 0', [customer_phone], callback);
+      },
+    
+      getCustomerByemail(customer_email, callback) {
+        connection.query('SELECT * FROM customer WHERE customer_email = ? AND is_delete = 0', [customer_email], callback);
       },
     
 
@@ -30,8 +34,8 @@ const customerModel = {
             return;
           }
     
-          const brandId = results.insertId;
-          callback(null, brandId);
+          const customer_id = results.insertId;
+          callback(null, customer_id);
         });
       },
 

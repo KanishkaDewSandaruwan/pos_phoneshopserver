@@ -60,7 +60,7 @@ const tableInfo = [
       { name: 'subcatid', type: 'INT(255)' },
       { name: 'colorid', type: 'INT(255)' },
       { name: 'brandid', type: 'INT(255)' },
-      { name: 'serial_status', type: 'INT(255)' },
+      { name: 'serial_status', type: 'INT(5)' },
       { name: 'item_image', type: 'VARCHAR(255)' },
       { name: 'trndate', type: 'DATETIME' },
       { name: 'status', type: 'INT(5)' },

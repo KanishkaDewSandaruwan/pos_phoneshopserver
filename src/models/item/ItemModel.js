@@ -70,13 +70,12 @@ addNewitemPrice(price, callback) {
 },
 
 
-
   updateItem(item, itemId, callback) {
     
-    const { item_code, item_name, item_description, catid, subcatid, colorid, brandid, serial, status } = item;
-    const trndate = new Date().toISOString().slice(0, 19).replace('T', ' ');
+    const { item_code, item_name, item_description, catid, subcatid, colorid, brandid, serial_status, status } = item;
     const query = 'UPDATE item SET item_code = ?, item_name = ?, item_description = ?, catid = ?, subcatid = ?, colorid = ?, brandid = ?, serial_status = ?, status = ? WHERE itemid = ?';
-    const values = [item_code, item_name, item_description, catid, subcatid, colorid, brandid, serial, status, itemId];
+    const values = [item_code, item_name, item_description, catid, subcatid, colorid, brandid, serial_status, status, itemId];
+
     connection.query(query, values, callback);
     
   },

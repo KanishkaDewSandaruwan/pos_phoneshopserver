@@ -125,9 +125,6 @@ const addItem = (req, res) => {
 
 const addNewitemPrice = (req, res) => {
     const price = req.body;
-    console.log(price.branch_id);
-    console.log(price.itemid);
-
 
     ItemModel.getPriceBybranchId(price.itemid, price.branch_id, (error, results) => {
        
@@ -165,37 +162,79 @@ const updateItem = (req, res) => {
     const item = req.body;
 
     // Check if the item exists before updating
-    ItemModel.getItemById(itemId, (error, results) => {
+    ItemModel.getItemById(itemId, (error, existingItem) => {
         if (error) {
             res.status(500).send({ error: 'Error fetching data from the database' });
             return;
         }
 
-
-
-        if (results.length === 0) {
-            console.log(itemId);
-            console.log(results.length);
+        if (existingItem.length === 0) {
             res.status(404).send({ error: 'Item not found' });
             return;
         }
 
-        // Item exists, proceed with the update
+        // Check if the provided item_code is already associated with another item
+        if (item.item_code && item.item_code !== existingItem[0].item_code) {
+            ItemModel.getItemByCode(item.item_code, (error, codeResults) => {
+                if (error) {
+                    res.status(500).send({ error: 'Error fetching data from the database' });
+                    return;
+                }
+
+                if (codeResults.length > 0) {
+                    res.status(409).send({ error: 'This item code is already associated with another item' });
+                    return;
+                }
+
+                // Call the next check
+                checkItemName(item, existingItem, itemId);
+            });
+        } else {
+            // Call the next check
+            checkItemName(item, existingItem, itemId);
+        }
+    });
+
+    function checkItemName(item, existingItem, itemId) {
+        if (item.item_name && item.item_name !== existingItem[0].item_name) {
+            ItemModel.getItemByName(item.item_name, (error, nameResults) => {
+                if (error) {
+                    res.status(500).send({ error: 'Error fetching data from the database' });
+                    return;
+                }
+
+                if (nameResults.length > 0) {
+                    res.status(409).send({ error: 'This item name is already associated with another item' });
+                    return;
+                }
+
+                // Proceed with the update
+                updateExistingItem(item, itemId);
+            });
+        } else {
+            // Proceed with the update
+            updateExistingItem(item, itemId);
+        }
+    }
+
+    function updateExistingItem(item, itemId) {
         ItemModel.updateItem(item, itemId, (updateError, updateResults) => {
             if (updateError) {
                 res.status(500).send({ error: 'Error updating item in the database' });
                 return;
             }
-
+    
             if (updateResults.affectedRows === 0) {
                 res.status(404).send({ error: 'Item not found or no changes made' });
                 return;
             }
-
+    
             res.status(200).send({ message: 'Item updated successfully' });
         });
-    });
+    }
 };
+
+
 
 const updateItemImage = (req, res) => {
     const { itemId } = req.params;
