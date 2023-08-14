@@ -1,8 +1,9 @@
 const express = require('express');
 const {
-  getAllItems,
+  getAllComonItems,
   getItemById,
   getAllItemsBybranch,
+  getAllItemsWithPrice,
   addItem,
   addNewitemPrice,
   updateItem,
@@ -20,8 +21,9 @@ module.exports = (config) => {
   router.post('/create', uploadItem.single('item'), authenticateToken, addItem);
   router.post('/upload/:itemId', uploadItem.single('item'), authenticateToken, updateItemImage);
   router.use('/getitem', express.static('src/uploads/item/'));
-  router.get('/allBybranch', authenticateToken, getAllItemsBybranch);
-  router.get('/all/comon', authenticateToken, getAllItems);
+  router.get('/allBybranch/:branch_id', authenticateToken, getAllItemsBybranch);
+  router.get('/all/comon', authenticateToken, getAllComonItems);
+  router.get('/all/withPrice', authenticateToken, getAllItemsWithPrice);
   router.get('/:itemId', authenticateToken, getItemById);
   router.put('/update/:itemId', authenticateToken, updateItem);
   router.put('/delete/:itemId', authenticateToken, deleteItem);

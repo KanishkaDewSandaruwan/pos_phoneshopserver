@@ -5,6 +5,11 @@ const ItemModel = {
     connection.query('SELECT * FROM item JOIN item_price ON item.itemid = item_price.itemid WHERE item.is_delete = 0 AND item_price.is_delete = 0 AND item_price.branch_id = ?',[branch_id], callback);
   },
 
+  getAllItemsWithPrice(callback) {
+    connection.query('SELECT * FROM item JOIN item_price ON item.itemid = item_price.itemid WHERE item.is_delete = 0 AND item_price.is_delete = 0',callback);
+  },
+    
+
   getAllItems(callback) {
     connection.query('SELECT * FROM item WHERE is_delete = 0', callback);
   },

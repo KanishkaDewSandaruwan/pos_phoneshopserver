@@ -1,20 +1,24 @@
-const ItemView = {
-    renderItem(item) {
+const branchItemView = {
+    renderbranchItem(item) {
         const {
             item_code,
             itemid,
             item_name,
             item_description,
             catid,
+            subcatid,
+            colorid,
+            brandid,
             item_image,
+            serial_status,
             trndate,
             status,
+            is_delete,
             sell_price,
             purchase_price,
             wholesale_price,
             discount,
             branch_id
-
         } = item;
 
         const data = {
@@ -23,23 +27,26 @@ const ItemView = {
             item_name,
             item_description,
             catid,
+            subcatid,
+            colorid,
+            brandid,
             item_image,
+            serial_status,
             trndate,
             status,
+            is_delete,
             sell_price,
             purchase_price,
             wholesale_price,
-            discount,
-            branch_id
-
+            discount,    // Moved out of the price object
+            branch_id    // Moved out of the price object
         };
 
         return data;
     },
 
-    renderItemsArray(items) {
-        return items.map(item => this.renderItem(item));
+    renderbranchItemsArray(items) {
+        return items.map(item => this.renderbranchItem(item));
     }
 };
-
-module.exports = ItemView;
+module.exports = branchItemView;

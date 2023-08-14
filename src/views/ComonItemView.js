@@ -1,5 +1,4 @@
-const ComonItemView
- = {
+const ComonItemView = {
     renderComonItem(item) {
         const {
             item_code,
@@ -14,8 +13,7 @@ const ComonItemView
             serial_status,
             trndate,
             status,
-            is_delete
-
+            is_delete,
         } = item;
 
         const data = {
@@ -31,7 +29,7 @@ const ComonItemView
             serial_status,
             trndate,
             status,
-            is_delete
+            is_delete,
         };
 
         return data;

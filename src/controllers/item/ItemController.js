@@ -1,27 +1,30 @@
 const ItemModel = require('../../models/item/ItemModel');
-const ItemView = require('../../views/ItemView');
+const branchItemView  = require('../../views/branchItemView');
 const ComonItemView = require('../../views/ComonItemView');
+const ItempriceView = require('../../views/ItempriceView');
 
 const getAllItemsBybranch = (req, res) => {
-    const items = req.body;
-    ItemModel.getAllItemsBybranch(items.branch_id, (error, results) => {
+    const { branch_id } = req.params;
+    ItemModel.getAllItemsBybranch(branch_id, (error, results) => {
         if (error) {
             res.status(500).send({ error: 'Error fetching data from the database' });
             return;
         }
 
         if (Array.isArray(results) && results.length > 0) {
-            const renderedItemsArray = ItemView.renderItemsArray(results);
-            res.status(200).send(renderedItemsArray);
-            return;
+            const modifiedItemsArray = branchItemView.renderbranchItemsArray(results);
+            res.status(200).send(modifiedItemsArray);
+        } else {
+            // Handle empty results case
+            res.status(404).send({ message: "not found" });
         }
-
-        // Handle empty results case
-        res.status(200).send({ message: "not found" });
     });
 };
 
-const getAllItems = (req, res) => {
+module.exports = { getAllItemsBybranch };
+
+
+const getAllComonItems = (req, res) => {
     const items = req.body;
     ItemModel.getAllItems((error, results) => {
         if (error) {
@@ -36,9 +39,30 @@ const getAllItems = (req, res) => {
         }
 
         // Handle empty results case
-        res.status(200).send({ message: "not found" });
+        res.status(404).send({ message: "not found" });
     });
 };
+
+
+const getAllItemsWithPrice = (req, res) => {
+    ItemModel.getAllItemsWithPrice((error, results) => {
+        if (error) {
+            res.status(500).send({ error: 'Error fetching data from the database' });
+            return;
+        }
+
+        if (Array.isArray(results) && results.length > 0) {
+            const renderedItempriceView = ItempriceView.renderItempricesArray(results);
+            res.status(200).send(renderedItempriceView);
+            return;
+        }
+
+        // Handle empty results case
+        res.status(404).send({ message: "not found" });
+    });
+};
+
+module.exports = { getAllItemsWithPrice };
 
 const getItemById = (req, res) => {
     const { itemId } = req.params;
@@ -357,10 +381,11 @@ module.exports = {
     addItem,
     getPriceBybranchId,
     getAllItemsBybranch,
+    getAllItemsWithPrice,
     updateItem,
     addNewitemPrice,
     deleteItem,
-    getAllItems,
+    getAllComonItems,
     deleteItems,
     updateItemImage
 };
