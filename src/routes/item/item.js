@@ -18,7 +18,7 @@ const { uploadItem } = require('../../../config/fileUpload');
 module.exports = (config) => {
   const router = express.Router();
 
-  router.post('/create', uploadItem.single('item'), authenticateToken, addItem);
+  router.post('/create', uploadItem.single('item_image'), authenticateToken, addItem);
   router.post('/upload/:itemId', uploadItem.single('item'), authenticateToken, updateItemImage);
   router.use('/getitem', express.static('src/uploads/item/'));
   router.get('/allBybranch/:branch_id', authenticateToken, getAllItemsBybranch);
