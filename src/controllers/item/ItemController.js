@@ -108,6 +108,7 @@ const getPriceBybranchId = (req, res) => {
 const addItem = (req, res) => {
     const item = req.body; // Retrieve the item data from the request body
     const filePath = req.file.filename;
+    console.log(req.file)
 
     ItemModel.getItemByName(item.item_name, (error, results) => {
         if (error) {
