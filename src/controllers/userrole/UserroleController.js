@@ -28,16 +28,17 @@ const permissionByroleid = (req, res) => {
     }
     
     // Access the user role ID from the results object
-    const userRoleId = results[0].userroleid;
-    console.log("userRoleId", userRoleId)
+    const userRoleIds = results[0].userroleid;
+    console.log("userRoleId", userRoleIds)
+    console.log("userroleid", userroleid)
 
     // Check if the user has the correct user role
-    if (userRoleId !== userroleid) {
+    if (userRoleIds != userroleid) {
       res.status(404).send({ error: 'UserRole is wrong. This user does not have this role' });
       return;
     }
 
-    UserRoleModel.getUserPermission(userRoleId, userid, (error, permissionResults) => {
+    UserRoleModel.getUserPermission(userRoleIds, userid, (error, permissionResults) => {
       if (error) {
         console.error('Error fetching data from the database:', error);
         res.status(500).send({ error: 'Error fetching data from the database' });
