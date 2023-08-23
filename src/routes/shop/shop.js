@@ -16,7 +16,7 @@ module.exports = (config) => {
 
     //admin only
     // router.post('/create', authorizeAccessControll, addShop);
-    router.get('/all', authorizeAccessControll, getShop);
+    router.get('/all', authenticateToken, getShop);
     router.put('/update', authorizeAccessControll, updateShop);
     router.put('/logo', uploadLogo.single('logo'), authorizeAccessControll, updateLogo);
     router.use('/getlogo', express.static('src/uploads/shop/'));
