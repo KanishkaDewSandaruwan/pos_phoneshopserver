@@ -31,7 +31,7 @@ const permissionByroleid = (req, res) => {
     const userRoleId = results[0].userroleid;
 
     // Check if the user has the correct user role
-    if (userRoleId !== userRole.userroleid) {
+    if (userRoleId !== userroleid) {
       res.status(404).send({ error: 'UserRole is wrong. This user does not have this role' });
       return;
     }
@@ -57,15 +57,6 @@ const permissionByroleid = (req, res) => {
 
       res.status(200).send({ message: "not found" });
 
-      // // Assuming you want to render and send the first permission in the results
-      // const userPermission = permissionResults[0];
-      // console.log(userPermission);
-
-      // // Render the permission using the PermissionGroupView
-      // const permissionData = PermissionGroupView.renderPermission(userPermission);
-
-      // // Instead of sending directly, use a view to respond with the data
-      // PermissionGroupView.renderPermission(res, permissionData);
     });
   });
 };
