@@ -12,7 +12,11 @@ const {
   getGrnTempById,
   addGrnTemp,
   updateGrnTemp,
-  updateGrnTempStatus,
+  updateGrnTempPurchaseprice,
+  updateGrnTempSellPrice,
+  updateGrnTempWholesaleprice,
+  updateGrnTempGrnqty,
+  updateGrnTempDiscount,
   deleteGrnTemp,
   permanentDeleteGrnTemp,
   deleteGrnTemps,
@@ -41,9 +45,15 @@ module.exports = (config) => {
   router.post('/temp/create', authenticateToken, addGrnTemp);
 //   router.put('/temp/update/:grnTempId', authenticateToken, updateGrnTemp);
 //   router.put('/temp/update/:grnTempId/status', authenticateToken, updateGrnTempStatus);
-//   router.put('/temp/delete/:grnTempId', authorizeAccessControll, deleteGrnTemp);
+  router.put('/temp/delete/:grntempid', authorizeAccessControll, deleteGrnTemp);
+  router.delete('/temp/permanent-delete/:grntempid', authorizeAccessControll, permanentDeleteGrnTemp);
   router.put('/temp/delete', authenticateToken, deleteGrnTemps);
-//   router.delete('/temp/permanent-delete/:grnTempId', authorizeAccessControll, permanentDeleteGrnTemp);
+  router.put('/temp/UpdatePurchaseprice/:grntempid', authenticateToken, updateGrnTempPurchaseprice);
+  router.put('/temp/UpdateSellprice/:grntempid', authenticateToken, updateGrnTempSellPrice);
+  router.put('/temp/UpdateWholesaleprice/:grntempid', authenticateToken, updateGrnTempWholesaleprice);
+  router.put('/temp/UpdateGrnqty/:grntempid', authenticateToken, updateGrnTempGrnqty);
+  router.put('/temp/UpdateDiscount/:grntempid', authenticateToken, updateGrnTempDiscount);
+
 
   return router;
 };

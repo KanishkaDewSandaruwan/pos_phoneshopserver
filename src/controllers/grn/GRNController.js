@@ -201,7 +201,7 @@ const permanentDeleteGrn = (req, res) => {
   });
 };
 
-// Controller functions for GrnTemp Model
+// Controller functions for GrnTemp Model//////////////////////////////////////////
 const getAllGrnTemp = (req, res) => {
   GrnTempModel.getAllGrnTemp((error, results) => {
     if (error) {
@@ -233,20 +233,37 @@ const getGrnTempById = (req, res) => {
 const addGrnTemp = (req, res) => {
   const grnTemp = req.body;
 
-  GrnTempModel.addGrnTemp(grnTemp, (error, grnTempId) => {
-    if (error) {
-      res.status(500).send({ error: 'Error fetching data from the database' });
-      return;
-    }
+  GrnTempModel.getItemBybranch(grnTemp.itemid, grnTemp.branch_id, (error, results) => {
+      if (error) {
+          res.status(500).send({ error: 'Error fetching data from the database' });
+          return;
+      }
 
-    if (!grnTempId) {
-      res.status(404).send({ error: 'Failed to create grnTemp' });
-      return;
-    }
+      if (results.length === 0) {
+          res.status(404).send({ error: 'Prices not found' });
+          return;
+      }
 
-    res.status(200).send({ message: 'GrnTemp created successfully', grnTempId });
+      const pricedetails = results[0];
+
+      GrnTempModel.addGrnTemp(grnTemp, pricedetails, (error, grnTempId) => {
+          if (error) {
+              res.status(500).send({ error: 'Error inserting data into the database' });
+              return;
+          }
+
+          if (!grnTempId) {
+              res.status(404).send({ error: 'Failed to create grnTemp' });
+              return;
+          }
+
+          res.status(200).send({ message: 'GrnTemp created successfully', grnTempId });
+      });
   });
 };
+
+module.exports = { addGrnTemp };
+
 
 const updateGrnTemp = (req, res) => {
   const { grnTempId } = req.params;
@@ -279,11 +296,11 @@ const updateGrnTemp = (req, res) => {
   });
 };
 
-const updateGrnTempStatus = (req, res) => {
-  const { grnTempId } = req.params;
-  const { status } = req.body;
+const updateGrnTempPurchaseprice = (req, res) => {
+  const { grntempid } = req.params;
+  const { purchase_price } = req.body;
 
-  GrnTempModel.getGrnTempById(grnTempId, (error, results) => {
+  GrnTempModel.getGrnTempById(grntempid, (error, results) => {
     if (error) {
       res.status(500).send({ error: 'Error fetching data from the database' });
       return;
@@ -294,21 +311,22 @@ const updateGrnTempStatus = (req, res) => {
       return;
     }
 
-    GrnTempModel.updateGrnTempStatus(grnTempId, status, (error, results) => {
+    GrnTempModel.updateGrnTempPurchaseprice(grntempid, purchase_price, (error, results) => {
       if (error) {
         res.status(500).send({ error: 'Error updating status in the database' });
         return;
       }
 
-      res.status(200).send({ message: 'Status updated successfully' });
+      res.status(200).send({ message: 'Purchase Price updated successfully' });
     });
   });
 };
 
-const deleteGrnTemp = (req, res) => {
-  const { grnTempId } = req.params;
+const updateGrnTempSellPrice = (req, res) => {
+  const { grntempid } = req.params;
+  const { sell_price } = req.body;
 
-  GrnTempModel.getGrnTempById(grnTempId, (error, results) => {
+  GrnTempModel.getGrnTempById(grntempid, (error, results) => {
     if (error) {
       res.status(500).send({ error: 'Error fetching data from the database' });
       return;
@@ -319,7 +337,110 @@ const deleteGrnTemp = (req, res) => {
       return;
     }
 
-    GrnTempModel.deleteGrnTemp(grnTempId, 1, (error, results) => {
+    GrnTempModel.updateGrnTempSellPrice(grntempid, sell_price, (error, results) => {
+      if (error) {
+        res.status(500).send({ error: 'Error updating status in the database' });
+        return;
+      }
+
+      res.status(200).send({ message: 'Sell Price updated successfully' });
+    });
+  });
+};
+
+const updateGrnTempWholesaleprice = (req, res) => {
+  const { grntempid } = req.params;
+  const { wholesale_price } = req.body;
+
+  GrnTempModel.getGrnTempById(grntempid, (error, results) => {
+    if (error) {
+      res.status(500).send({ error: 'Error fetching data from the database' });
+      return;
+    }
+
+    if (results.length === 0) {
+      res.status(404).send({ error: 'GrnTemp not found' });
+      return;
+    }
+
+    GrnTempModel.updateGrnTempWholesaleprice(grntempid, wholesale_price, (error, results) => {
+      if (error) {
+        res.status(500).send({ error: 'Error updating status in the database' });
+        return;
+      }
+
+      res.status(200).send({ message: 'wholesale price updated successfully' });
+    });
+  });
+};
+
+const updateGrnTempGrnqty = (req, res) => {
+  const { grntempid } = req.params;
+  const { grnqty } = req.body;
+
+  GrnTempModel.getGrnTempById(grntempid, (error, results) => {
+    if (error) {
+      res.status(500).send({ error: 'Error fetching data from the database' });
+      return;
+    }
+
+    if (results.length === 0) {
+      res.status(404).send({ error: 'GrnTemp not found' });
+      return;
+    }
+
+    GrnTempModel.updateGrnTempGrnqty(grntempid, grnqty, (error, results) => {
+      if (error) {
+        res.status(500).send({ error: 'Error updating status in the database' });
+        return;
+      }
+
+      res.status(200).send({ message: 'Qty updated successfully' });
+    });
+  });
+};
+
+const updateGrnTempDiscount = (req, res) => {
+  const { grntempid } = req.params;
+  const { discount } = req.body;
+
+  GrnTempModel.getGrnTempById(grntempid, (error, results) => {
+    if (error) {
+      res.status(500).send({ error: 'Error fetching data from the database' });
+      return;
+    }
+
+    if (results.length === 0) {
+      res.status(404).send({ error: 'GrnTemp not found' });
+      return;
+    }
+
+    GrnTempModel.updateGrnTempDiscount(grntempid, discount, (error, results) => {
+      if (error) {
+        res.status(500).send({ error: 'Error updating status in the database' });
+        return;
+      }
+
+      res.status(200).send({ message: 'Discount updated successfully' });
+    });
+  });
+};
+
+const deleteGrnTemp = (req, res) => {
+  const { grntempid } = req.params;
+
+  GrnTempModel.getGrnTempById(grntempid, (error, results) => {
+    if (error) {
+      res.status(500).send({ error: 'Error fetching data from the database' });
+      return;
+    }
+
+    if (results.length === 0) {
+      res.status(404).send({ error: 'GrnTemp not found' });
+      return;
+    }
+
+    GrnTempModel.deleteGrnTemp(grntempid, 1, (error, results) => {
       if (error) {
         res.status(500).send({ error: 'Error updating deletion in the database' });
         return;
@@ -331,9 +452,9 @@ const deleteGrnTemp = (req, res) => {
 };
 
 const deleteGrnTemps = (req, res) => {
-  const { grnTempIds } = req.body;
+  const { grntempids } = req.body;
 
-  if (!Array.isArray(grnTempIds) || grnTempIds.length === 0) {
+  if (!Array.isArray(grntempids) || grntempids.length === 0) {
     res.status(400).send({ error: 'Invalid grnTemp IDs' });
     return;
   }
@@ -341,27 +462,27 @@ const deleteGrnTemps = (req, res) => {
   let successCount = 0;
   let failCount = 0;
 
-  for (const grnTempId of grnTempIds) {
-    GrnTempModel.getGrnTempById(grnTempId, (error, results) => {
+  for (const grntempid of grntempids) {
+    GrnTempModel.getGrnTempById(grntempid, (error, results) => {
       if (error) {
-        console.error(`Error fetching grnTemp with ID ${grnTempId}: ${error}`);
+        console.error(`Error fetching grnTemp with ID ${grntempid}: ${error}`);
         failCount++;
       } else if (results.length === 0) {
-        console.log(`GrnTemp with ID ${grnTempId} not found`);
+        console.log(`GrnTemp with ID ${grntempid} not found`);
         failCount++;
       } else {
-        GrnTempModel.deleteGrnTemp(grnTempId, 1, (deleteError, deleteResult) => {
+        GrnTempModel.deleteGrnTemp(grntempid, 1, (deleteError, deleteResult) => {
           if (deleteError) {
-            console.error(`Error deleting grnTemp with ID ${grnTempId}: ${deleteError}`);
+            console.error(`Error deleting grnTemp with ID ${grntempid}: ${deleteError}`);
             failCount++;
           } else {
             successCount++;
-            console.log(`GrnTemp with ID ${grnTempId} deleted successfully`);
+            console.log(`GrnTemp with ID ${grntempid} deleted successfully`);
           }
 
           // Check if all deletions have been processed
-          if (successCount + failCount === grnTempIds.length) {
-            const totalCount = grnTempIds.length;
+          if (successCount + failCount === grntempids.length) {
+            const totalCount = grntempids.length;
             res.status(200).send({
               totalCount,
               successCount,
@@ -372,8 +493,8 @@ const deleteGrnTemps = (req, res) => {
       }
 
       // Check if all grnTemps have been processed
-      if (successCount + failCount === grnTempIds.length) {
-        const totalCount = grnTempIds.length;
+      if (successCount + failCount === grntempids.length) {
+        const totalCount = grntempids.length;
         res.status(200).send({
           totalCount,
           successCount,
@@ -385,9 +506,10 @@ const deleteGrnTemps = (req, res) => {
 };
 
 const permanentDeleteGrnTemp = (req, res) => {
-  const { grnTempId } = req.params;
+  const { grntempid } = req.params;
 
-  GrnTempModel.permanentDeleteGrnTemp(grnTempId, (error, results) => {
+
+  GrnTempModel.permanentDeleteGrnTemp(grntempid, (error, results) => {
     if (error) {
       res.status(500).send({ error: 'Error deleting grnTemp from the database' });
       return;
@@ -413,8 +535,12 @@ module.exports = {
   getGrnTempById,
   addGrnTemp,
   updateGrnTemp,
-  updateGrnTempStatus,
+  updateGrnTempPurchaseprice,
+  updateGrnTempSellPrice,
+  updateGrnTempWholesaleprice,
+  updateGrnTempGrnqty,
+  updateGrnTempDiscount,
   deleteGrnTemp,
   permanentDeleteGrnTemp,
-  deleteGrnTemps
+  deleteGrnTemps,
 };

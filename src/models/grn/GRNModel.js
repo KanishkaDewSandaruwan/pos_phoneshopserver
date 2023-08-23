@@ -13,7 +13,7 @@ const GrnModel = {
     const { supplier_id, reference_number, branch_id } = grn;
     const trndate = new Date().toISOString().slice(0, 19).replace('T', ' ');
     const defaultValues = 0;
-    const activeValues = 0;
+   
 
     const query = 'INSERT INTO grn (supplier_id, reference_number, branch_id, status, trndate, is_delete) VALUES (?, ?, ?, ?, ?, ?)';
     const values = [supplier_id, reference_number, branch_id, activeValues, trndate, defaultValues];
@@ -122,13 +122,21 @@ const GrnTempModel = {
     connection.query('SELECT * FROM grn_temp WHERE is_delete = 0', callback);
   },
 
-  addGrnTemp(grnTemp, callback) {
-    const { itemid, sell_price, purchase_price, wholesale_price, discount, grnqty, branch_id, status } = grnTemp;
+  getItemBybranch(itemid, branch_id, callback) {
+    connection.query('SELECT * FROM item_price WHERE itemId = ? AND branch_id = ? AND is_delete = 0', [itemid, branch_id], callback);
+  },
+
+  addGrnTemp(grnTemp,pricedetails, callback) {
+    const { sell_price, purchase_price, wholesale_price, discount } = pricedetails;
+    const { itemid,item_name, grnno, branch_id } = grnTemp;
     const trndate = new Date().toISOString().slice(0, 19).replace('T', ' ');
     const defaultValues = 0;
+    const activeValues = 1;
+    const grnqty = 0;
 
-    const query = 'INSERT INTO grn_temp (itemid, sell_price, purchase_price, wholesale_price, discount, grnqty, branch_id, status, trndate, is_delete) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
-    const values = [itemid, sell_price, purchase_price, wholesale_price, discount, grnqty, branch_id, status, trndate, defaultValues];
+    const query = 'INSERT INTO grn_temp (itemid, sell_price, purchase_price, wholesale_price, discount, grnqty, branch_id, trndate, status, is_delete, item_name, grnno ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
+
+    const values = [itemid, sell_price, purchase_price, wholesale_price, discount, grnqty, branch_id, trndate, activeValues, defaultValues, item_name, grnno];
 
     connection.query(query, values, (error, results) => {
       if (error) {
@@ -149,16 +157,36 @@ const GrnTempModel = {
     connection.query(query, values, callback);
   },
 
-  updateGrnTempStatus(grnTempId, status, callback) {
-    const query = 'UPDATE grn_temp SET status = ? WHERE grntempid = ?';
-    const values = [status, grnTempId];
-
+  updateGrnTempPurchaseprice(grntempid, purchase_price, callback) {
+    const query = 'UPDATE grn_temp SET purchase_price = ? WHERE grntempid = ?';
+    const values = [purchase_price, grntempid];
     connection.query(query, values, callback);
   },
+  updateGrnTempSellPrice(grnTempId, sell_price, callback) {
+    const query = 'UPDATE grn_temp SET sell_price = ? WHERE grntempid = ?';
+    const values = [sell_price, grnTempId];
+    connection.query(query, values, callback);
+  },
+  updateGrnTempWholesaleprice(grnTempId, wholesale_price, callback) {
+    const query = 'UPDATE grn_temp SET wholesale_price = ? WHERE grntempid = ?';
+    const values = [wholesale_price, grnTempId];
+    connection.query(query, values, callback);
+  },
+  updateGrnTempGrnqty(grnTempId, grnqty, callback) {
+    const query = 'UPDATE grn_temp SET grnqty = ? WHERE grntempid = ?';
+    const values = [grnqty, grnTempId];
+    connection.query(query, values, callback); 
+  },
 
-  deleteGrnTemp(grnTempId, value, callback) {
+  updateGrnTempDiscount(grnTempId, discount, callback) {
+    const query = 'UPDATE grn_temp SET discount = ? WHERE grntempid = ?';
+    const values = [discount, grnTempId];
+    connection.query(query, values, callback); 
+  },
+
+  deleteGrnTemp(grntempid, value, callback) {
     const query = 'UPDATE grn_temp SET is_delete = ? WHERE grntempid = ?';
-    const values = [value, grnTempId];
+    const values = [value, grntempid];
 
     connection.query(query, values, callback);
   },
@@ -204,9 +232,9 @@ const GrnTempModel = {
     }
   },
 
-  permanentDeleteGrnTemp(grnTempId, callback) {
-    const query = 'DELETE FROM grn_temp WHERE grntempid = ?';
-    const values = [grnTempId];
+  permanentDeleteGrnTemp(grntempid, callback) {
+    const query = 'DELETE FROM `grn_temp` WHERE `grn_temp`.`grntempid` = ?';
+    const values = [grntempid];
 
     connection.query(query, values, callback);
   },
