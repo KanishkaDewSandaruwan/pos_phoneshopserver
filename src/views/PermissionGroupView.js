@@ -1,7 +1,18 @@
 const permissionGroupView = {
+    renderPermission(permission_group) { // <-- Make sure 'permission_group' is valid
+
+        const { permission_code, assignpermissionid } = permission_group;
+
+        const data = {
+            assignpermissionid,
+            permission_code
+        };
+
+        return data;
+    },
+
     renderpermissionGroup(permissions) {
-        const permissionCodes = permissions.map(permission => permission.permission_code);
-        return permissionCodes;
+        return permissions.map(permissions => this.renderPermission(permissions));
     }
 };
 
