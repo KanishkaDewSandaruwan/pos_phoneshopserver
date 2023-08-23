@@ -13,10 +13,9 @@ const getAllUserRoles = (req, res) => {
 };
 
 const permissionByroleid = (req, res) => {
-  const { userid } = req.params;
-  const userRole = req.body;
+  const { userid, userroleid } = req.params;
 
-  UserRoleModel.getUserById(userid, (error, results) => {
+  UserRoleModel.getUserById(userroleid, (error, results) => {
     if (error) {
       console.error('Error fetching data from the database:', error);
       res.status(500).send({ error: 'Error fetching data from the database' });
