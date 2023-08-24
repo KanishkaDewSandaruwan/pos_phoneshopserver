@@ -14,13 +14,13 @@ const { authorizeAccessControll } = require('../../middlewares/userAccess');
 module.exports = (config) => {
   const router = express.Router();
 
-  router.post('/create', authorizeAccessControll, addStock);
-  router.get('/all', authorizeAccessControll, getAllStocks);
-  router.get('/branch/all/:branch_id', authorizeAccessControll, getAllStocksBranch);
-  router.get('/:stockId', authorizeAccessControll, getStockById);
-  router.put('/update/:stockId', authorizeAccessControll, updateStockQty);
-  router.put('/delete/:stockId', authorizeAccessControll, deleteStock);
-  router.put('/permanent-delete/:stockId', authorizeAccessControll, permanentDeleteStock);
+  router.post('/create', authenticateToken, addStock);
+  router.get('/all', authenticateToken, getAllStocks);
+  router.get('/branch/all/:branch_id', authenticateToken, getAllStocksBranch);
+  router.get('/:stockId', authenticateToken, getStockById);
+  router.put('/update/:stockId', authenticateToken, updateStockQty);
+  router.put('/delete/:stockId', authenticateToken, deleteStock);
+  router.put('/permanent-delete/:stockId', authenticateToken, permanentDeleteStock);
 
   return router;
 };
