@@ -20,7 +20,7 @@ const {
   deleteGrnTemp,
   permanentDeleteGrnTemp,
   deleteGrnTemps,
-} = require('../../controllers/grn/GRNController');
+} = require('../../mvc/controllers/grn/GRNController');
 
 const { authenticateToken } = require('../../middlewares/userAuth');
 const { authorizeAccessControll } = require('../../middlewares/userAccess');

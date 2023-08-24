@@ -8,7 +8,7 @@ const {
   deleteBrand,
   permanentDeleteBrand,
   deleteBrands
-} = require('../../controllers/brands/BrandController');
+} = require('../../mvc/controllers/brands/BrandController');
 const { authenticateToken } = require('../../middlewares/userAuth');
 const { authorizeAccessControll } = require('../../middlewares/userAccess');
 

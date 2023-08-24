@@ -9,7 +9,7 @@ const {
     deleteSupplier,
     permanentDeleteSupplier,
     deleteSuppliers
-} = require('../../controllers/supplier/SupplierContoller');
+} = require('../../mvc/controllers/supplier/SupplierContoller');
 
 const { authenticateToken } = require('../../middlewares/userAuth');
 

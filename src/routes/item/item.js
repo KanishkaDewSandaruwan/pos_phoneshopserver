@@ -11,7 +11,7 @@ const {
   deleteItems,
   getPriceBybranchId,
   updateItemImage
-} = require('../../controllers/item/ItemController');
+} = require('../../mvc/controllers/item/ItemController');
 const { authenticateToken } = require('../../middlewares/userAuth');
 const { uploadItem } = require('../../../config/fileUpload');
 

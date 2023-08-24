@@ -8,7 +8,7 @@ const {
   deleteColor,
   permanentDeleteColor,
   deleteColors
-} = require('../../controllers/colors/ColorController');
+} = require('../../mvc/controllers/colors/ColorController');
 const { authenticateToken } = require('../../middlewares/userAuth');
 const { authorizeAccessControll } = require('../../middlewares/userAccess');
 

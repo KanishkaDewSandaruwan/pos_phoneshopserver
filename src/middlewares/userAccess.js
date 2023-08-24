@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken');
 require('dotenv').config(); // Load environment variables
-const UserModel = require('../models/user/UserModel');
+const UserModel = require('../mvc/models/user/UserModel');
 
 async function authorizeAccessControll(req, res, next) {
   try {

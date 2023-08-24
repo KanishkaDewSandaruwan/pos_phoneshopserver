@@ -8,7 +8,7 @@ const {
   deleteCategory,
   permanentDeleteCategory,
   deleteCategories
-} = require('../../controllers/category/CategoryController');
+} = require('../../mvc/controllers/category/CategoryController');
 const { authenticateToken } = require('../../middlewares/userAuth');
 const { authorizeAccessControll } = require('../../middlewares/userAccess');
 

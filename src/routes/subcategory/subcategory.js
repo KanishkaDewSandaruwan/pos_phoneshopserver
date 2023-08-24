@@ -8,7 +8,7 @@ const {
   deleteSubcategory,
   permanentDeleteSubcategory,
   deleteSubcategories
-} = require('../../controllers/subcategory/SubcategoryController');
+} = require('../../mvc/controllers/subcategory/SubcategoryController');
 const { authenticateToken } = require('../../middlewares/userAuth');
 const { authorizeAccessControll } = require('../../middlewares/userAccess');
 
