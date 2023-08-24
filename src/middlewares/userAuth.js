@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken');
 require('dotenv').config(); // Load environment variables
-const UserModel = require('../mvc/models/user/UserModel');
+const UserModel = require('../mvc/user/UserModel');
 const user = require('../routes/user/user');
 
 function authenticateToken(req, res, next) {

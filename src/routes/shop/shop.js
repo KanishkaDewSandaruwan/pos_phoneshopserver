@@ -6,7 +6,7 @@ const {
     updateLogo,
     getshopData
 
-} = require('../../mvc/controllers/shop/ShopController');
+} = require('../../mvc/shop/ShopController');
 const { authenticateToken } = require('../../middlewares/userAuth');
 const { uploadLogo } = require('../../../config/fileUpload');
 const { authorizeAccessControll } = require('../../middlewares/userAccess');

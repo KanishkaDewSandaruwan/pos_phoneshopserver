@@ -8,7 +8,7 @@ const {
   deleteBranch,
   permanentDeleteBranch,
   deleteBranches
-} = require('../../mvc/controllers/branch/BranchController');
+} = require('../../mvc/branch/BranchController');
 const { authenticateToken } = require('../../middlewares/userAuth');
 const { authorizeAccessControll } = require('../../middlewares/userAccess');
 

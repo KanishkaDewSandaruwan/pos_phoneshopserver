@@ -8,7 +8,7 @@ const {
   deleteAssignPermission,
   permanentDeleteAssignPermission,
   deleteAssignPermissions,
-} = require('../../mvc/controllers/permission_group/PermissionGroupController');
+} = require('../../mvc/permission_group/PermissionGroupController');
 const { authenticateToken } = require('../../middlewares/userAuth');
 const { authorizeAccessSupoerAdmin } = require('../../middlewares/userAccess');
 

@@ -13,6 +13,7 @@ const permissionRoute = require('./permission/permission');
 const permissionGroupRoute = require('./permission_group/permission_group');
 const GRNRoute = require('./grn/grn');
 const customerRoute = require('./customer/customer');
+const stockRoute = require('./stock/stock');
 
 
 module.exports = (config) => {
@@ -29,6 +30,7 @@ module.exports = (config) => {
   router.use('/supplier', supplierRoute(config));   //any user
   router.use('/item', itemRoute(config));   //any user
   router.use('/grn', GRNRoute(config));   //any user
+  router.use('/stock', stockRoute(config));   //any user
   router.use('/customer', customerRoute(config));   //any user
   
   //filter routes

@@ -8,7 +8,7 @@ const {
     deleteCustomers
     
 
-} = require ('../../mvc/controllers/customer/CustomerController');
+} = require ('../../mvc/customer/CustomerController');
 
 const { authenticateToken } = require('../../middlewares/userAuth');
 const { authorizeAccessControll } = require('../../middlewares/userAccess');

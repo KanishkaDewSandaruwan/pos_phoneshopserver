@@ -9,7 +9,7 @@ const {
   permanentDeleteUserRole,
   deleteRoles,
   permissionByroleid,
-} = require('../../mvc/controllers/userrole/UserroleController');
+} = require('../../mvc/userrole/UserroleController');
 const { authenticateToken } = require('../../middlewares/userAuth');
 const { authorizeAccessSupoerAdmin } = require('../../middlewares/userAccess');
 

@@ -14,7 +14,7 @@ const { login,
     changePassword,
     changeStatus,
     deleteuser,
-} = require('../../mvc/controllers/user/UserController');
+} = require('../../mvc/user/UserController');
 const { authenticateToken, authorizeValidateUser } = require('../../middlewares/userAuth');
 const { authorizeAccessControll } = require('../../middlewares/userAccess');
 const { uploadProfile } = require('../../../config/fileUpload');

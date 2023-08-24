@@ -5,7 +5,7 @@ const {
   addPermission,
   updatePermission,
   permanentDeletePermission,
-} = require('../../mvc/controllers/permission/PermissionController');
+} = require('../../mvc/permission/PermissionController');
 const { authorizeAccessSupoerAdmin } = require('../../middlewares/userAccess');
 
 module.exports = (config) => {

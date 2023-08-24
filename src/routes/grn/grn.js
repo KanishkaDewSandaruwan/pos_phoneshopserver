@@ -20,7 +20,7 @@ const {
   deleteGrnTemp,
   permanentDeleteGrnTemp,
   deleteGrnTemps,
-} = require('../../mvc/controllers/grn/GRNController');
+} = require('../../mvc/grn/GRNController');
 
 const { authenticateToken } = require('../../middlewares/userAuth');
 const { authorizeAccessControll } = require('../../middlewares/userAccess');
@@ -53,6 +53,9 @@ module.exports = (config) => {
   router.put('/temp/UpdateWholesaleprice/:grntempid', authenticateToken, updateGrnTempWholesaleprice);
   router.put('/temp/UpdateGrnqty/:grntempid', authenticateToken, updateGrnTempGrnqty);
   router.put('/temp/UpdateDiscount/:grntempid', authenticateToken, updateGrnTempDiscount);
+
+
+  //finalize grn
 
 
   return router;
