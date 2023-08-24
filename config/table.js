@@ -157,6 +157,7 @@ const tableInfo = [
       { name: 'supplier_id', type: 'INT(255)' },
       { name: 'reference_number', type: 'VARCHAR(255)' },
       { name: 'branch_id', type: 'INT(255)' },
+      { name: 'user_id', type: 'INT(255)' },
       { name: 'status', type: 'INT(5)' },
       { name: 'trndate', type: 'DATETIME' },
       { name: 'is_delete', type: 'INT(5)' },
@@ -207,7 +208,6 @@ const tableInfo = [
       { name: 'is_delete', type: 'INT(5)' },
     ],
   },
-
   {
     tableName: 'customer',
     fields: [
@@ -219,9 +219,19 @@ const tableInfo = [
       { name: 'status', type: 'INT(5)' },
       { name: 'is_delete', type: 'INT(5)' },
     ],
-  }
-
-  
+  },
+  {
+    tableName: 'grnpayment',
+    fields: [
+      { name: 'grnpayment_id', type: 'INT AUTO_INCREMENT PRIMARY KEY' },
+      { name: 'grnno', type: 'INT(255)' },
+      { name: 'total_amount', type: 'FLOAT' },
+      { name: 'resiptNo', type: 'VARCHAR(255)' },
+      { name: 'payment_status', type: 'INT(255)' },
+      { name: 'trndate', type: 'DATETIME' },
+      { name: 'is_delete', type: 'INT(5)' },
+    ],
+  },
 ];
 
 async function checkTables() {

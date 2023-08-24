@@ -1,4 +1,4 @@
-const { connection } = require('../../../config/config');
+const { connection } = require('../../../config/connection');
 
 const UserModel = {
   getUserByUsernameAndPassword(username, password, callback) {

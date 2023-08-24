@@ -1,4 +1,4 @@
-const { connection } = require('../../../config/config');
+const { connection } = require('../../../config/connection');
 
 const GrnModel = {
   getGrnById(grnId, callback) {
@@ -10,13 +10,13 @@ const GrnModel = {
   },
 
   addGrn(grn, callback) {
-    const { supplier_id, reference_number, branch_id } = grn;
+    const { supplier_id, reference_number, branch_id, user_id } = grn;
     const trndate = new Date().toISOString().slice(0, 19).replace('T', ' ');
     const defaultValues = 0;
    
 
-    const query = 'INSERT INTO grn (supplier_id, reference_number, branch_id, status, trndate, is_delete) VALUES (?, ?, ?, ?, ?, ?)';
-    const values = [supplier_id, reference_number, branch_id, activeValues, trndate, defaultValues];
+    const query = 'INSERT INTO grn (supplier_id, reference_number, branch_id, status, trndate, is_delete, user_id) VALUES (?, ?, ?, ?, ?, ?, ?)';
+    const values = [supplier_id, reference_number, branch_id, activeValues, trndate, defaultValues, user_id];
 
     connection.query(query, values, (error, results) => {
       if (error) {

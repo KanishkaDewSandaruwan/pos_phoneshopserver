@@ -1,4 +1,4 @@
-const { connection } = require('../../../config/config');
+const { connection } = require('../../../config/connection');
 
 const PermissionModel = {
   getPermissionById(permissionId, callback) {
