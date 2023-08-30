@@ -122,6 +122,10 @@ const GrnTempModel = {
     connection.query('SELECT * FROM grn_temp WHERE is_delete = 0', callback);
   },
 
+  getAllGrnTempBYGRNNO(grnId, callback) {
+    connection.query('SELECT * FROM grn_temp WHERE is_delete = 0 AND grnno = ? ',[grnId] , callback);
+  },
+
   getItemBybranch(itemid, branch_id, callback) {
     connection.query('SELECT * FROM item_price WHERE itemId = ? AND branch_id = ? AND is_delete = 0', [itemid, branch_id], callback);
   },

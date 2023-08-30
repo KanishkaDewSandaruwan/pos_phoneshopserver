@@ -4,6 +4,19 @@ const {
   GrnTempModel
 } = require('./GRNModel');
 
+//
+
+const finishGrn = (req, res) => {
+  GrnModel.getAllGrns((error, results) => {
+    if (error) {
+      res.status(500).send({ error: 'Error fetching data from the database' });
+      return;
+    }
+
+    res.status(200).send(results);
+  });
+};
+
 // Controller functions for Grn Model
 const getAllGrns = (req, res) => {
   GrnModel.getAllGrns((error, results) => {
@@ -45,7 +58,7 @@ const addGrn = (req, res) => {
     if (!grnId) {
       res.status(404).send({ error: 'Failed to create grn' });
       return;
-      
+
     }
 
     res.status(200).send({ message: 'Grn created successfully', grnId });
@@ -213,6 +226,30 @@ const getAllGrnTemp = (req, res) => {
   });
 };
 
+const getAllGrnTempBYGRNNO = (req, res) => {
+  const { grnId } = req.params;
+
+  GrnModel.getGrnById(grnId, (error, results) => {
+    if (error) {
+      res.status(500).send({ error: 'Error fetching data from the database' });
+      return;
+    }
+
+    if (results.length === 0) {
+      res.status(404).send({ error: 'GRN not found' });
+      return;
+    }
+    GrnTempModel.getAllGrnTempBYGRNNO(grnId, (error, results) => {
+      if (error) {
+        res.status(500).send({ error: 'Error fetching data from the database' });
+        return;
+      }
+
+      res.status(200).send(results);
+    });
+  });
+};
+
 const getGrnTempById = (req, res) => {
   const { grnTempId } = req.params;
   GrnTempModel.getGrnTempById(grnTempId, (error, results) => {
@@ -234,36 +271,33 @@ const addGrnTemp = (req, res) => {
   const grnTemp = req.body;
 
   GrnTempModel.getItemBybranch(grnTemp.itemid, grnTemp.branch_id, (error, results) => {
+    if (error) {
+      res.status(500).send({ error: 'Error fetching data from the database' });
+      return;
+    }
+
+    if (results.length === 0) {
+      res.status(404).send({ error: 'Prices not found' });
+      return;
+    }
+
+    const pricedetails = results[0];
+
+    GrnTempModel.addGrnTemp(grnTemp, pricedetails, (error, grnTempId) => {
       if (error) {
-          res.status(500).send({ error: 'Error fetching data from the database' });
-          return;
+        res.status(500).send({ error: 'Error inserting data into the database' });
+        return;
       }
 
-      if (results.length === 0) {
-          res.status(404).send({ error: 'Prices not found' });
-          return;
+      if (!grnTempId) {
+        res.status(404).send({ error: 'Failed to create grnTemp' });
+        return;
       }
 
-      const pricedetails = results[0];
-
-      GrnTempModel.addGrnTemp(grnTemp, pricedetails, (error, grnTempId) => {
-          if (error) {
-              res.status(500).send({ error: 'Error inserting data into the database' });
-              return;
-          }
-
-          if (!grnTempId) {
-              res.status(404).send({ error: 'Failed to create grnTemp' });
-              return;
-          }
-
-          res.status(200).send({ message: 'GrnTemp created successfully', grnTempId });
-      });
+      res.status(200).send({ message: 'GrnTemp created successfully', grnTempId });
+    });
   });
 };
-
-module.exports = { addGrnTemp };
-
 
 const updateGrnTemp = (req, res) => {
   const { grnTempId } = req.params;
@@ -529,7 +563,7 @@ module.exports = {
   deleteGrn,
   permanentDeleteGrn,
   deleteGrns,
-  
+
   // GrnTemp Model
   getAllGrnTemp,
   getGrnTempById,
@@ -543,4 +577,7 @@ module.exports = {
   deleteGrnTemp,
   permanentDeleteGrnTemp,
   deleteGrnTemps,
+  getAllGrnTempBYGRNNO,
+  addGrnTemp,
+  finishGrn
 };

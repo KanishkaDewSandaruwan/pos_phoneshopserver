@@ -19,7 +19,9 @@ const {
   updateGrnTempDiscount,
   deleteGrnTemp,
   permanentDeleteGrnTemp,
+  getAllGrnTempBYGRNNO,
   deleteGrnTemps,
+  finishGrn,
 } = require('../../mvc/grn/GRNController');
 
 const { authenticateToken } = require('../../middlewares/userAuth');
@@ -41,6 +43,7 @@ module.exports = (config) => {
 
   // Routes for GrnTemp Model
   router.get('/temp/all', authenticateToken, getAllGrnTemp);
+  router.get('/temp/all/:grnId', authenticateToken, getAllGrnTempBYGRNNO); //new //have to update
   router.get('/temp/:grnTempId', authenticateToken, getGrnTempById);
   router.post('/temp/create', authenticateToken, addGrnTemp);
 //   router.put('/temp/update/:grnTempId', authenticateToken, updateGrnTemp);
@@ -53,9 +56,9 @@ module.exports = (config) => {
   router.put('/temp/UpdateWholesaleprice/:grntempid', authenticateToken, updateGrnTempWholesaleprice);
   router.put('/temp/UpdateGrnqty/:grntempid', authenticateToken, updateGrnTempGrnqty);
   router.put('/temp/UpdateDiscount/:grntempid', authenticateToken, updateGrnTempDiscount);
-
-
+  
   //finalize grn
+  router.put('/finish/:grnId', authenticateToken, finishGrn);
 
 
   return router;

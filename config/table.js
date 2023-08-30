@@ -232,8 +232,22 @@ const tableInfo = [
       { name: 'is_delete', type: 'INT(5)' },
     ],
   },
+  {
+    tableName: 'itemdetails',
+    fields: [
+      { name: 'itemdetails_id', type: 'INT AUTO_INCREMENT PRIMARY KEY' },
+      { name: 'grnno', type: 'INT(255)' },
+      { name: 'total_amount', type: 'INT(255)' },
+      { name: 'resiptNo', type: 'VARCHAR(255)' },
+      { name: 'payment_status', type: 'INT(255)' },
+      { name: 'trndate', type: 'DATETIME' },
+      { name: 'is_delete', type: 'INT(5)' },
+    ],
+  },
 ];
 
+
+// Function to check and set up the tables
 async function checkTables() {
   try {
     const pool = await mysql.createPool(config.connection);
@@ -250,24 +264,38 @@ async function checkTables() {
   }
 }
 
+// Function to get existing table names from the database
 async function getExistingTables(connection) {
   const [rows] = await connection.query(`SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = '${config.connection.database}'`);
   return rows.map(row => row.TABLE_NAME);
 }
 
+// Function to create new tables and add indexes if needed
 async function createNewTables(connection, existingTables) {
   for (const table of tableInfo) {
     if (!existingTables.includes(table.tableName)) {
       const fieldsString = table.fields.map((field) => `${field.name} ${field.type}`).join(', ');
+
+      // Create the table with the defined fields
       const createQuery = `CREATE TABLE ${table.tableName} (${fieldsString})`;
       await connection.query(createQuery);
       console.log(`Table '${table.tableName}' created!`);
+
+      // Add indexes after creating the table
+      if (table.indexes) {
+        for (const index of table.indexes) {
+          const indexQuery = `ALTER TABLE ${table.tableName} ADD INDEX ${index.name} (${index.columns.join(', ')})`;
+          await connection.query(indexQuery);
+          console.log(`Index '${index.name}' added to table '${table.tableName}'`);
+        }
+      }
     } else {
       await checkAndAlterFields(connection, table);
     }
   }
 }
 
+// Function to check and alter fields in existing tables if needed
 async function checkAndAlterFields(connection, table) {
   const [columns] = await connection.query(`SHOW COLUMNS FROM ${table.tableName}`);
   const existingFields = columns.map(column => column.Field);
@@ -283,6 +311,7 @@ async function checkAndAlterFields(connection, table) {
   }
 }
 
+// Function to add new fields to an existing table
 async function addFieldsToTable(connection, tableName, fieldsToAdd) {
   for (const field of fieldsToAdd) {
     const addQuery = `ALTER TABLE ${tableName} ADD COLUMN ${field.name} ${field.type}`;
@@ -291,6 +320,7 @@ async function addFieldsToTable(connection, tableName, fieldsToAdd) {
   }
 }
 
+// Function to remove fields from an existing table
 async function removeFieldsFromTable(connection, tableName, fieldsToRemove) {
   for (const field of fieldsToRemove) {
     const removeQuery = `ALTER TABLE ${tableName} DROP COLUMN ${field}`;
@@ -299,6 +329,8 @@ async function removeFieldsFromTable(connection, tableName, fieldsToRemove) {
   }
 }
 
+// Uncomment and use this function to remove unused tables
+/*
 async function removeUnusedTables(connection, existingTables) {
   for (const existingTable of existingTables) {
     const tableExists = tableInfo.some(table => table.tableName === existingTable);
@@ -309,5 +341,7 @@ async function removeUnusedTables(connection, existingTables) {
     }
   }
 }
+*/
 
+// Export the necessary functions and tableInfo
 module.exports = { checkTables, tableInfo };
