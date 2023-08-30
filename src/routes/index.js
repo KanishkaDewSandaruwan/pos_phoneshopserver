@@ -14,6 +14,7 @@ const permissionGroupRoute = require('./permission_group/permission_group');
 const GRNRoute = require('./grn/grn');
 const customerRoute = require('./customer/customer');
 const stockRoute = require('./stock/stock');
+const storageRoute = require('./storage/storage');
 
 
 module.exports = (config) => {
@@ -38,6 +39,7 @@ module.exports = (config) => {
   router.use('/subcategory', subcategoryRoute(config)); //admin user only
   router.use('/color', colorRoute(config)); //admin user only
   router.use('/brand', brandRoute(config)); //admin user only
+  router.use('/storage', storageRoute(config)); //admin user only
 
   router.use('/permission', permissionRoute(config)); //super admin only
   router.use('/permission_group', permissionGroupRoute(config)); //super admin only

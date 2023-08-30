@@ -120,6 +120,7 @@ const addItem = (req, res) => {
             res.status(409).send({ error: 'This item name is already exists' });
             return;
         }
+        
         ItemModel.getItemByCode(item.item_code, (error, results) => {
             if (error) {
                 res.status(500).send({ error: 'Error fetching data from the database' });
