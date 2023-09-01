@@ -21,7 +21,7 @@ module.exports = (config) => {
   router.post('/create', uploadItem.single('item_image'), authenticateToken, addItem);
   router.post('/upload/:itemId', uploadItem.single('item'), authenticateToken, updateItemImage);
   router.use('/getitem', express.static('src/uploads/item/'));
-  router.get('/allBybranch/:branch_id', authenticateToken, getAllItemsBybranch);
+  router.get('/withPriceBybranch/:branch_id', authenticateToken, getAllItemsBybranch);
   router.get('/all/comon', authenticateToken, getAllComonItems);
   router.get('/all/withPrice', authenticateToken, getAllItemsWithPrice);
   router.get('/:itemId', authenticateToken, getItemById);
