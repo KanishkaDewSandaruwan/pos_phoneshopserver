@@ -24,6 +24,17 @@ const {
   finishGrn,
 } = require('../../mvc/grn/GRNController');
 
+const {
+  getAllTempItemDetails,
+  getTempItemDetailsById,
+  addTempItemDetails,
+  updateTempItemDetails,
+  deleteTempItemDetails,
+  permenentdeleteTempItemDetails,
+  deletemultipleTempItemDetails,
+  permenentdeletemultipleTempItemDetails
+} = require('../../mvc/grn/ItemDetailsController');
+
 const { authenticateToken } = require('../../middlewares/userAuth');
 const { authorizeAccessControll } = require('../../middlewares/userAccess');
 
@@ -35,10 +46,9 @@ module.exports = (config) => {
   router.get('/:grnId', authenticateToken, getGrnById);
   router.post('/create', authenticateToken, addGrn);
   router.put('/update/status/:grnId', authenticateToken, updateGrnStatus);
-  
-//   router.put('/update/:grnId', authenticateToken, updateGrn);
-//   router.put('/delete/:grnId', authorizeAccessControll, deleteGrn);
-//   router.put('/delete', authorizeAccessControll, deleteGrns);
+  router.put('/update/:grnId', authenticateToken, updateGrn);
+  router.put('/delete/:grnId', authorizeAccessControll, deleteGrn);
+  router.put('/delete', authorizeAccessControll, deleteGrns);
 //   router.delete('/permanent-delete/:grnId', authorizeAccessControll, permanentDeleteGrn);
 
   // Routes for GrnTemp Model
@@ -56,9 +66,21 @@ module.exports = (config) => {
   router.put('/temp/UpdateWholesaleprice/:grntempid', authenticateToken, updateGrnTempWholesaleprice);
   router.put('/temp/UpdateGrnqty/:grntempid', authenticateToken, updateGrnTempGrnqty);
   router.put('/temp/UpdateDiscount/:grntempid', authenticateToken, updateGrnTempDiscount);
+
+  // Routes for  TempItemDetailsModel
+  router.post('/tempitem/create', authenticateToken, addTempItemDetails);
+  router.get('/tempitem/all', authenticateToken, getAllTempItemDetails);
+  router.get('/tempitem/:temp_itemdetails_id', authenticateToken, getTempItemDetailsById);
+  router.put('/tempitem/update/:temp_itemdetails_id', authenticateToken, updateTempItemDetails);
+  router.put('/tempitem/delete/:temp_itemdetails_id', authenticateToken, deleteTempItemDetails);
+  router.delete('/tempitem/delete/:temp_itemdetails_id', authenticateToken, permenentdeleteTempItemDetails);
+  router.put('/tempitem/delete', authenticateToken, deletemultipleTempItemDetails);
+  router.delete('/tempitem/delete', authenticateToken, permenentdeletemultipleTempItemDetails);
+
   
   //finalize grn
   router.put('/finish/:grnId', authenticateToken, finishGrn);
+
 
 
   return router;

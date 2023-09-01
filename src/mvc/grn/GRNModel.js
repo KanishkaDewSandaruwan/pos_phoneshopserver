@@ -13,6 +13,7 @@ const GrnModel = {
     const { supplier_id, reference_number, branch_id, user_id } = grn;
     const trndate = new Date().toISOString().slice(0, 19).replace('T', ' ');
     const defaultValues = 0;
+    const activeValues =1;
    
 
     const query = 'INSERT INTO grn (supplier_id, reference_number, branch_id, status, trndate, is_delete, user_id) VALUES (?, ?, ?, ?, ?, ?, ?)';
@@ -31,9 +32,9 @@ const GrnModel = {
   },
 
   updateGrn(grn, grnId, callback) {
-    const { supplier_id, reference_number, branch_id, status } = grn;
-    const query = 'UPDATE grn SET supplier_id = ?, reference_number = ?, branch_id = ?, status = ? WHERE grnno = ?';
-    const values = [supplier_id, reference_number, branch_id, status, grnId];
+    const { supplier_id, reference_number, branch_id, status, user_id } = grn;
+    const query = 'UPDATE grn SET supplier_id = ?, reference_number = ?, branch_id = ?, status = ?, user_id = ? WHERE grnno = ?';
+    const values = [supplier_id, reference_number, branch_id, status, user_id, grnId];
 
     connection.query(query, values, callback);
   },
