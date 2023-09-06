@@ -18,8 +18,8 @@ const TempItemDetailsModel = {
     connection.query('SELECT * FROM temp_itemdetails WHERE is_delete = 0', callback);
   },
 
-  addTempItemDetails(tempitemdetails, callback) {
-    const { grntempid, serial_no, emi_number, colorid} = tempitemdetails;
+  addTempItemDetails(grntempid, serial_no, emi_number, colorid, callback) {
+
     const trndate = new Date().toISOString().slice(0, 19).replace('T', ' ');
     const defaultValues = 0;
     //const activeValues = 1;
@@ -32,9 +32,6 @@ const TempItemDetailsModel = {
         callback(error, null);
         return;
       }
-
-      const temp_itemdetails_id = results.insertId;
-      callback(null, temp_itemdetails_id);
     });
   },
 

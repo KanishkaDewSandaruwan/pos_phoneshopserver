@@ -4,18 +4,91 @@ const {
   GrnTempModel
 } = require('./GRNModel');
 
-//
+//grn finishing ////////////
 
-const finishGrn = (req, res) => {
-  GrnModel.getAllGrns((error, results) => {
-    if (error) {
-      res.status(500).send({ error: 'Error fetching data from the database' });
-      return;
-    }
+const finishGrn = async (req, res) => {
 
-    res.status(200).send(results);
-  });
+    const { grnno } = req.params;
+    const { branch_id } = req.body;
+
+    // Fetch grntempdetails
+    GrnTempModel.getAllGrnTempBygrnnoAndBranch(grnno, branch_id, (error, grntempdetails) => {
+      if (error) {
+        console.error(`Error fetching grntempdetails: ${error}`);
+        res.status(500).send({ error: 'Failed to fetch grntempdetails' });
+        return;
+      }
+
+      console.log(grntempdetails.length);
+
+      if (!grntempdetails || grntempdetails.length === 0) {
+        res.status(404).send({ error: 'Grn temp not found' });
+        return;
+      }
+
+      // Initialize a variable to track the total updated rows
+      let successCount = 0;
+      let failCount = 0;
+
+      // Update stock for each grntempdetail
+      for (const detail of grntempdetails) {
+        const { grnqty, itemid, branch_id } = detail;
+
+        GrnModel.getStokebyItemidAndBranch(itemid,branch_id, (error, results) => {
+          if (error) {
+            console.error(`Error fetching stock in database`);
+            failCount++;
+          } else if (results.length === 0) {
+            GrnModel.addnewStokes(grnqty, itemid, branch_id, (insertError, updateResult) => {
+              if (insertError) {
+                console.error(`Error inserting stock`);
+                failCount++;
+              } else {
+                successCount++;
+                console.log(`new stok added successfully`);
+              }
+    
+            });
+            
+          } else {
+            GrnModel.updateDetailsInStock(grnqty, itemid, branch_id, (updateError, updateResult) => {
+              if (updateError) {
+                console.error(`Error updating stock`);
+                failCount++;
+
+              } else {
+                successCount++;
+                console.log(`stok updated successfully`);
+              }
+    
+              // Check if all updates have been processed
+              if (successCount + failCount === grntempdetails.length) {
+                const totalCount = grntempdetails.length;
+                res.status(200).send({
+                  totalCount,
+                  successCount,
+                  failCount,
+                });
+              }
+            });
+          }
+    
+          // Check if all stokes have been processed
+          if (successCount + failCount === grntempdetails.length) {
+            const totalCount = grntempdetails.length;
+            res.status(200).send({
+              totalCount,
+              successCount,
+              failCount,
+            });
+          }
+        });
+      }
+      
+    });
 };
+
+
 
 // Controller functions for Grn Model
 const getAllGrns = (req, res) => {

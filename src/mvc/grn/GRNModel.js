@@ -101,6 +101,36 @@ const GrnModel = {
     connection.query(query, values, callback);
   },
 
+  updateDetailsInStock(grnqty, itemid, branch_id, callback) {
+    const query = 'UPDATE stock SET qty = ? WHERE itemid = ? AND branch_id = ?';
+    const values = [grnqty, itemid, branch_id];
+    connection.query(query, values, callback);
+  },
+
+  addnewStokes(grnqty, itemid, branch_id, callback) {
+    const trndate = new Date().toISOString().slice(0, 19).replace('T', ' ');
+    const defaultValues = 0;
+    //const activeValues = 1;
+
+    const query = 'INSERT INTO stock (qty, itemid, branch_id, trndate, is_delete) VALUES (?, ?, ?, ?, ?)';
+    const values = [grnqty, itemid, branch_id, trndate, defaultValues];
+
+    connection.query(query, values, (error, results) => {
+      if (error) {
+        console.error(`Error inserting stock: ${error}`);
+        callback(error, null);
+        return;
+      }
+      const stockid = results.insertId;
+      callback(null, stockid);
+    });
+  },
+
+  
+  getStokebyItemidAndBranch(itemid,branch_id, callback) {
+    connection.query('SELECT * FROM stock WHERE itemid = ? AND branch_id = ? AND is_delete = 0', [ itemid, branch_id ], callback);
+  },
+  
   getGrnByIdPromise(grnId) {
     return new Promise((resolve, reject) => {
       connection.query('SELECT * FROM grn WHERE grnno = ?', [grnId], (error, results) => {
@@ -130,6 +160,26 @@ const GrnTempModel = {
   getItemBybranch(itemid, branch_id, callback) {
     connection.query('SELECT * FROM item_price WHERE itemId = ? AND branch_id = ? AND is_delete = 0', [itemid, branch_id], callback);
   },
+
+  getAllGrnTempBygrnnoAndBranch(grnno, branch_id, callback) {
+    connection.query(
+      'SELECT * FROM grn_temp WHERE is_delete = 0 AND grnno = ? AND branch_id = ?',
+      [grnno, branch_id],
+      (error, results) => {
+        if (error) {
+          // Handle the database error by passing it to the callback
+          callback(error, null);
+        } else {
+          // No error, pass the results to the callback
+          callback(null, results);
+        }
+      }
+    );
+  },  
+
+  
+
+
 
   addGrnTemp(grnTemp,pricedetails, callback) {
     const { sell_price, purchase_price, wholesale_price, discount } = pricedetails;

@@ -35,45 +35,58 @@ const getAllTempItemDetails = (req, res) => {
 
 const addTempItemDetails = (req, res) => {
 
-    const tempitemdetails = req.body;
-  
-    TempItemDetailsModel.getTempItemDetailsBySerial(tempitemdetails.serial_no, (error, results) => {
-      if (error) {
-          res.status(500).send({ error: 'Error fetching data from the database' });
-          return;
-      }
-  
-      if (results.length > 0) {
-          res.status(409).send({ error: 'This serial_no is already exists' });
-          return;
-      }
+  const tempitemdetails = req.body;
 
-      TempItemDetailsModel.getTempItemDetailsByEmi(tempitemdetails.emi_number, (error, results) => {
-        if (error) {
-            res.status(500).send({ error: 'Error fetching data from the database' });
-            return;
-        }
-    
-        if (results.length > 0) {
-            res.status(409).send({ error: 'This emi_number is already exists' });
-            return;
-        }
+  let successCount = 0;
+  let failCount = 0;
 
-      TempItemDetailsModel.addTempItemDetails(tempitemdetails, (error, tempitemdetails_id) => {
+  for (const detail of tempitemdetails) {
+
+    const { grntempid, serial_no, emi_number, colorid} = detail;
+
+    TempItemDetailsModel.getTempItemDetailsBySerial(serial_no, (error, results) => {
       if (error) {
         res.status(500).send({ error: 'Error fetching data from the database' });
         return;
+    } else if (results.length > 0) {
+      res.status(409).send(`this serial number is alredy exist: ${serial_no}`);
+      return;
+    } else {
+      console.log('cscse');
+      TempItemDetailsModel.addTempItemDetails(grntempid, serial_no, emi_number, colorid, (insertError, deleteResult) => {
+        console.log('cscs');
+        
+          if (insertError) {
+            console.error(`Error inserting tempitemdetails`);
+            failCount++;
+          } else {
+            successCount++;
+            console.log(`tempitemdetails added successfully`);
+          }
+
+          // Check if all insertings have been processed
+          if (successCount + failCount === tempitemdetails.length) {
+            const totalCount = tempitemdetails.length;
+            res.status(200).send({
+              totalCount,
+              successCount,
+              failCount,
+            });
+          }
+        });
       }
-  
-      if (!tempitemdetails_id) {
-        res.status(404).send({ error: 'Failed to create tempitemdetails' });
-        return;
+
+      // Check if all tempitemdetails have been processed
+      if (successCount + failCount === tempitemdetails.length) {
+        const totalCount = tempitemdetails.length;
+        res.status(200).send({
+          totalCount,
+          successCount,
+          failCount,
+        });
       }
-  
-      res.status(200).send({ message: 'TempItemDetails created successfully', tempitemdetails_id });
     });
-    });
-  });
+  }
   };
 
   const updateTempItemDetails = (req, res) => {
@@ -210,6 +223,7 @@ const addTempItemDetails = (req, res) => {
           failCount++;
         } else {
             TempItemDetailsModel.deleteTempItemDetails(temp_itemdetails_id, 1, (deleteError, deleteResult) => {
+              console.log('cscs');
             if (deleteError) {
               console.error(`Error deleting tempitemdetails with ID ${temp_itemdetails_id}: ${deleteError}`);
               failCount++;

@@ -79,7 +79,7 @@ module.exports = (config) => {
 
   
   //finalize grn
-  router.put('/finish/:grnId', authenticateToken, finishGrn);
+  router.put('/finish/:grnno', authenticateToken, finishGrn);
 
 
 
