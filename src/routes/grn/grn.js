@@ -79,7 +79,7 @@ module.exports = (config) => {
 
   
   //finalize grn
-  router.put('/finish/:grnno', authenticateToken, finishGrn);
+  router.put('/finish/:grnno/:branch_id', authenticateToken, finishGrn);
 
 
 

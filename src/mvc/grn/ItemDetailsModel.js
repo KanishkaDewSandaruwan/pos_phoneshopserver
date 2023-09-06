@@ -13,25 +13,27 @@ const TempItemDetailsModel = {
   getTempItemDetailsByEmi(emi_number, callback) {
     connection.query('SELECT * FROM temp_itemdetails WHERE emi_number = ? AND is_delete = 0', [emi_number], callback);
   },
- 
+
   getAllTempItemDetails(callback) {
     connection.query('SELECT * FROM temp_itemdetails WHERE is_delete = 0', callback);
   },
 
-  addTempItemDetails(grntempid, serial_no, emi_number, colorid, callback) {
-
+  addTempItemDetails(grntempid, serial_no, colorid, callback) {
     const trndate = new Date().toISOString().slice(0, 19).replace('T', ' ');
     const defaultValues = 0;
-    //const activeValues = 1;
 
-    const query = 'INSERT INTO temp_itemdetails (grntempid, serial_no, emi_number, colorid, trndate, is_delete) VALUES (?, ?, ?, ?, ?, ?)';
-    const values = [grntempid, serial_no, emi_number, colorid, trndate, defaultValues];
+    const query = 'INSERT INTO temp_itemdetails (grntempid, serial_no, colorid, trndate, is_delete) VALUES (?, ?, ?, ?, ?)';
+    const values = [grntempid, serial_no, colorid, trndate, defaultValues];
 
     connection.query(query, values, (error, results) => {
       if (error) {
         callback(error, null);
         return;
       }
+
+      // Assuming you want to return the insert ID
+      const insertId = results.insertId;
+      callback(null, insertId);
     });
   },
 

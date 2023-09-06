@@ -2,13 +2,13 @@ const { connection } = require('../../../config/connection');
 
 const ItemModel = {
   getAllItemsBybranch(branch_id, callback) {
-    connection.query('SELECT * FROM item JOIN item_price ON item.itemid = item_price.itemid WHERE item.is_delete = 0 AND item_price.is_delete = 0 AND item_price.branch_id = ?',[branch_id], callback);
+    connection.query('SELECT * FROM item JOIN item_price ON item.itemid = item_price.itemid WHERE item.is_delete = 0 AND item_price.is_delete = 0 AND item_price.branch_id = ?', [branch_id], callback);
   },
 
   getAllItemsWithPrice(callback) {
-    connection.query('SELECT * FROM item JOIN item_price ON item.itemid = item_price.itemid WHERE item.is_delete = 0 AND item_price.is_delete = 0',callback);
+    connection.query('SELECT * FROM item JOIN item_price ON item.itemid = item_price.itemid WHERE item.is_delete = 0 AND item_price.is_delete = 0', callback);
   },
-    
+
 
   getAllItems(callback) {
     connection.query('SELECT * FROM item WHERE is_delete = 0', callback);
@@ -19,8 +19,8 @@ const ItemModel = {
   },
 
   getPriceBybranchId(itemid, branch_id, callback) {
-    connection.query('SELECT item_priceid FROM item_price WHERE itemId = ? AND branch_id = ? AND is_delete = 0', [itemid, branch_id], callback);
-},
+    connection.query('SELECT * FROM item_price WHERE itemId = ? AND branch_id = ? AND is_delete = 0', [itemid, branch_id], callback);
+  },
 
 
 
@@ -33,7 +33,7 @@ const ItemModel = {
   },
 
   addItem(item, itemimage, callback) {
-    const { item_code, item_name, item_description, catid, subcatid, storageid, sale_warranty, condition_type, brandid, serial, sell_price, purchase_price, wholesale_price, discount} = item;
+    const { item_code, item_name, item_description, catid, subcatid, storageid, sale_warranty, condition_type, brandid, serial, sell_price, purchase_price, wholesale_price, discount } = item;
     const trndate = new Date().toISOString().slice(0, 19).replace('T', ' ');
     const defaultValues = 0;
     const activeValues = 1;
@@ -42,47 +42,55 @@ const ItemModel = {
     const values = [item_code, item_name, item_description, catid, subcatid, storageid, sale_warranty, condition_type, brandid, serial, itemimage, trndate, activeValues, defaultValues];
 
     connection.query(query, values, (error, results) => {
-        if (error) {
-            callback(error, null);
-            return;
-        }
+      if (error) {
+        callback(error, null);
+        return;
+      }
 
-        const itemId = results.insertId;
-        callback(null, itemId);
+      const itemId = results.insertId;
+      callback(null, itemId);
 
     });
-},
+  },
 
-addNewitemPrice(price, callback) {
-  const { itemid, sell_price, purchase_price, wholesale_price, discount, branch_id } = price;
-  const trndate = new Date().toISOString().slice(0, 19).replace('T', ' ');
-  const defaultValues = 0;
-  const activeValues = 1;
+  addNewitemPrice(price, callback) {
+    const { itemid, sell_price, purchase_price, wholesale_price, discount, branch_id } = price;
+    const trndate = new Date().toISOString().slice(0, 19).replace('T', ' ');
+    const defaultValues = 0;
+    const activeValues = 1;
 
-  const query = 'INSERT INTO item_price (itemid, sell_price, purchase_price, wholesale_price, discount, branch_id, status, trndate, is_delete) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)';
-  const values = [itemid, sell_price, purchase_price, wholesale_price, discount, branch_id, activeValues, trndate, defaultValues];
+    const query = 'INSERT INTO item_price (itemid, sell_price, purchase_price, wholesale_price, discount, branch_id, status, trndate, is_delete) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)';
+    const values = [itemid, sell_price, purchase_price, wholesale_price, discount, branch_id, activeValues, trndate, defaultValues];
 
-  connection.query(query, values, (error2, results) => {
+    connection.query(query, values, (error2, results) => {
       if (error2) {
-          callback(error2, null);
-          return;
+        callback(error2, null);
+        return;
       }
 
       const itempriceId = results.insertId;
-  callback(null,itempriceId);
+      callback(null, itempriceId);
 
-});
-},
+    });
+  },
+
+  updateItemPrices(itemid, sell_price, purchase_price, wholesale_price, discount, branch_id, callback){
+    const trndate = new Date().toISOString().slice(0, 19).replace('T', ' ');
+  
+    const query = 'UPDATE item_price SET sell_price = ?, purchase_price = ?, wholesale_price = ?, discount = ?, trndate = ? WHERE itemid = ?  AND branch_id = ?';
+    const values = [sell_price, purchase_price, wholesale_price, discount, trndate, itemid, branch_id];
+    connection.query(query, values, callback);
+  },
 
 
   updateItem(item, itemId, callback) {
-    
+
     const { item_code, item_name, item_description, catid, subcatid, storageid, sale_warranty, condition_type, brandid, serial_status, status } = item;
     const query = 'UPDATE item SET item_code = ?, item_name = ?, item_description = ?, catid = ?, subcatid = ?, storageid = ?, sale_warranty = ?, condition_type = ?, brandid = ?, serial_status = ?, status = ? WHERE itemid = ?';
     const values = [item_code, item_name, item_description, catid, subcatid, storageid, sale_warranty, condition_type, brandid, serial_status, status, itemId];
 
     connection.query(query, values, callback);
-    
+
   },
 
   updateItemImage(itemimage, itemId, callback) {
@@ -97,34 +105,34 @@ addNewitemPrice(price, callback) {
 
     connection.query(query1, values1, (error1, results1) => {
       if (error1) {
-          callback(error1, null);
-          return;
+        callback(error1, null);
+        return;
       }
-      
+
       const query2 = 'UPDATE item_price SET is_delete = ? WHERE itemid = ?';
       const values2 = [is_delete, itemId];
-  
+
       connection.query(query2, values2, (error2, results2) => {
-          if (error2) {
-              callback(error2, null);
-              return;
-          }
+        if (error2) {
+          callback(error2, null);
+          return;
+        }
 
-      callback(null,null);
+        callback(null, null);
 
-  });
+      });
 
-  });
-},
+    });
+  },
 
   deleteItems(itemIds, callback) {
     if (!Array.isArray(itemIds)) {
       itemIds = [itemIds]; // Convert to array if it's a single user ID
     }
-  
+
     let successCount = 0;
     let failCount = 0;
-  
+
     for (const itemId of itemIds) {
       ItemModel.getItemById(itemId, (error, results) => {
         if (error || results.length === 0) {
@@ -137,13 +145,13 @@ addNewitemPrice(price, callback) {
             } else {
               successCount++;
             }
-  
+
             checkCompletion();
           });
         }
       });
     }
-  
+
     function checkCompletion() {
       const totalCount = itemIds.length;
       if (successCount + failCount === totalCount) {
@@ -157,7 +165,7 @@ addNewitemPrice(price, callback) {
       }
     }
   }
-  
+
   ,
 
 };

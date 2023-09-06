@@ -4,89 +4,121 @@ const {
   GrnTempModel
 } = require('./GRNModel');
 
-//grn finishing ////////////
+const StockModel = require('../stock/StockModel');
+const ItemModel = require('../item/ItemModel');
 
 const finishGrn = async (req, res) => {
+  const { grnno, branch_id } = req.params;
+  let hasError = false;
 
-    const { grnno } = req.params;
-    const { branch_id } = req.body;
+  GrnTempModel.getAllGrnTempBygrnnoAndBranch(grnno, branch_id, (error, grntempdetails) => {
+    if (error) {
+      console.error(`Error fetching grntempdetails: ${error}`);
+      res.status(500).send({ error: 'Failed to fetch grntempdetails' });
+      hasError = true; // Set the flag to true
+      return;
+    }
+    if (!grntempdetails || grntempdetails.length === 0) {
+      res.status(404).send({ error: 'Grn temp not found' });
+      hasError = true; // Set the flag to true
+      return;
+    }
 
-    // Fetch grntempdetails
-    GrnTempModel.getAllGrnTempBygrnnoAndBranch(grnno, branch_id, (error, grntempdetails) => {
-      if (error) {
-        console.error(`Error fetching grntempdetails: ${error}`);
-        res.status(500).send({ error: 'Failed to fetch grntempdetails' });
-        return;
+    let processedCount = 0;
+    const totalCount = grntempdetails.length;
+
+    const sendFailResponse = () => {
+      res.status(500).send({ message: 'Grn save failed' });
+    };
+
+    const sendSuccessResponse = () => {
+      if (processedCount === totalCount) {
+        if (hasError) {
+          sendFailResponse();
+        } else {
+          res.status(200).send({ message: 'Grn save Success' });
+        }
       }
+    };
 
-      console.log(grntempdetails.length);
+    for (const detail of grntempdetails) {
+      const itemid = detail.itemid;
 
-      if (!grntempdetails || grntempdetails.length === 0) {
-        res.status(404).send({ error: 'Grn temp not found' });
-        return;
-      }
+      StockModel.getStockByItemAndBranch(itemid, branch_id, (error, results) => {
+        if (error) {
+          console.error(`Error fetching data from the database: ${error}`);
+          hasError = true; // Set the flag to true
+          processedCount++;
+          sendFailResponse();
+          return;
+        }
 
-      // Initialize a variable to track the total updated rows
-      let successCount = 0;
-      let failCount = 0;
+        if (results.length > 0) {
+          StockModel.updateDetailsInStock(detail.grnqty, itemid, branch_id, (error, grnId) => {
+            if (error) {
+              console.error(`Error updating stock: ${error}`);
+              hasError = true; // Set the flag to true
+            }
+            processedCount++;
+            sendSuccessResponse();
+          });
+        } else {
+          StockModel.addnewStokes(detail.grnqty, itemid, branch_id, (error, stockid) => {
+            if (error) {
+              console.error(`Error adding new stock: ${error}`);
+              hasError = true; // Set the flag to true
+            }
+            console.log('stockid', stockid);
+            processedCount++;
+            sendSuccessResponse();
+          });
+        }
+      });
 
-      // Update stock for each grntempdetail
-      for (const detail of grntempdetails) {
-        const { grnqty, itemid, branch_id } = detail;
+      // update Item Price
+      ItemModel.getPriceBybranchId(itemid, branch_id, (error, results) => {
+        if (error) {
+          console.error(`Error fetching data from the database: ${error}`);
+          hasError = true; // Set the flag to true
+          processedCount++;
+          sendFailResponse();
+          return;
+        }
 
-        GrnModel.getStokebyItemidAndBranch(itemid,branch_id, (error, results) => {
-          if (error) {
-            console.error(`Error fetching stock in database`);
-            failCount++;
-          } else if (results.length === 0) {
-            GrnModel.addnewStokes(grnqty, itemid, branch_id, (insertError, updateResult) => {
-              if (insertError) {
-                console.error(`Error inserting stock`);
-                failCount++;
-              } else {
-                successCount++;
-                console.log(`new stok added successfully`);
-              }
-    
-            });
-            
-          } else {
-            GrnModel.updateDetailsInStock(grnqty, itemid, branch_id, (updateError, updateResult) => {
-              if (updateError) {
-                console.error(`Error updating stock`);
-                failCount++;
+        if (results.length > 0) {
+          ItemModel.updateItemPrices(itemid, detail.sell_price, detail.purchase_price, detail.wholesale_price, detail.discount, branch_id, (error, grnId) => {
+            if (error) {
+              console.error(`Error updating item prices: ${error}`);
+              hasError = true; // Set the flag to true
+            }
+            processedCount++;
+            sendSuccessResponse();
+          });
+        } else {
+          const itemPrice = { 
+            itemid: itemid, 
+            sell_price: detail.sell_price, 
+            purchase_price: detail.purchase_price, 
+            wholesale_price: detail.wholesale_price, 
+            discount: detail.discount, 
+            branch_id: branch_id
+          };
 
-              } else {
-                successCount++;
-                console.log(`stok updated successfully`);
-              }
-    
-              // Check if all updates have been processed
-              if (successCount + failCount === grntempdetails.length) {
-                const totalCount = grntempdetails.length;
-                res.status(200).send({
-                  totalCount,
-                  successCount,
-                  failCount,
-                });
-              }
-            });
-          }
-    
-          // Check if all stokes have been processed
-          if (successCount + failCount === grntempdetails.length) {
-            const totalCount = grntempdetails.length;
-            res.status(200).send({
-              totalCount,
-              successCount,
-              failCount,
-            });
-          }
-        });
-      }
-      
-    });
+          ItemModel.addNewitemPrice(itemPrice, (error, itempriceId) => {
+            if (error) {
+              console.error(`Error adding new item price: ${error}`);
+              hasError = true; // Set the flag to true
+            }
+            console.log('itempriceId', itempriceId);
+            processedCount++;
+            sendSuccessResponse();
+          });
+        }
+      });
+    }
+  });
 };
+
 
 
 

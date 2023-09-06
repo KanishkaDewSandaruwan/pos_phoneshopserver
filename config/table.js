@@ -238,9 +238,8 @@ const tableInfo = [
     tableName: 'itemdetails',
     fields: [
       { name: 'itemdetails_id', type: 'INT AUTO_INCREMENT PRIMARY KEY' },
-      { name: 'grnno', type: 'INT(255)' },
+      { name: 'itemid', type: 'INT(255)' },
       { name: 'sirial_no', type: 'VARCHAR(255)' },
-      { name: 'emi_number', type: 'VARCHAR(255)' },
       { name: 'colorid', type: 'INT(255)' },
       { name: 'trndate', type: 'DATETIME' },
       { name: 'is_delete', type: 'INT(5)' },
@@ -252,7 +251,6 @@ const tableInfo = [
       { name: 'temp_itemdetails_id', type: 'INT AUTO_INCREMENT PRIMARY KEY' },
       { name: 'grntempid', type: 'INT(255)' },
       { name: 'serial_no', type: 'VARCHAR(255)' },
-      { name: 'emi_number', type: 'VARCHAR(255)' },
       { name: 'colorid', type: 'INT(255)' },
       { name: 'trndate', type: 'DATETIME' },
       { name: 'is_delete', type: 'INT(5)' },

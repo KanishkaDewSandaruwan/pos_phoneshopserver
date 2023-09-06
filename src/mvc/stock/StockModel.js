@@ -20,6 +20,31 @@ const StockModel = {
         connection.query(query, values, callback);
     },
 
+    updateDetailsInStock(grnqty, itemid, branch_id, callback) {
+        const query = 'UPDATE stock SET qty = qty + ? WHERE itemid = ? AND branch_id = ?';
+        const values = [grnqty, itemid, branch_id];
+        connection.query(query, values, callback);
+    },
+
+    addnewStokes(grnqty, itemid, branch_id, callback) {
+        const trndate = new Date().toISOString().slice(0, 19).replace('T', ' ');
+        const defaultValues = 0;
+        //const activeValues = 1;
+
+        const query = 'INSERT INTO stock (qty, itemid, branch_id, trndate, is_delete) VALUES (?, ?, ?, ?, ?)';
+        const values = [grnqty, itemid, branch_id, trndate, defaultValues];
+
+        connection.query(query, values, (error, results) => {
+            if (error) {
+                console.error(`Error inserting stock: ${error}`);
+                callback(error, null);
+                return;
+            }
+            const stockid = results.insertId;
+            callback(null, stockid);
+        });
+    },
+
     deleteStock(stockId, value, callback) {
         const query = 'UPDATE stock SET is_delete = ? WHERE stockid = ?';
         const values = [value, stockId];
