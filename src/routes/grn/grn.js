@@ -32,7 +32,8 @@ const {
   deleteTempItemDetails,
   permenentdeleteTempItemDetails,
   deletemultipleTempItemDetails,
-  permenentdeletemultipleTempItemDetails
+  permenentdeletemultipleTempItemDetails,
+  addItemDetails
 } = require('../../mvc/grn/ItemDetailsController');
 
 const { authenticateToken } = require('../../middlewares/userAuth');
@@ -76,6 +77,8 @@ module.exports = (config) => {
   router.delete('/tempitem/delete/:temp_itemdetails_id', authenticateToken, permenentdeleteTempItemDetails);
   router.put('/tempitem/delete', authenticateToken, deletemultipleTempItemDetails);
   router.delete('/tempitem/delete', authenticateToken, permenentdeletemultipleTempItemDetails);
+
+  router.post('/itemdetails/create', authenticateToken, addItemDetails);
 
   
   //finalize grn

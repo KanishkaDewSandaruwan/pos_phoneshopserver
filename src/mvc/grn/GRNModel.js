@@ -104,7 +104,7 @@ const GrnModel = {
   getStokebyItemidAndBranch(itemid,branch_id, callback) {
     connection.query('SELECT * FROM stock WHERE itemid = ? AND branch_id = ? AND is_delete = 0', [ itemid, branch_id ], callback);
   },
-  
+
   getGrnByIdPromise(grnId) {
     return new Promise((resolve, reject) => {
       connection.query('SELECT * FROM grn WHERE grnno = ?', [grnId], (error, results) => {
@@ -151,11 +151,43 @@ const GrnTempModel = {
     );
   },  
 
+  addGrnTempwithoutprice(grnTemp, zeropricedetails, callback) {
+    const { itemid, item_name, grnno, branch_id } = grnTemp;
+    const trndate = new Date().toISOString().slice(0, 19).replace('T', ' ');
+    const defaultValues = 0;
+    const activeValues = 1;
+    const grnqty = 0;
   
+    const query =
+      'INSERT INTO grn_temp (itemid, sell_price, purchase_price, wholesale_price, discount, grnqty, branch_id, trndate, status, is_delete, item_name, grnno ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
+  
+    const values = [
+      itemid,
+      zeropricedetails.sell_price, // Access properties from zeropricedetails object
+      zeropricedetails.purchase_price,
+      zeropricedetails.wholesale_price,
+      zeropricedetails.discount,
+      grnqty,
+      branch_id,
+      trndate,
+      activeValues,
+      defaultValues,
+      item_name,
+      grnno,
+    ];
+  
+    connection.query(query, values, (error, results) => {
+      if (error) {
+        callback(error, null);
+        return;
+      }
+  
+      const grnTempId = results.insertId;
+      callback(null, grnTempId);
+    });
+  },
 
-
-
-  addGrnTemp(grnTemp,pricedetails, callback) {
+  addGrnTempwithprice(grnTemp,pricedetails, callback) {
     const { sell_price, purchase_price, wholesale_price, discount } = pricedetails;
     const { itemid,item_name, grnno, branch_id } = grnTemp;
     const trndate = new Date().toISOString().slice(0, 19).replace('T', ' ');

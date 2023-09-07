@@ -18,6 +18,10 @@ const TempItemDetailsModel = {
     connection.query('SELECT * FROM temp_itemdetails WHERE is_delete = 0', callback);
   },
 
+  getTempItemDetailsByBranchAngrntemp(grntempid, callback) {
+    connection.query('SELECT * FROM temp_itemdetails WHERE grntempid = ? AND is_delete = 0', [grntempid,], callback);
+  },
+
   addTempItemDetails(grntempid, serial_no, colorid, callback) {
     const trndate = new Date().toISOString().slice(0, 19).replace('T', ' ');
     const defaultValues = 0;
@@ -62,4 +66,37 @@ const TempItemDetailsModel = {
 
 };
 
-module.exports = TempItemDetailsModel;
+const ItemDetailsModel = {
+
+  getItemDetailsBySerial(serial_no, callback) {
+    connection.query('SELECT * FROM itemdetails WHERE serial_no = ? AND is_delete = 0', [serial_no], callback);
+  },
+
+  addItemDetails(itemid, serial_no, colorid, callback) {
+    const trndate = new Date().toISOString().slice(0, 19).replace('T', ' ');
+    const defaultValues = 0;
+
+    const query = 'INSERT INTO itemdetails (itemid, serial_no, colorid, trndate, is_delete) VALUES (?, ?, ?, ?, ?)';
+    const values = [itemid, serial_no, colorid, trndate, defaultValues];
+
+    connection.query(query, values, (error, results) => {
+      if (error) {
+        callback(error, null);
+        return;
+      }
+
+      // Assuming you want to return the insert ID
+      const insertId = results.insertId;
+      callback(null, insertId);
+    });
+  },
+
+
+
+};
+
+
+module.exports = {
+  TempItemDetailsModel,
+  ItemDetailsModel,
+};

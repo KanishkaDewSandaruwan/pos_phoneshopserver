@@ -4,6 +4,8 @@ const {
   GrnTempModel
 } = require('./GRNModel');
 
+const {TempItemDetailsModel,ItemDetailsModel} = require('./ItemDetailsModel');
+
 const StockModel = require('../stock/StockModel');
 const ItemModel = require('../item/ItemModel');
 
@@ -115,6 +117,72 @@ const finishGrn = async (req, res) => {
           });
         }
       });
+      /////add temp item details to itemdetails
+      let successCount = 0;
+  let failCount = 0;
+  const failedSerials = []; // Store failed serial numbers
+  const insertIds = []; // Store inserted IDs
+
+  TempItemDetailsModel.getTempItemDetailsByBranchAngrntemp(detail.grntempid, (error, tempitemdetails) => {
+    if (error) {
+      res.status(500).send({ error: 'Error fetching data from the database' });
+      return;
+    }
+
+    if (tempitemdetails.length === 0) {
+      res.status(404).send({ error: 'TempItemDetails not found' });
+      return;
+    }
+    
+
+    for (const tempitemdetail of tempitemdetails) {
+      const { serial_no, colorid } = tempitemdetail;
+  
+      ItemDetailsModel.getItemDetailsBySerial(serial_no, (error, results) => {
+        if (error) {
+          console.error(`Error fetching itemdetails: ${error}`);
+          failCount++;
+        } else if (results.length > 0) {
+          // Serial number already exists
+          failedSerials.push(serial_no);
+          failCount++;
+          console.log(`Serial number already exists: ${serial_no}`);
+          hasError = true;
+        } else {
+          ItemDetailsModel.addItemDetails(itemid, serial_no, colorid, (insertError, insertId) => {
+            if (insertError) {
+              console.error(`Error inserting itemdetails: ${insertError}`);
+              failCount++;
+            } else {
+              successCount++;
+              insertIds.push(insertId);
+              //console.log(`itemdetails added successfully`);
+            }
+  
+            // Check if all items have been processed
+            if (successCount + failCount === tempitemdetails.length) {
+              const totalCount = tempitemdetails.length;
+              console.log(`total count:${totalCount},successCount:${successCount},failCountfailCount:${failedSerials},insertIds:${insertIds}`);
+              processedCount++;
+            sendSuccessResponse();
+
+            }
+          });
+        }
+  
+        // Check if all items have been processed
+        if (successCount + failCount === tempitemdetails.length) {
+          const totalCount = tempitemdetails.length;
+          console.log(`total count:${totalCount},successCount:${successCount},failCountfailCount:${failedSerials},insertIds:${insertIds}`);
+          processedCount++;
+          sendSuccessResponse();
+            
+
+        }
+      });
+    }
+  });
+
     }
   });
 };
@@ -380,15 +448,36 @@ const addGrnTemp = (req, res) => {
       res.status(500).send({ error: 'Error fetching data from the database' });
       return;
     }
-
+    
+    // Check the condition and proceed with your code
     if (results.length === 0) {
-      res.status(404).send({ error: 'Prices not found' });
-      return;
+    // Define and initialize pricedetails with default values
+    const zeropricedetails = {
+      sell_price: 0,
+      purchase_price: 0,
+      wholesale_price: 0,
+      discount: 0,
+    };
+      GrnTempModel.addGrnTempwithoutprice(grnTemp, zeropricedetails, (error, grnTempId) => {
+        if (error) {
+          res.status(500).send({ error: 'Error inserting data into the database' });
+          return;
+        }
+    
+        if (!grnTempId) {
+          res.status(404).send({ error: 'Failed to create grnTemp' });
+          return;
+        }
+    
+        res.status(200).send({ message: 'GrnTemp created successfully', grnTempId });
+      });
     }
-
+    
+    if (results.length > 0) {
+      
     const pricedetails = results[0];
 
-    GrnTempModel.addGrnTemp(grnTemp, pricedetails, (error, grnTempId) => {
+    GrnTempModel.addGrnTempwithprice(grnTemp, pricedetails, (error, grnTempId) => {
       if (error) {
         res.status(500).send({ error: 'Error inserting data into the database' });
         return;
@@ -401,6 +490,7 @@ const addGrnTemp = (req, res) => {
 
       res.status(200).send({ message: 'GrnTemp created successfully', grnTempId });
     });
+  }
   });
 };
 
