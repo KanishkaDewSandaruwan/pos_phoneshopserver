@@ -72,6 +72,10 @@ const ItemDetailsModel = {
     connection.query('SELECT * FROM itemdetails WHERE serial_no = ? AND is_delete = 0', [serial_no], callback);
   },
 
+  getAllitemSerial(callback) {
+    connection.query('SELECT * FROM itemdetails WHERE is_delete = 0', callback);
+  },
+
   addItemDetails(itemid, serial_no, colorid, callback) {
     const trndate = new Date().toISOString().slice(0, 19).replace('T', ' ');
     const defaultValues = 0;

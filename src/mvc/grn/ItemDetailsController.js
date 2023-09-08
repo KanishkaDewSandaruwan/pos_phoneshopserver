@@ -1,6 +1,17 @@
 const express = require('express');
 const {TempItemDetailsModel,ItemDetailsModel} = require('./ItemDetailsModel');
 
+const getAllitemSerial = (req, res) => {
+  ItemDetailsModel.getAllitemSerial((error, results) => {
+    if (error) {
+      res.status(500).send({ error: 'Error fetching data from the database' });
+      return;
+    }
+
+    res.status(200).send(results);
+  });
+};
+
 const getAllTempItemDetails = (req, res) => {
   TempItemDetailsModel.getAllTempItemDetails((error, results) => {
     if (error) {
@@ -315,73 +326,7 @@ const permenentdeletemultipleTempItemDetails = (req, res) => {
   }
 };
 
-const addItemDetails = async (req, res) => {
-  const branch_id = 2;
-  const grntempid = 20;
-  const itemid = 1;
-  let successCount = 0;
-  let failCount = 0;
-  const failedSerials = []; // Store failed serial numbers
-  const insertIds = []; // Store inserted IDs
-
-  TempItemDetailsModel.getTempItemDetailsByBranchAngrntemp(grntempid, (error, tempitemdetails) => {
-    if (error) {
-      res.status(500).send({ error: 'Error fetching data from the database' });
-      return;
-    }
-
-    if (tempitemdetails.length === 0) {
-      res.status(404).send({ error: 'TempItemDetails not found' });
-      return;
-    }
-
-    for (const tempitemdetail of tempitemdetails) {
-      const { serial_no, colorid } = tempitemdetail;
   
-      ItemDetailsModel.getItemDetailsBySerial(serial_no, (error, results) => {
-        if (error) {
-          console.error(`Error fetching itemdetails: ${error}`);
-          failCount++;
-        } else if (results.length > 0) {
-          // Serial number already exists
-          failedSerials.push(serial_no);
-          failCount++;
-          console.log(`Serial number already exists: ${serial_no}`);
-        } else {
-          ItemDetailsModel.addItemDetails(itemid, serial_no, colorid, (insertError, insertId) => {
-            if (insertError) {
-              console.error(`Error inserting itemdetails: ${insertError}`);
-              failCount++;
-            } else {
-              successCount++;
-              insertIds.push(insertId);
-              console.log(`itemdetails added successfully`);
-            }
-  
-            // Check if all items have been processed
-            if (successCount + failCount === tempitemdetails.length) {
-              const totalCount = tempitemdetails.length;
-              console.log(totalCount,successCount,failCount,failedSerials,insertIds);
-
-            }
-          });
-        }
-  
-        // Check if all items have been processed
-        if (successCount + failCount === tempitemdetails.length) {
-          const totalCount = tempitemdetails.length;
-
-
-            console.log(totalCount,successCount,failCount,failedSerials,insertIds);
-
-        }
-      });
-    }
-  });
-};
-
-  
-
 module.exports = {
   getAllTempItemDetails,
   getTempItemDetailsById,
@@ -391,6 +336,7 @@ module.exports = {
   permenentdeleteTempItemDetails,
   deletemultipleTempItemDetails,
   permenentdeletemultipleTempItemDetails,
-  addItemDetails
+  getAllitemSerial
+
 
 };
