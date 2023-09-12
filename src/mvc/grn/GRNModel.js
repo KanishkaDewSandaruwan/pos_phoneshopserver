@@ -1,6 +1,7 @@
 const { connection } = require('../../../config/connection');
 
 const GrnModel = {
+  
   getGrnById(grnId, callback) {
     connection.query('SELECT * FROM grn WHERE grnno = ? AND is_delete = 0', [grnId], callback);
   },

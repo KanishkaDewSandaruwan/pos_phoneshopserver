@@ -28,7 +28,7 @@ const finishGrn = async (req, res) => {
 
     let processedCount = 0;
     const totalCount = grntempdetails.length;
-    let totalpayment = 0;
+    
 
     const sendFailResponse = () => {
       res.status(500).send({ message: 'Grn save failed' });
@@ -87,9 +87,14 @@ const finishGrn = async (req, res) => {
       }
     };
 
+    let totalpayment = 0;
+
 
     for (const detail of grntempdetails) {
       const itemid = detail.itemid;
+      
+      totalpayment += detail.purchase_price * detail.grnqty;
+   
 
             /////add temp item details to itemdetails
             
@@ -177,7 +182,7 @@ const finishGrn = async (req, res) => {
             }
             processedCount++;
            
-            totalpayment += detail.purchase_price * detail.grnqty;
+            
             sendSuccessResponse();
           });
         } else {
@@ -188,7 +193,8 @@ const finishGrn = async (req, res) => {
             }
             console.log('stockid', stockid);
             processedCount++;
-            totalpayment += detail.purchase_price * detail.grnqty;
+            
+            
             sendSuccessResponse();
           });
         }
@@ -238,6 +244,7 @@ const finishGrn = async (req, res) => {
       
 
     }
+    console.log('totalpayement',totalpayment);
 
   });
 };
