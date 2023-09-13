@@ -6,8 +6,12 @@ const StockModel = {
     },
 
     getAllStocksInBranch(branch_id, callback) {
-        connection.query('SELECT * FROM stock WHERE is_delete = 0 AND branch_id = ?', [branch_id], callback);
+        connection.query('SELECT * FROM stock JOIN item ON stock.itemid = item.itemid WHERE stock.is_delete = 0 AND item.is_delete = 0 AND stock.branch_id = ?', [branch_id], callback);
     },
+    
+    getAllStockInallBranches(callback) {
+        connection.query('SELECT * FROM stock JOIN item ON stock.itemid = item.itemid WHERE stock.is_delete = 0 AND item.is_delete = 0', callback);
+    }, 
 
     getAllStocks(callback) {
         connection.query('SELECT * FROM stock WHERE is_delete = 0 ', callback);

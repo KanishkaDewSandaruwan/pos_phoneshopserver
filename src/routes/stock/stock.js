@@ -3,8 +3,9 @@ const {
   getAllStocks,
   getStockById,
   deleteStock,
-  getAllStocksBranch,
+  getAllStockByBranch,
   permanentDeleteStock,
+  getAllStockInallBranches
 } = require('../../mvc/stock/StockController');
 const { authenticateToken } = require('../../middlewares/userAuth');
 const { authorizeAccessControll } = require('../../middlewares/userAccess');
@@ -13,7 +14,8 @@ module.exports = (config) => {
   const router = express.Router();
 
   router.get('/all/comon', authenticateToken, getAllStocks);
-  router.get('/branch/all/:branch_id', authenticateToken, getAllStocksBranch);
+  router.get('/allBybranch/:branch_id', authenticateToken, getAllStockByBranch);
+  router.get('/all/BranchesStockes', authenticateToken, getAllStockInallBranches);
   router.get('/:stockId', authenticateToken, getStockById);
   router.put('/delete/:stockId', authenticateToken, deleteStock);
   router.delete('/permanent-delete/:stockId', authenticateToken, permanentDeleteStock);

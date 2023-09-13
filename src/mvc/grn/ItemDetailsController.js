@@ -44,6 +44,23 @@ const getTempItemDetailsById = (req, res) => {
   });
 };
 
+const getTempItemDetailsBygrnTempId = (req, res) => {
+  const { grntempid } = req.params;
+  TempItemDetailsModel.getTempItemDetailsBygrnTempId(grntempid, (error, results) => {
+    if (error) {
+      res.status(500).send({ error: 'Error fetching data from the database' });
+      return;
+    }
+
+    if (results.length === 0) {
+      res.status(404).send({ error: 'TempItemDetails not found' });
+      return;
+    }
+
+    res.status(200).send(results);
+  });
+};
+
 
 const addTempItemDetails = async (req, res) => {
   const tempitemdetails = req.body;
@@ -330,6 +347,7 @@ const permenentdeletemultipleTempItemDetails = (req, res) => {
 module.exports = {
   getAllTempItemDetails,
   getTempItemDetailsById,
+  getTempItemDetailsBygrnTempId,
   addTempItemDetails,
   updateTempItemDetails,
   deleteTempItemDetails,

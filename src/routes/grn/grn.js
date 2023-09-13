@@ -2,6 +2,9 @@ const express = require('express');
 const {
   getAllGrns,
   getGrnById,
+  getAllGrnsbyBranch,
+  getAllGrnPayment,
+  getAllGrnPaymentbyGrnno,
   addGrn,
   updateGrn,
   updateGrnStatus,
@@ -34,6 +37,7 @@ const {
   permenentdeleteTempItemDetails,
   deletemultipleTempItemDetails,
   permenentdeletemultipleTempItemDetails,
+  getTempItemDetailsBygrnTempId,
   getAllitemSerial
 } = require('../../mvc/grn/ItemDetailsController');
 
@@ -46,11 +50,15 @@ module.exports = (config) => {
   // Routes for Grn Model
   router.get('/all', authenticateToken, getAllGrns);
   router.get('/:grnId', authenticateToken, getGrnById);
+  router.get('/allbyBranch/:branch_id', authenticateToken, getAllGrnsbyBranch);
   router.post('/create', authenticateToken, addGrn);
   router.put('/update/status/:grnId', authenticateToken, updateGrnStatus);
   router.put('/update/:grnId', authenticateToken, updateGrn);
   router.put('/delete/:grnId', authorizeAccessControll, deleteGrn);
   router.put('/delete', authorizeAccessControll, deleteGrns);
+
+  router.get('/all/grnPayments', authenticateToken, getAllGrnPayment);
+  router.get('/allgrnPaymentsbyGrnno/:grnno', authenticateToken, getAllGrnPaymentbyGrnno);
 //   router.delete('/permanent-delete/:grnId', authorizeAccessControll, permanentDeleteGrn);
 
   // Routes for GrnTemp Model
@@ -73,6 +81,7 @@ module.exports = (config) => {
   router.post('/tempitem/create', authenticateToken, addTempItemDetails);
   router.get('/tempitem/all', authenticateToken, getAllTempItemDetails);
   router.get('/tempitem/:temp_itemdetails_id', authenticateToken, getTempItemDetailsById);
+  router.get('/tempitemBygrntemp/:grntempid', authenticateToken, getTempItemDetailsBygrnTempId);
   router.put('/tempitem/update/:temp_itemdetails_id', authenticateToken, updateTempItemDetails);
   router.put('/tempitem/delete/:temp_itemdetails_id', authenticateToken, deleteTempItemDetails);
   router.delete('/tempitem/delete/:temp_itemdetails_id', authenticateToken, permenentdeleteTempItemDetails);

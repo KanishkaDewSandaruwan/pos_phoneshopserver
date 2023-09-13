@@ -1,13 +1,25 @@
 const { connection } = require('../../../config/connection');
 
 const GrnModel = {
-  
+
   getGrnById(grnId, callback) {
     connection.query('SELECT * FROM grn WHERE grnno = ? AND is_delete = 0', [grnId], callback);
   },
 
   getAllGrns(callback) {
     connection.query('SELECT * FROM grn WHERE is_delete = 0 AND status = 1', callback);
+  },
+
+  getAllGrnPayment(callback) {
+    connection.query('SELECT * FROM grnpayment WHERE is_delete = 0 AND payment_status = 1', callback);
+  },
+
+  getAllGrnsbyBranch(branch_id,callback) {
+    connection.query('SELECT * FROM grn WHERE is_delete = 0 AND status = 1 AND branch_id = ? ',[branch_id], callback);
+  },
+
+  getAllGrnPaymentbyGrnno(grnno,callback) {
+    connection.query('SELECT * FROM grnpayment WHERE is_delete = 0 AND grnno = ? ',[grnno], callback);
   },
 
 
@@ -38,7 +50,7 @@ const GrnModel = {
     const trndate = new Date().toISOString().slice(0, 19).replace('T', ' ');
     const defaultValues = 0;
     const activeValues =1;
-    const resiptNo=12;
+    const resiptNo=" ";
    
 
     const query = 'INSERT INTO grnpayment (total_amount, grnno, resiptNo, payment_status, trndate, is_delete) VALUES (?, ?, ?, ?, ?, ?)';

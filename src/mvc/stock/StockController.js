@@ -1,4 +1,6 @@
 const StockModel = require('./StockModel');
+const branchStockView  = require('./BranchStockView');
+const allbranchesStockView  = require('./AllBranchesStockView');
 
 const getAllStocks = (req, res) => {
   StockModel.getAllStocks((error, results) => {
@@ -16,7 +18,7 @@ const getAllStocks = (req, res) => {
   });
 };
 
-const getAllStocksBranch = (req, res) => {
+const getAllStockByBranch = (req, res) => {
   const { branch_id } = req.params;
 
   StockModel.getAllStocksInBranch(branch_id, (error, results) => {
@@ -25,12 +27,32 @@ const getAllStocksBranch = (req, res) => {
       res.status(500).send({ error: 'Error fetching data from the database' });
       return;
     }
-    if (results.length === 0) {
-      res.status(404).send({ error: 'Stock not found' });
+    if (Array.isArray(results) && results.length > 0) {
+      const modifiedStockesArray = branchStockView.renderbranchStocksArray(results);
+      res.status(200).send(modifiedStockesArray);
+  } else {
+      // Handle empty results case
+      res.status(404).send({ message: "not found" });
+  }
+  });
+};
+
+const getAllStockInallBranches = (req, res) => {
+  
+
+  StockModel.getAllStockInallBranches((error, results) => {
+
+    if (error) {
+      res.status(500).send({ error: 'Error fetching data from the database' });
       return;
     }
-
-    res.status(200).send(results);
+    if (Array.isArray(results) && results.length > 0) {
+      const modifiedStockesArray = allbranchesStockView.renderStockWithBranchesArray(results);
+      res.status(200).send(modifiedStockesArray);
+  } else {
+      // Handle empty results case
+      res.status(404).send({ message: "not found" });
+  }
   });
 };
 
@@ -80,8 +102,9 @@ const permanentDeleteStock = (req, res) => {
 
 module.exports = {
   getAllStocks,
-  getAllStocksBranch,
+  getAllStockByBranch,
   getStockById,
   deleteStock,
   permanentDeleteStock,
+  getAllStockInallBranches
 };

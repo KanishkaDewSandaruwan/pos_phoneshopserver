@@ -6,6 +6,10 @@ const TempItemDetailsModel = {
     connection.query('SELECT * FROM temp_itemdetails WHERE temp_itemdetails_id = ? AND is_delete = 0', [temp_itemdetails_id], callback);
   },
 
+  getTempItemDetailsBygrnTempId(grntempid, callback) {
+    connection.query('SELECT * FROM temp_itemdetails WHERE grntempid = ? AND is_delete = 0', [grntempid], callback);
+  },
+
   getTempItemDetailsBySerial(serial_no, callback) {
     connection.query('SELECT * FROM temp_itemdetails WHERE serial_no = ? AND is_delete = 0', [serial_no], callback);
   },

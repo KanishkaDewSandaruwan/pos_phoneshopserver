@@ -40,6 +40,55 @@ const finishGrn = async (req, res) => {
           sendFailResponse();
         } else {
 
+           
+
+let totalpayment = 0;
+
+
+for (const detail of grntempdetails) {
+  const itemid = detail.itemid;
+  
+  totalpayment += detail.purchase_price * detail.grnqty;
+
+
+//stokes update
+
+  StockModel.getStockByItemAndBranch(itemid, branch_id, (error, results) => {
+    if (error) {
+      console.error(`Error fetching data from the database: ${error}`);
+      hasError = true; // Set the flag to true
+    
+      sendFailResponse();
+      return;
+    }
+
+    if (results.length > 0) {
+      StockModel.updateDetailsInStock(detail.grnqty, itemid, branch_id, (error, grnId) => {
+        if (error) {
+          console.error(`Error updating stock: ${error}`);
+          hasError = true; // Set the flag to true
+        }
+        
+       console.log("stock update succes");
+
+      });
+    } else {
+      StockModel.addnewStokes(detail.grnqty, itemid, branch_id, (error, stockid) => {
+        if (error) {
+          console.error(`Error adding new stock: ${error}`);
+          hasError = true; // Set the flag to true
+        }
+        console.log('stockid', stockid);
+  
+        console.log("new stock added succes");
+        
+        
+      });
+    }
+  });
+
+}
+
              //grn payment part//
 
               GrnModel.addGrnPayment(totalpayment,grnno, (error, grnpayementId) => {
@@ -87,13 +136,13 @@ const finishGrn = async (req, res) => {
       }
     };
 
-    let totalpayment = 0;
+    // let totalpayment = 0;
 
 
     for (const detail of grntempdetails) {
       const itemid = detail.itemid;
-      
-      totalpayment += detail.purchase_price * detail.grnqty;
+
+      // totalpayment += detail.purchase_price * detail.grnqty;
    
 
             /////add temp item details to itemdetails
@@ -165,40 +214,40 @@ const finishGrn = async (req, res) => {
 
         //stokes update
 
-      StockModel.getStockByItemAndBranch(itemid, branch_id, (error, results) => {
-        if (error) {
-          console.error(`Error fetching data from the database: ${error}`);
-          hasError = true; // Set the flag to true
-          processedCount++;
-          sendFailResponse();
-          return;
-        }
+      // StockModel.getStockByItemAndBranch(itemid, branch_id, (error, results) => {
+      //   if (error) {
+      //     console.error(`Error fetching data from the database: ${error}`);
+      //     hasError = true; // Set the flag to true
+      //     processedCount++;
+      //     sendFailResponse();
+      //     return;
+      //   }
 
-        if (results.length > 0) {
-          StockModel.updateDetailsInStock(detail.grnqty, itemid, branch_id, (error, grnId) => {
-            if (error) {
-              console.error(`Error updating stock: ${error}`);
-              hasError = true; // Set the flag to true
-            }
-            processedCount++;
+      //   if (results.length > 0) {
+      //     StockModel.updateDetailsInStock(detail.grnqty, itemid, branch_id, (error, grnId) => {
+      //       if (error) {
+      //         console.error(`Error updating stock: ${error}`);
+      //         hasError = true; // Set the flag to true
+      //       }
+      //       processedCount++;
            
             
-            sendSuccessResponse();
-          });
-        } else {
-          StockModel.addnewStokes(detail.grnqty, itemid, branch_id, (error, stockid) => {
-            if (error) {
-              console.error(`Error adding new stock: ${error}`);
-              hasError = true; // Set the flag to true
-            }
-            console.log('stockid', stockid);
-            processedCount++;
+      //       sendSuccessResponse();
+      //     });
+      //   } else {
+      //     StockModel.addnewStokes(detail.grnqty, itemid, branch_id, (error, stockid) => {
+      //       if (error) {
+      //         console.error(`Error adding new stock: ${error}`);
+      //         hasError = true; // Set the flag to true
+      //       }
+      //       console.log('stockid', stockid);
+      //       processedCount++;
             
             
-            sendSuccessResponse();
-          });
-        }
-      });
+      //       sendSuccessResponse();
+      //     });
+      //   }
+      // });
 
       // update Item Price
       ItemModel.getPriceBybranchId(itemid, branch_id, (error, results) => {
@@ -244,7 +293,7 @@ const finishGrn = async (req, res) => {
       
 
     }
-    console.log('totalpayement',totalpayment);
+    // console.log('totalpayement',totalpayment);
 
   });
 };
@@ -255,6 +304,46 @@ const finishGrn = async (req, res) => {
 // Controller functions for Grn Model
 const getAllGrns = (req, res) => {
   GrnModel.getAllGrns((error, results) => {
+    if (error) {
+      res.status(500).send({ error: 'Error fetching data from the database' });
+      return;
+    }
+
+    res.status(200).send(results);
+  });
+};
+
+//get all grn by branch
+
+const getAllGrnsbyBranch = (req, res) => {
+  const { branch_id } = req.params;
+  GrnModel.getAllGrnsbyBranch(branch_id,(error, results) => {
+    if (error) {
+      res.status(500).send({ error: 'Error fetching data from the database' });
+      return;
+    }
+
+    res.status(200).send(results);
+  });
+};
+//get all grnpayement
+
+const getAllGrnPayment = (req, res) => {
+  GrnModel.getAllGrnPayment((error, results) => {
+    if (error) {
+      res.status(500).send({ error: 'Error fetching data from the database' });
+      return;
+    }
+
+    res.status(200).send(results);
+  });
+};
+
+//get all grnpayement by branch
+
+const getAllGrnPaymentbyGrnno = (req, res) => {
+  const { grnno } = req.params;
+  GrnModel.getAllGrnPaymentbyGrnno(grnno,(error, results) => {
     if (error) {
       res.status(500).send({ error: 'Error fetching data from the database' });
       return;
@@ -825,6 +914,9 @@ module.exports = {
   deleteGrn,
   permanentDeleteGrn,
   deleteGrns,
+  getAllGrnsbyBranch,
+  getAllGrnPayment,
+  getAllGrnPaymentbyGrnno,
  
 
 
