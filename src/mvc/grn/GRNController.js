@@ -165,7 +165,7 @@ for (const detail of grntempdetails) {
           
 
           for (const tempitemdetail of tempitemdetails) {
-            const { serial_no, colorid } = tempitemdetail;
+            const { serial_no, branch_id, colorid } = tempitemdetail;
         
             ItemDetailsModel.getItemDetailsBySerial(serial_no, (error, results) => {
               if (error) {
@@ -178,7 +178,7 @@ for (const detail of grntempdetails) {
                 console.log(`Serial number already exists: ${serial_no}`);
                 hasError = true;
               } else {
-                ItemDetailsModel.addItemDetails(itemid, serial_no, colorid, (insertError, insertId) => {
+                ItemDetailsModel.addItemDetails(itemid, branch_id, serial_no, colorid, (insertError, insertId) => {
                   if (insertError) {
                     console.error(`Error inserting itemdetails: ${insertError}`);
                     failCount++;

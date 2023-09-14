@@ -1,6 +1,8 @@
 const express = require('express');
 const {TempItemDetailsModel,ItemDetailsModel} = require('./ItemDetailsModel');
 
+//item details part
+
 const getAllitemSerial = (req, res) => {
   ItemDetailsModel.getAllitemSerial((error, results) => {
     if (error) {
@@ -11,6 +13,26 @@ const getAllitemSerial = (req, res) => {
     res.status(200).send(results);
   });
 };
+//get all item details for admin
+const getAllItemDetailsBybranchAnditem = (req, res) => {
+
+  const { itemid, branch_id } = req.params;
+  ItemDetailsModel.getAllItemDetailsBybranchAnditem(itemid,branch_id,(error, results) => {
+
+    if (error) {
+      res.status(500).send({ error: 'Error fetching data from the database' });
+      return;
+    }
+    if (results.length === 0) {
+      res.status(404).send({ error: 'TempItemDetails not found' });
+      return;
+    }
+
+    res.status(200).send(results);
+  });
+};
+
+//temp item details part
 
 const getAllTempItemDetails = (req, res) => {
   TempItemDetailsModel.getAllTempItemDetails((error, results) => {
@@ -70,7 +92,7 @@ const addTempItemDetails = async (req, res) => {
   const insertIds = []; // Store inserted IDs
 
   for (const detail of tempitemdetails) {
-    const { grntempid, serial_no, colorid } = detail;
+    const { grntempid, branch_id, serial_no, colorid } = detail;
 
     TempItemDetailsModel.getTempItemDetailsBySerial(serial_no, (error, results) => {
       if (error) {
@@ -82,7 +104,7 @@ const addTempItemDetails = async (req, res) => {
         failCount++;
         console.log(`Serial number already exists: ${serial_no}`);
       } else {
-        TempItemDetailsModel.addTempItemDetails(grntempid, serial_no, colorid, (insertError, insertId) => {
+        TempItemDetailsModel.addTempItemDetails(grntempid, branch_id, serial_no, colorid, (insertError, insertId) => {
           if (insertError) {
             console.error(`Error inserting tempitemdetails: ${insertError}`);
             failCount++;
@@ -354,7 +376,8 @@ module.exports = {
   permenentdeleteTempItemDetails,
   deletemultipleTempItemDetails,
   permenentdeletemultipleTempItemDetails,
-  getAllitemSerial
+  getAllitemSerial,
+  getAllItemDetailsBybranchAnditem
 
 
 };

@@ -243,6 +243,7 @@ const tableInfo = [
       { name: 'colorid', type: 'INT(255)' },
       { name: 'trndate', type: 'DATETIME' },
       { name: 'is_delete', type: 'INT(5)' },
+      { name: 'branch_id', type: 'INT(255)'},
     ],
   },
   {
@@ -254,6 +255,7 @@ const tableInfo = [
       { name: 'colorid', type: 'INT(255)' },
       { name: 'trndate', type: 'DATETIME' },
       { name: 'is_delete', type: 'INT(5)' },
+      { name: 'branch_id', type: 'INT(255)'},
     ],
   },
   {
