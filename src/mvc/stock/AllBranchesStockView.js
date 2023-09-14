@@ -1,29 +1,33 @@
 const allbranchesStockView = {
     renderStockWithBranches(stock) {
         const {
-            item_code,
             itemid,
+            item_code,
             item_name,
             item_description,
             catid,
             subcatid,
             storageid,
-            condition_type, 
+            sale_warranty,
+            condition_type,
             brandid,
+            item_image,
             serial_status,
             stockes // Prices array for different branches
         } = stock;
 
         const data = {
-            item_code,
             itemid,
+            item_code,
             item_name,
             item_description,
             catid,
             subcatid,
             storageid,
+            sale_warranty,
             condition_type,
             brandid,
+            item_image,
             serial_status,
             stock: stockes // stock array
         };

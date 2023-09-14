@@ -2,32 +2,36 @@
 const branchStockView = {
     renderbranchStock(stock) {
         const {
-            item_code,
             itemid,
+            item_code,
             item_name,
             item_description,
-            qty,
             catid,
             subcatid,
             storageid,
+            sale_warranty,
             condition_type,
             brandid,
+            item_image,
             serial_status,
+            qty,
             branch_id
         } = stock;
 
         const data = {
-            item_code,
             itemid,
+            item_code,
             item_name,
             item_description,
-            qty,
             catid,
             subcatid,
             storageid,
+            sale_warranty,
             condition_type,
             brandid,
+            item_image,
             serial_status,
+            qty,
             branch_id
         };
 
