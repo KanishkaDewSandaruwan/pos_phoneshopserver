@@ -15,6 +15,7 @@ const GRNRoute = require('./grn/grn');
 const customerRoute = require('./customer/customer');
 const stockRoute = require('./stock/stock');
 const storageRoute = require('./storage/storage');
+const posRoute = require('./pos/pos');
 
 
 module.exports = (config) => {
@@ -33,6 +34,8 @@ module.exports = (config) => {
   router.use('/grn', GRNRoute(config));   //any user
   router.use('/stock', stockRoute(config));   //any user
   router.use('/customer', customerRoute(config));   //any user
+  router.use('/pos', posRoute(config));   //any user
+
   
   //filter routes
   router.use('/category', categoryRoute(config)); //admin user only

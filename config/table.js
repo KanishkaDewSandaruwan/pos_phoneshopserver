@@ -268,6 +268,25 @@ const tableInfo = [
       { name: 'is_delete', type: 'INT(5)' },
     ],
   },
+
+  {
+    tableName: 'pos_temp',
+    fields: [
+      { name: 'postempid', type: 'INT AUTO_INCREMENT PRIMARY KEY' },
+      { name: 'itemid', type: 'INT(255)' },
+      { name: 'item_code', type: 'VARCHAR(255)' },
+      { name: 'item_name', type: 'VARCHAR(255)' },
+      { name: 'serial_no', type: 'VARCHAR(255)' },
+      { name: 'sell_price', type: 'FLOAT(10, 2)' },
+      { name: 'wholesale_price', type: 'FLOAT(10, 2)' },
+      { name: 'discount', type: 'FLOAT(10, 2)' },
+      { name: 'qty', type: 'INT(255)' },
+      { name: 'branch_id', type: 'INT(255)'},
+      { name: 'trndate', type: 'DATETIME' },
+      { name: 'status', type: 'INT(5)' },
+      { name: 'is_delete', type: 'INT(5)' },
+    ],
+  },
 ];
 
 
