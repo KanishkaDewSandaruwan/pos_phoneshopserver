@@ -51,14 +51,12 @@ const getAllItemsWithPrice = (req, res) => {
             return;
         }
 
-        if (Array.isArray(results) && results.length > 0) {
-            const renderedItempriceView = ItempriceView.renderItempricesArray(results);
-            res.status(200).send(renderedItempriceView);
+        if (results.length === 0) {
+            // Handle empty results case
+        res.status(404).send({ message: "item not found" });
             return;
         }
-
-        // Handle empty results case
-        res.status(404).send({ message: "not found" });
+        res.status(200).send(results);
     });
 };
 
@@ -94,7 +92,7 @@ const getPriceBybranchId = (req, res) => {
 
         if (results.length === 0) {
             console.log(results.length);
-            res.status(404).send({ error: 'Item not found sfd sdjjjjjjjjj' });
+            res.status(404).send({ error: 'Item not found' });
             return;
         }
 

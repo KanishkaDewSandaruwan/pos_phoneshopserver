@@ -46,12 +46,13 @@ const getAllStockInallBranches = (req, res) => {
       res.status(500).send({ error: 'Error fetching data from the database' });
       return;
     }
-    if (Array.isArray(results) && results.length > 0) {
-      const modifiedStockesArray = allbranchesStockView.renderStockWithBranchesArray(results);
-      res.status(200).send(modifiedStockesArray);
-  } else {
+    if (results.length === 0) {
       // Handle empty results case
       res.status(404).send({ message: "not found" });
+
+  } else {
+      
+      res.status(200).send(results);
   }
   });
 };
