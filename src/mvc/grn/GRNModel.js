@@ -159,7 +159,7 @@ const GrnTempModel = {
 
 
 
-  addGrnTemp(grnTemp,pricedetails, callback) {
+  addGrnTemp(grnTemp, pricedetails, items, callback) {
     const { sell_price, purchase_price, wholesale_price, discount } = pricedetails;
     const { itemid,item_name, grnno, branch_id } = grnTemp;
     const { serial_status} = items;
