@@ -4,8 +4,6 @@ const {
   GrnTempModel
 } = require('./GRNModel');
 
-const {TempItemDetailsModel,ItemDetailsModel} = require('./ItemDetailsModel');
-
 const StockModel = require('../stock/StockModel');
 const ItemModel = require('../item/ItemModel');
 
@@ -28,7 +26,6 @@ const finishGrn = async (req, res) => {
 
     let processedCount = 0;
     const totalCount = grntempdetails.length;
-    
 
     const sendFailResponse = () => {
       res.status(500).send({ message: 'Grn save failed' });
@@ -39,215 +36,44 @@ const finishGrn = async (req, res) => {
         if (hasError) {
           sendFailResponse();
         } else {
-
-           
-
-let totalpayment = 0;
-
-
-for (const detail of grntempdetails) {
-  const itemid = detail.itemid;
-  
-  totalpayment += detail.purchase_price * detail.grnqty;
-
-
-//stokes update
-
-  StockModel.getStockByItemAndBranch(itemid, branch_id, (error, results) => {
-    if (error) {
-      console.error(`Error fetching data from the database: ${error}`);
-      hasError = true; // Set the flag to true
-    
-      sendFailResponse();
-      return;
-    }
-
-    if (results.length > 0) {
-      StockModel.updateDetailsInStock(detail.grnqty, itemid, branch_id, (error, grnId) => {
-        if (error) {
-          console.error(`Error updating stock: ${error}`);
-          hasError = true; // Set the flag to true
-        }
-        
-       console.log("stock update succes");
-
-      });
-    } else {
-      StockModel.addnewStokes(detail.grnqty, itemid, branch_id, (error, stockid) => {
-        if (error) {
-          console.error(`Error adding new stock: ${error}`);
-          hasError = true; // Set the flag to true
-        }
-        console.log('stockid', stockid);
-  
-        console.log("new stock added succes");
-        
-        
-      });
-    }
-  });
-
-}
-
-             //grn payment part//
-
-              GrnModel.addGrnPayment(totalpayment,grnno, (error, grnpayementId) => {
-                if (error) {
-                  res.status(500).send({ error: 'Error fetching data from the database and not added grnpayment ' });
-                  return;
-                }
-
-                if (!grnpayementId) {
-                  res.status(404).send({ error: 'Failed to create grnpayment' });
-                  return;
-                }
-
-                console.log({ message: 'grnpayment created successfully', grnpayementId });
-
-              });
-          
-
-          //change status of grn and grn temp//
-
-          GrnModel.updateGrnStatus(grnno, 1, (error, results) => {
-            if (error) {
-              res.status(500).send({ error: 'Error updating status of grn' });
-              return;
-            }
-      
-            console.log({ message: 'Grn status updated successfully' });
-          });
-
-          GrnTempModel.updateGrnTempStatus(grnno, 0, (error, results) => {
-            if (error) {
-              res.status(500).send({ error: 'Error updating status of Tempgrn' });
-              return;
-            }
-      
-            console.log({ message: 'TempGrn status updated successfully' });
-
-          });
-
           res.status(200).send({ message: 'Grn save Success' });
-
-
-
         }
       }
     };
 
-    // let totalpayment = 0;
-
-
     for (const detail of grntempdetails) {
       const itemid = detail.itemid;
 
-      // totalpayment += detail.purchase_price * detail.grnqty;
-   
+      StockModel.getStockByItemAndBranch(itemid, branch_id, (error, results) => {
+        if (error) {
+          console.error(`Error fetching data from the database: ${error}`);
+          hasError = true; // Set the flag to true
+          processedCount++;
+          sendFailResponse();
+          return;
+        }
 
-            /////add temp item details to itemdetails
-            
-        let successCount = 0;
-        let failCount = 0;
-        const failedSerials = []; // Store failed serial numbers
-        const insertIds = []; // Store inserted IDs
-
-        TempItemDetailsModel.getTempItemDetailsByBranchAngrntemp(detail.grntempid, (error, tempitemdetails) => {
-          if (error) {
-            res.status(500).send({ error: 'Error fetching data from the database' });
-            return;
-          }
-
-          if (tempitemdetails.length === 0) {
-            res.status(404).send({ error: 'TempItemDetails not found' });
-            return;
-          }
-          
-
-          for (const tempitemdetail of tempitemdetails) {
-            const { serial_no, branch_id, colorid } = tempitemdetail;
-        
-            ItemDetailsModel.getItemDetailsBySerial(serial_no, (error, results) => {
-              if (error) {
-                console.error(`Error fetching itemdetails: ${error}`);
-                failCount++;
-              } else if (results.length > 0) {
-                // Serial number already exists
-                failedSerials.push(serial_no);
-                failCount++;
-                console.log(`Serial number already exists: ${serial_no}`);
-                hasError = true;
-              } else {
-                ItemDetailsModel.addItemDetails(itemid, branch_id, serial_no, colorid, (insertError, insertId) => {
-                  if (insertError) {
-                    console.error(`Error inserting itemdetails: ${insertError}`);
-                    failCount++;
-                  } else {
-                    successCount++;
-                    insertIds.push(insertId);
-                    //console.log(`itemdetails added successfully`);
-                  }
-        
-                  // Check if all items have been processed
-                  if (successCount + failCount === tempitemdetails.length) {
-                    const totalCount = tempitemdetails.length;
-                    console.log(`total count:${totalCount},successCount:${successCount},failCountfailCount:${failedSerials},insertIds:${insertIds}`);
-                    processedCount++;
-                  sendSuccessResponse();
-
-                  }
-                });
-              }
-        
-              // Check if all items have been processed
-              if (successCount + failCount === tempitemdetails.length) {
-                const totalCount = tempitemdetails.length;
-                console.log(`total count:${totalCount},successCount:${successCount},failCountfailCount:${failedSerials},insertIds:${insertIds}`);
-                processedCount++;
-                sendSuccessResponse();
-                  
-
-              }
-            });
-          }
-        });
-
-        //stokes update
-
-      // StockModel.getStockByItemAndBranch(itemid, branch_id, (error, results) => {
-      //   if (error) {
-      //     console.error(`Error fetching data from the database: ${error}`);
-      //     hasError = true; // Set the flag to true
-      //     processedCount++;
-      //     sendFailResponse();
-      //     return;
-      //   }
-
-      //   if (results.length > 0) {
-      //     StockModel.updateDetailsInStock(detail.grnqty, itemid, branch_id, (error, grnId) => {
-      //       if (error) {
-      //         console.error(`Error updating stock: ${error}`);
-      //         hasError = true; // Set the flag to true
-      //       }
-      //       processedCount++;
-           
-            
-      //       sendSuccessResponse();
-      //     });
-      //   } else {
-      //     StockModel.addnewStokes(detail.grnqty, itemid, branch_id, (error, stockid) => {
-      //       if (error) {
-      //         console.error(`Error adding new stock: ${error}`);
-      //         hasError = true; // Set the flag to true
-      //       }
-      //       console.log('stockid', stockid);
-      //       processedCount++;
-            
-            
-      //       sendSuccessResponse();
-      //     });
-      //   }
-      // });
+        if (results.length > 0) {
+          StockModel.updateDetailsInStock(detail.grnqty, itemid, branch_id, (error, grnId) => {
+            if (error) {
+              console.error(`Error updating stock: ${error}`);
+              hasError = true; // Set the flag to true
+            }
+            processedCount++;
+            sendSuccessResponse();
+          });
+        } else {
+          StockModel.addnewStokes(detail.grnqty, itemid, branch_id, (error, stockid) => {
+            if (error) {
+              console.error(`Error adding new stock: ${error}`);
+              hasError = true; // Set the flag to true
+            }
+            console.log('stockid', stockid);
+            processedCount++;
+            sendSuccessResponse();
+          });
+        }
+      });
 
       // update Item Price
       ItemModel.getPriceBybranchId(itemid, branch_id, (error, results) => {
@@ -269,12 +95,12 @@ for (const detail of grntempdetails) {
             sendSuccessResponse();
           });
         } else {
-          const itemPrice = { 
-            itemid: itemid, 
-            sell_price: detail.sell_price, 
-            purchase_price: detail.purchase_price, 
-            wholesale_price: detail.wholesale_price, 
-            discount: detail.discount, 
+          const itemPrice = {
+            itemid: itemid,
+            sell_price: detail.sell_price,
+            purchase_price: detail.purchase_price,
+            wholesale_price: detail.wholesale_price,
+            discount: detail.discount,
             branch_id: branch_id
           };
 
@@ -289,12 +115,7 @@ for (const detail of grntempdetails) {
           });
         }
       });
-
-      
-
     }
-    // console.log('totalpayement',totalpayment);
-
   });
 };
 
@@ -304,46 +125,6 @@ for (const detail of grntempdetails) {
 // Controller functions for Grn Model
 const getAllGrns = (req, res) => {
   GrnModel.getAllGrns((error, results) => {
-    if (error) {
-      res.status(500).send({ error: 'Error fetching data from the database' });
-      return;
-    }
-
-    res.status(200).send(results);
-  });
-};
-
-//get all grn by branch
-
-const getAllGrnsbyBranch = (req, res) => {
-  const { branch_id } = req.params;
-  GrnModel.getAllGrnsbyBranch(branch_id,(error, results) => {
-    if (error) {
-      res.status(500).send({ error: 'Error fetching data from the database' });
-      return;
-    }
-
-    res.status(200).send(results);
-  });
-};
-//get all grnpayement
-
-const getAllGrnPayment = (req, res) => {
-  GrnModel.getAllGrnPayment((error, results) => {
-    if (error) {
-      res.status(500).send({ error: 'Error fetching data from the database' });
-      return;
-    }
-
-    res.status(200).send(results);
-  });
-};
-
-//get all grnpayement by branch
-
-const getAllGrnPaymentbyGrnno = (req, res) => {
-  const { grnno } = req.params;
-  GrnModel.getAllGrnPaymentbyGrnno(grnno,(error, results) => {
     if (error) {
       res.status(500).send({ error: 'Error fetching data from the database' });
       return;
@@ -538,9 +319,6 @@ const permanentDeleteGrn = (req, res) => {
   });
 };
 
-
-
-
 // Controller functions for GrnTemp Model//////////////////////////////////////////
 const getAllGrnTemp = (req, res) => {
   GrnTempModel.getAllGrnTemp((error, results) => {
@@ -597,54 +375,44 @@ const getGrnTempById = (req, res) => {
 const addGrnTemp = (req, res) => {
   const grnTemp = req.body;
 
-  GrnTempModel.getItemBybranch(grnTemp.itemid, grnTemp.branch_id, (error, results) => {
+  GrnTempModel.getItemBybranch(grnTemp.itemid, (error, item) => {
     if (error) {
       res.status(500).send({ error: 'Error fetching data from the database' });
       return;
     }
-    
-    // Check the condition and proceed with your code
-    if (results.length === 0) {
-    // Define and initialize pricedetails with default values
-    const zeropricedetails = {
-      sell_price: 0,
-      purchase_price: 0,
-      wholesale_price: 0,
-      discount: 0,
-    };
-      GrnTempModel.addGrnTempwithoutprice(grnTemp, zeropricedetails, (error, grnTempId) => {
+
+    if (item.length === 0) {
+      res.status(404).send({ error: 'Prices not found' });
+      return;
+    }
+
+    GrnTempModel.getItemPriceBybranch(grnTemp.itemid, grnTemp.branch_id, (error, itemPrice) => {
+      if (error) {
+        res.status(500).send({ error: 'Error fetching data from the database' });
+        return;
+      }
+
+      if (itemPrice.length === 0) {
+        res.status(404).send({ error: 'Prices not found' });
+        return;
+      }
+      const pricedetails = itemPrice[0];
+      const items = item[0];
+
+      GrnTempModel.addGrnTemp(grnTemp, pricedetails, items, (error, grnTempId) => {
         if (error) {
           res.status(500).send({ error: 'Error inserting data into the database' });
           return;
         }
-    
+
         if (!grnTempId) {
           res.status(404).send({ error: 'Failed to create grnTemp' });
           return;
         }
-    
+
         res.status(200).send({ message: 'GrnTemp created successfully', grnTempId });
       });
-    }
-    
-    if (results.length > 0) {
-
-    const pricedetails = results[0];
-
-    GrnTempModel.addGrnTempwithprice(grnTemp, pricedetails, (error, grnTempId) => {
-      if (error) {
-        res.status(500).send({ error: 'Error inserting data into the database' });
-        return;
-      }
-
-      if (!grnTempId) {
-        res.status(404).send({ error: 'Failed to create grnTemp' });
-        return;
-      }
-
-      res.status(200).send({ message: 'GrnTemp created successfully', grnTempId });
     });
-  }
   });
 };
 
@@ -902,8 +670,6 @@ const permanentDeleteGrnTemp = (req, res) => {
   });
 };
 
-
-
 module.exports = {
   // Grn Model
   getAllGrns,
@@ -914,11 +680,6 @@ module.exports = {
   deleteGrn,
   permanentDeleteGrn,
   deleteGrns,
-  getAllGrnsbyBranch,
-  getAllGrnPayment,
-  getAllGrnPaymentbyGrnno,
- 
-
 
   // GrnTemp Model
   getAllGrnTemp,
@@ -935,5 +696,5 @@ module.exports = {
   deleteGrnTemps,
   getAllGrnTempBYGRNNO,
   addGrnTemp,
-  finishGrn,
+  finishGrn
 };

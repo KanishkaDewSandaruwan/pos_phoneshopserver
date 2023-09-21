@@ -1,7 +1,6 @@
 const { connection } = require('../../../config/connection');
 
 const GrnModel = {
-
   getGrnById(grnId, callback) {
     connection.query('SELECT * FROM grn WHERE grnno = ? AND is_delete = 0', [grnId], callback);
   },
@@ -10,25 +9,11 @@ const GrnModel = {
     connection.query('SELECT * FROM grn WHERE is_delete = 0 AND status = 1', callback);
   },
 
-  getAllGrnPayment(callback) {
-    connection.query('SELECT * FROM grnpayment WHERE is_delete = 0 AND payment_status = 1', callback);
-  },
-
-  getAllGrnsbyBranch(branch_id,callback) {
-    connection.query('SELECT * FROM grn WHERE is_delete = 0 AND status = 1 AND branch_id = ? ',[branch_id], callback);
-  },
-
-  getAllGrnPaymentbyGrnno(grnno,callback) {
-    connection.query('SELECT * FROM grnpayment WHERE is_delete = 0 AND grnno = ? ',[grnno], callback);
-  },
-
-
-
   addGrn(grn, callback) {
     const { supplier_id, reference_number, branch_id, user_id } = grn;
     const trndate = new Date().toISOString().slice(0, 19).replace('T', ' ');
     const defaultValues = 0;
-    const activeValues =0;
+    const activeValues =1;
    
 
     const query = 'INSERT INTO grn (supplier_id, reference_number, branch_id, status, trndate, is_delete, user_id) VALUES (?, ?, ?, ?, ?, ?, ?)';
@@ -42,28 +27,6 @@ const GrnModel = {
 
       const grnId = results.insertId;
       callback(null, grnId);
-
-    });
-  },
-
-  addGrnPayment(totalpayment,grnno, callback) {
-    const trndate = new Date().toISOString().slice(0, 19).replace('T', ' ');
-    const defaultValues = 0;
-    const activeValues =1;
-    const resiptNo=" ";
-   
-
-    const query = 'INSERT INTO grnpayment (total_amount, grnno, resiptNo, payment_status, trndate, is_delete) VALUES (?, ?, ?, ?, ?, ?)';
-    const values = [totalpayment,grnno,resiptNo, activeValues, trndate, defaultValues];
-
-    connection.query(query, values, (error, results) => {
-      if (error) {
-        callback(error, null);
-        return;
-      }
-
-      const grnpayment_id = results.insertId;
-      callback(null, grnpayment_id);
 
     });
   },
@@ -141,7 +104,7 @@ const GrnModel = {
   getStokebyItemidAndBranch(itemid,branch_id, callback) {
     connection.query('SELECT * FROM stock WHERE itemid = ? AND branch_id = ? AND is_delete = 0', [ itemid, branch_id ], callback);
   },
-
+  
   getGrnByIdPromise(grnId) {
     return new Promise((resolve, reject) => {
       connection.query('SELECT * FROM grn WHERE grnno = ?', [grnId], (error, results) => {
@@ -168,8 +131,12 @@ const GrnTempModel = {
     connection.query('SELECT * FROM grn_temp WHERE is_delete = 0 AND grnno = ? ',[grnId] , callback);
   },
 
-  getItemBybranch(itemid, branch_id, callback) {
+  getItemPriceBybranch(itemid, branch_id, callback) {
     connection.query('SELECT * FROM item_price WHERE itemId = ? AND branch_id = ? AND is_delete = 0', [itemid, branch_id], callback);
+  },
+
+  getItemBybranch(itemid, callback) {
+    connection.query('SELECT * FROM item WHERE itemid = ? AND is_delete = 0', [itemid,], callback);
   },
 
   getAllGrnTempBygrnnoAndBranch(grnno, branch_id, callback) {
@@ -188,53 +155,22 @@ const GrnTempModel = {
     );
   },  
 
-  addGrnTempwithoutprice(grnTemp, zeropricedetails, callback) {
-    const { itemid, item_name, grnno, branch_id } = grnTemp;
-    const trndate = new Date().toISOString().slice(0, 19).replace('T', ' ');
-    const defaultValues = 0;
-    const activeValues = 1;
-    const grnqty = 0;
   
-    const query =
-      'INSERT INTO grn_temp (itemid, sell_price, purchase_price, wholesale_price, discount, grnqty, branch_id, trndate, status, is_delete, item_name, grnno ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
-  
-    const values = [
-      itemid,
-      zeropricedetails.sell_price, // Access properties from zeropricedetails object
-      zeropricedetails.purchase_price,
-      zeropricedetails.wholesale_price,
-      zeropricedetails.discount,
-      grnqty,
-      branch_id,
-      trndate,
-      activeValues,
-      defaultValues,
-      item_name,
-      grnno,
-    ];
-  
-    connection.query(query, values, (error, results) => {
-      if (error) {
-        callback(error, null);
-        return;
-      }
-  
-      const grnTempId = results.insertId;
-      callback(null, grnTempId);
-    });
-  },
 
-  addGrnTempwithprice(grnTemp,pricedetails, callback) {
+
+
+  addGrnTemp(grnTemp,pricedetails, callback) {
     const { sell_price, purchase_price, wholesale_price, discount } = pricedetails;
     const { itemid,item_name, grnno, branch_id } = grnTemp;
+    const { serial_status} = items;
     const trndate = new Date().toISOString().slice(0, 19).replace('T', ' ');
     const defaultValues = 0;
     const activeValues = 1;
     const grnqty = 0;
 
-    const query = 'INSERT INTO grn_temp (itemid, sell_price, purchase_price, wholesale_price, discount, grnqty, branch_id, trndate, status, is_delete, item_name, grnno ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
+    const query = 'INSERT INTO grn_temp (itemid, sell_price, purchase_price, wholesale_price, discount, grnqty, branch_id, trndate, status, is_delete, item_name, grnno, temp_serial_status ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
 
-    const values = [itemid, sell_price, purchase_price, wholesale_price, discount, grnqty, branch_id, trndate, activeValues, defaultValues, item_name, grnno];
+    const values = [itemid, sell_price, purchase_price, wholesale_price, discount, grnqty, branch_id, trndate, activeValues, defaultValues, item_name, grnno, serial_status];
 
     connection.query(query, values, (error, results) => {
       if (error) {
@@ -254,13 +190,6 @@ const GrnTempModel = {
 
     connection.query(query, values, callback);
   },
-  updateGrnTempStatus(grnId, status, callback) {
-    const query = 'UPDATE grn_temp SET status = ? WHERE grnno = ?';
-    const values = [status, grnId];
- 
-    connection.query(query, values, callback);
-  },
-
 
   updateGrnTempPurchaseprice(grntempid, purchase_price, callback) {
     const query = 'UPDATE grn_temp SET purchase_price = ? WHERE grntempid = ?';
