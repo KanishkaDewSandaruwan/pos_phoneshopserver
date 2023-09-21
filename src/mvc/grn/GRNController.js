@@ -388,7 +388,7 @@ const addGrnTemp = (req, res) => {
 
     GrnTempModel.getItemPriceBybranch(grnTemp.itemid, grnTemp.branch_id, (error, itemPrice) => {
       if (error) {
-        res.status(500).send({ error: 'Error fetching data from the database' });
+        res.status(500).send({ error: 'Error fetching data from the database 1' });
         return;
       }
 

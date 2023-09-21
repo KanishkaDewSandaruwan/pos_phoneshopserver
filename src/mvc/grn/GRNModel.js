@@ -13,8 +13,8 @@ const GrnModel = {
     const { supplier_id, reference_number, branch_id, user_id } = grn;
     const trndate = new Date().toISOString().slice(0, 19).replace('T', ' ');
     const defaultValues = 0;
-    const activeValues =1;
-   
+    const activeValues = 1;
+
 
     const query = 'INSERT INTO grn (supplier_id, reference_number, branch_id, status, trndate, is_delete, user_id) VALUES (?, ?, ?, ?, ?, ?, ?)';
     const values = [supplier_id, reference_number, branch_id, activeValues, trndate, defaultValues, user_id];
@@ -57,10 +57,10 @@ const GrnModel = {
     if (!Array.isArray(grnIds)) {
       grnIds = [grnIds]; // Convert to array if it's a single grn ID
     }
-  
+
     let successCount = 0;
     let failCount = 0;
-  
+
     for (const grnId of grnIds) {
       GrnModel.getGrnById(grnId, (error, results) => {
         if (error || results.length === 0) {
@@ -73,13 +73,13 @@ const GrnModel = {
             } else {
               successCount++;
             }
-  
+
             checkCompletion();
           });
         }
       });
     }
-  
+
     function checkCompletion() {
       const totalCount = grnIds.length;
       if (successCount + failCount === totalCount) {
@@ -101,10 +101,10 @@ const GrnModel = {
     connection.query(query, values, callback);
   },
 
-  getStokebyItemidAndBranch(itemid,branch_id, callback) {
-    connection.query('SELECT * FROM stock WHERE itemid = ? AND branch_id = ? AND is_delete = 0', [ itemid, branch_id ], callback);
+  getStokebyItemidAndBranch(itemid, branch_id, callback) {
+    connection.query('SELECT * FROM stock WHERE itemid = ? AND branch_id = ? AND is_delete = 0', [itemid, branch_id], callback);
   },
-  
+
   getGrnByIdPromise(grnId) {
     return new Promise((resolve, reject) => {
       connection.query('SELECT * FROM grn WHERE grnno = ?', [grnId], (error, results) => {
@@ -128,7 +128,7 @@ const GrnTempModel = {
   },
 
   getAllGrnTempBYGRNNO(grnId, callback) {
-    connection.query('SELECT * FROM grn_temp WHERE is_delete = 0 AND grnno = ? ',[grnId] , callback);
+    connection.query('SELECT * FROM grn_temp WHERE is_delete = 0 AND grnno = ? ', [grnId], callback);
   },
 
   getItemPriceBybranch(itemid, branch_id, callback) {
@@ -153,16 +153,17 @@ const GrnTempModel = {
         }
       }
     );
-  },  
+  },
 
-  
+
 
 
 
   addGrnTemp(grnTemp, pricedetails, items, callback) {
     const { sell_price, purchase_price, wholesale_price, discount } = pricedetails;
-    const { itemid,item_name, grnno, branch_id } = grnTemp;
-    const { serial_status} = items;
+    const { itemid, item_name, grnno, branch_id } = grnTemp;
+    const { serial_status } = items;
+    console.log(serial_status)
     const trndate = new Date().toISOString().slice(0, 19).replace('T', ' ');
     const defaultValues = 0;
     const activeValues = 1;
@@ -209,13 +210,13 @@ const GrnTempModel = {
   updateGrnTempGrnqty(grnTempId, grnqty, callback) {
     const query = 'UPDATE grn_temp SET grnqty = ? WHERE grntempid = ?';
     const values = [grnqty, grnTempId];
-    connection.query(query, values, callback); 
+    connection.query(query, values, callback);
   },
 
   updateGrnTempDiscount(grnTempId, discount, callback) {
     const query = 'UPDATE grn_temp SET discount = ? WHERE grntempid = ?';
     const values = [discount, grnTempId];
-    connection.query(query, values, callback); 
+    connection.query(query, values, callback);
   },
 
   deleteGrnTemp(grntempid, value, callback) {
@@ -229,10 +230,10 @@ const GrnTempModel = {
     if (!Array.isArray(grnTempIds)) {
       grnTempIds = [grnTempIds]; // Convert to array if it's a single grnTemp ID
     }
-  
+
     let successCount = 0;
     let failCount = 0;
-  
+
     for (const grnTempId of grnTempIds) {
       GrnTempModel.getGrnTempById(grnTempId, (error, results) => {
         if (error || results.length === 0) {
@@ -245,13 +246,13 @@ const GrnTempModel = {
             } else {
               successCount++;
             }
-  
+
             checkCompletion();
           });
         }
       });
     }
-  
+
     function checkCompletion() {
       const totalCount = grnTempIds.length;
       if (successCount + failCount === totalCount) {
