@@ -172,6 +172,7 @@ const tableInfo = [
       { name: 'itemid', type: 'INT(255)' },
       { name: 'sell_price', type: 'FLOAT' },
       { name: 'item_name', type: 'VARCHAR(255)' },
+      { name: 'temp_serial_status', type: 'VARCHAR(255)' },
       { name: 'purchase_price', type: 'FLOAT' },
       { name: 'sell_price', type: 'FLOAT' },
       { name: 'wholesale_price', type: 'FLOAT' },
