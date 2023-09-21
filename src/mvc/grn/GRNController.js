@@ -382,7 +382,7 @@ const addGrnTemp = (req, res) => {
     }
 
     if (item.length === 0) {
-      res.status(404).send({ error: 'Prices not found' });
+      res.status(404).send({ error: 'Item not found' });
       return;
     }
 
