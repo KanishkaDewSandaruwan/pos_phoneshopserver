@@ -49,7 +49,7 @@ module.exports = (config) => {
   router.put('/update/:grnId', authenticateToken, updateGrn);
   router.put('/delete/:grnId', authorizeAccessControll, deleteGrn);
   router.put('/delete', authorizeAccessControll, deleteGrns);
-//   router.delete('/permanent-delete/:grnId', authorizeAccessControll, permanentDeleteGrn);
+  router.delete('/permanent-delete/:grnId', authorizeAccessControll, permanentDeleteGrn);
 
   // Routes for GrnTemp Model
   router.get('/temp/all', authenticateToken, getAllGrnTemp);
