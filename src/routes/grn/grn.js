@@ -27,6 +27,7 @@ const {
 const {
   getAllTempItemDetails,
   getTempItemDetailsById,
+  getTempItemDetailsBygrnTempId,
   addTempItemDetails,
   updateTempItemDetails,
   deleteTempItemDetails,
@@ -71,6 +72,7 @@ module.exports = (config) => {
   router.post('/tempitem/create', authenticateToken, addTempItemDetails);
   router.get('/tempitem/all', authenticateToken, getAllTempItemDetails);
   router.get('/tempitem/:temp_itemdetails_id', authenticateToken, getTempItemDetailsById);
+  router.get('/tempitemBygrntemp/:grntempid', authenticateToken, getTempItemDetailsBygrnTempId);
   router.put('/tempitem/update/:temp_itemdetails_id', authenticateToken, updateTempItemDetails);
   router.put('/tempitem/delete/:temp_itemdetails_id', authenticateToken, deleteTempItemDetails);
   router.delete('/tempitem/delete/:temp_itemdetails_id', authenticateToken, permenentdeleteTempItemDetails);
