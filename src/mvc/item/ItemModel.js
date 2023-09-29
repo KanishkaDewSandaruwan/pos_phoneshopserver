@@ -14,6 +14,11 @@ const ItemModel = {
     connection.query('SELECT * FROM item WHERE is_delete = 0', callback);
   },
 
+  searchAllComonItems(searchtext, callback) {
+    const searchTextWithWildcards = '%' + searchtext + '%';
+        connection.query('SELECT * FROM item WHERE item_code LIKE ? OR item_name LIKE ? AND is_delete = 0',[searchTextWithWildcards, searchTextWithWildcards], callback);
+      },
+
   getItemById(itemId, callback) {
     connection.query('SELECT * FROM item WHERE itemid = ? AND is_delete = 0', [itemId], callback);
   },

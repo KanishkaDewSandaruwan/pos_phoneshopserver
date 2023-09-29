@@ -55,7 +55,7 @@ const TempposModel = {
     
         });
 
-    }
+    } else {
     const { itemid, item_code, item_name, sell_price, wholesale_price, discount, branch_id } = details;
         const trndate = new Date().toISOString().slice(0, 19).replace('T', ' ');
         const defaultValues = 0;
@@ -77,6 +77,7 @@ const TempposModel = {
           callback(null, postempid);
     
         });
+      }
 
       },
 

@@ -43,6 +43,25 @@ const getAllComonItems = (req, res) => {
     });
 };
 
+const searchAllComonItems = (req, res) => {
+    const { searchtext } = req.params;
+    ItemModel.searchAllComonItems(searchtext,(error, results) => {
+        if (error) {
+            res.status(500).send({ error: 'Error fetching data from the database' });
+            return;
+        }
+
+        if (Array.isArray(results) && results.length > 0) {
+            const renderedComonItemsArray = ComonItemView.renderComonItemsArray(results);
+            res.status(200).send(renderedComonItemsArray);
+            return;
+        }
+
+        // Handle empty results case
+        res.status(404).send({ message: "not found" });
+    });
+};
+
 
 const getAllItemsWithPrice = (req, res) => {
     ItemModel.getAllItemsWithPrice((error, results) => {
@@ -387,5 +406,6 @@ module.exports = {
     deleteItem,
     getAllComonItems,
     deleteItems,
-    updateItemImage
+    updateItemImage,
+    searchAllComonItems
 };

@@ -9,6 +9,18 @@ const GrnModel = {
     connection.query('SELECT * FROM grn WHERE is_delete = 0 AND status = 1', callback);
   },
 
+  getAllGrnPayment(callback) {
+    connection.query('SELECT * FROM grnpayment WHERE is_delete = 0 AND payment_status = 1', callback);
+  },
+
+  getAllGrnsbyBranch(branch_id,callback) {
+    connection.query('SELECT * FROM grn WHERE is_delete = 0 AND status = 1 AND branch_id = ? ',[branch_id], callback);
+  },
+
+  getAllGrnPaymentbyGrnno(grnno,callback) {
+    connection.query('SELECT * FROM grnpayment WHERE is_delete = 0 AND grnno = ? ',[grnno], callback);
+  },
+
   addGrn(grn, callback) {
     const { supplier_id, reference_number, branch_id, user_id } = grn;
     const trndate = new Date().toISOString().slice(0, 19).replace('T', ' ');
@@ -28,6 +40,25 @@ const GrnModel = {
       const grnId = results.insertId;
       callback(null, grnId);
 
+    });
+  },
+
+  addGrnPayment(totalpayment,grnno, callback) {
+    const trndate = new Date().toISOString().slice(0, 19).replace('T', ' ');
+    const defaultValues = 0;
+    const activeValues =1;
+    const resiptNo=" ";
+
+
+    const query = 'INSERT INTO grnpayment (total_amount, grnno, resiptNo, payment_status, trndate, is_delete) VALUES (?, ?, ?, ?, ?, ?)';
+    const values = [totalpayment,grnno,resiptNo, activeValues, trndate, defaultValues];
+    connection.query(query, values, (error, results) => {
+      if (error) {
+        callback(error, null);
+        return;
+      }
+      const grnpayment_id = results.insertId;
+      callback(null, grnpayment_id);
     });
   },
 
@@ -192,6 +223,13 @@ const GrnTempModel = {
     connection.query(query, values, callback);
   },
 
+  updateGrnTempStatus(grnId, status, callback) {
+    const query = 'UPDATE grn_temp SET status = ? WHERE grnno = ?';
+    const values = [status, grnId];
+ 
+    connection.query(query, values, callback);
+  },
+
   updateGrnTempPurchaseprice(grntempid, purchase_price, callback) {
     const query = 'UPDATE grn_temp SET purchase_price = ? WHERE grntempid = ?';
     const values = [purchase_price, grntempid];
@@ -220,10 +258,33 @@ const GrnTempModel = {
   },
 
   deleteGrnTemp(grntempid, value, callback) {
-    const query = 'UPDATE grn_temp SET is_delete = ? WHERE grntempid = ?';
-    const values = [value, grntempid];
+    const query1 = 'UPDATE grn_temp SET is_delete = ? WHERE grntempid = ?';
+    const values1 = [value, grntempid];
 
-    connection.query(query, values, callback);
+    //////
+
+    connection.query(query1, values1, (error1) => {
+      if (error1) {
+          callback(error1, null);
+          return;
+      }
+
+      const query2 = 'UPDATE temp_itemdetails SET is_delete = ? WHERE grntempid = ?';
+        const values2 = [value, grntempid];
+    
+        connection.query(query2, values2, (error2) => {
+            if (error2) {
+
+                callback(error2, null);
+                return;
+            }
+            
+        callback();
+        ;
+
+    });
+
+    });
   },
 
   deleteGrnTemps(grnTempIds, callback) {
@@ -268,10 +329,31 @@ const GrnTempModel = {
   },
 
   permanentDeleteGrnTemp(grntempid, callback) {
-    const query = 'DELETE FROM `grn_temp` WHERE `grn_temp`.`grntempid` = ?';
-    const values = [grntempid];
+    const query1 = 'DELETE FROM `grn_temp` WHERE `grn_temp`.`grntempid` = ?';
+    const values1 = [grntempid];
 
-    connection.query(query, values, callback);
+    connection.query(query1, values1, (error1) => {
+      if (error1) {
+          callback(error1, null);
+          return;
+      }
+
+      const query2 = 'DELETE FROM `temp_itemdetails` WHERE `temp_itemdetails`.`grntempid` = ?';
+        const values2 = [grntempid];
+    
+        connection.query(query2, values2, (error2) => {
+            if (error2) {
+
+                callback(error2, null);
+                return;
+            }
+
+        callback();
+        ;
+
+    });
+
+    });
   },
 
   getGrnTempByIdPromise(grnTempId) {

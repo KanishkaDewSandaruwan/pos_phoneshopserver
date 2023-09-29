@@ -273,7 +273,7 @@ const tableInfo = [
   {
     tableName: 'pos_temp',
     fields: [
-      { name: 'postempid', type: 'INT AUTO_INCREMENT PRIMARY KEY' },
+      { name: 'postempid', type: 'INT AUTO_ INCREMENT PRIMARY KEY' },
       { name: 'itemid', type: 'INT(255)' },
       { name: 'item_code', type: 'VARCHAR(255)' },
       { name: 'item_name', type: 'VARCHAR(255)' },

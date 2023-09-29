@@ -1,6 +1,7 @@
 const express = require('express');
 const {
   getAllComonItems,
+  searchAllComonItems,
   getItemById,
   getAllItemsBybranch,
   getAllItemsWithPrice,
@@ -23,6 +24,7 @@ module.exports = (config) => {
   router.use('/getitem', express.static('src/uploads/item/'));
   router.get('/withPriceBybranch/:branch_id', authenticateToken, getAllItemsBybranch);
   router.get('/all/comon', authenticateToken, getAllComonItems);
+  router.get('/finditem/:searchtext', authenticateToken, searchAllComonItems);
   router.get('/all/withPrice', authenticateToken, getAllItemsWithPrice);
   router.get('/:itemId', authenticateToken, getItemById);
   router.put('/update/:itemId', authenticateToken, updateItem);

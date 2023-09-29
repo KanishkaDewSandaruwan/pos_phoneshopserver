@@ -2,7 +2,8 @@ const express = require("express");
 const { GrnModel, GrnTempModel } = require("./GRNModel");
 
 const StockModel = require("../stock/StockModel");
-const ItemModel = require("../item/ItemModel");
+const {TempItemDetailsModel,ItemDetailsModel} = require('./ItemDetailsModel');
+const ItemModel = require('../item/ItemModel');
 
 const finishGrn = async (req, res) => {
   const { grnno, branch_id } = req.params;
@@ -36,60 +37,221 @@ const finishGrn = async (req, res) => {
           if (hasError) {
             sendFailResponse();
           } else {
-            res.status(200).send({ message: "Grn save Success" });
-          }
-        }
-      };
+            let totalpayment = 0;
+
+
+            for (const detail of grntempdetails) {
+              const itemid = detail.itemid;
+            
+              totalpayment += detail.purchase_price * detail.grnqty;
+            
+            
+            //stokes update
+            
+              StockModel.getStockByItemAndBranch(itemid, branch_id, (error, results) => {
+                if (error) {
+                  console.error(`Error fetching data from the database: ${error}`);
+                  hasError = true; // Set the flag to true
+            
+                  sendFailResponse();
+                  return;
+                }
+            
+                if (results.length > 0) {
+                  StockModel.updateDetailsInStock(detail.grnqty, itemid, branch_id, (error, grnId) => {
+                    if (error) {
+                      console.error(`Error updating stock: ${error}`);
+                      hasError = true; // Set the flag to true
+                    }
+            
+                   console.log("stock update succes");
+            
+                  });
+                } else {
+                  StockModel.addnewStokes(detail.grnqty, itemid, branch_id, (error, stockid) => {
+                    if (error) {
+                      console.error(`Error adding new stock: ${error}`);
+                      hasError = true; // Set the flag to true
+                    }
+                    console.log('stockid', stockid);
+            
+                    console.log("new stock added succes");
+            
+            
+                  });
+                }
+              });
+            
+            }
+            
+                         //grn payment part//
+            
+                          GrnModel.addGrnPayment(totalpayment,grnno, (error, grnpayementId) => {
+                            if (error) {
+                              res.status(500).send({ error: 'Error fetching data from the database and not added grnpayment ' });
+                              return;
+                            }
+                            if (!grnpayementId) {
+                              res.status(404).send({ error: 'Failed to create grnpayment' });
+                              return;
+                            }
+                            console.log({ message: 'grnpayment created successfully', grnpayementId });
+                          });
+                      
+                      //change status of grn and grn temp//
+                      GrnModel.updateGrnStatus(grnno, 1, (error, results) => {
+                        if (error) {
+                          res.status(500).send({ error: 'Error updating status of grn' });
+                          return;
+                        }
+                  
+                        console.log({ message: 'Grn status updated successfully' });
+                      });
+                      GrnTempModel.updateGrnTempStatus(grnno, 0, (error, results) => {
+                        if (error) {
+                          res.status(500).send({ error: 'Error updating status of Tempgrn' });
+                          return;
+                        }
+                  
+                        console.log({ message: 'TempGrn status updated successfully' });
+                      });
+                      res.status(200).send({ message: 'Grn save Success' });
+                    }
+                  }
+                };
 
       for (const detail of grntempdetails) {
         const itemid = detail.itemid;
+        const serial_status = detail.temp_serial_status;
 
-        StockModel.getStockByItemAndBranch(
-          itemid,
-          branch_id,
-          (error, results) => {
-            if (error) {
-              console.error(`Error fetching data from the database: ${error}`);
-              hasError = true; // Set the flag to true
-              processedCount++;
-              sendFailResponse();
-              return;
-            }
+        console.log(serial_status);
 
-            if (results.length > 0) {
-              StockModel.updateDetailsInStock(
-                detail.grnqty,
-                itemid,
-                branch_id,
-                (error, grnId) => {
+        if (serial_status == 1) {
+          
+
+
+                /////add temp item details to itemdetails
+
+                let successCount = 0;
+                let failCount = 0;
+                const failedSerials = []; // Store failed serial numbers
+                const insertIds = []; // Store inserted IDs
+        
+                TempItemDetailsModel.getTempItemDetailsByBranchAngrntemp(detail.grntempid, (error, tempitemdetails) => {
                   if (error) {
-                    console.error(`Error updating stock: ${error}`);
-                    hasError = true; // Set the flag to true
+                    res.status(500).send({ error: 'Error fetching data from the database' });
+                    return;
                   }
-                  processedCount++;
-                  sendSuccessResponse();
-                }
-              );
-            } else {
-              StockModel.addnewStokes(
-                detail.grnqty,
-                itemid,
-                branch_id,
-                (error, stockid) => {
-                  if (error) {
-                    console.error(`Error adding new stock: ${error}`);
-                    hasError = true; // Set the flag to true
+        
+                  if (tempitemdetails.length === 0) {
+                    res.status(404).send({ error: 'TempItemDetails not found' });
+                    return;
                   }
-                  console.log("stockid", stockid);
-                  processedCount++;
-                  sendSuccessResponse();
-                }
-              );
-            }
-          }
-        );
+        
+        
+                  for (const tempitemdetail of tempitemdetails) {
+                    const { serial_no, colorid } = tempitemdetail;
+        
+                    ItemDetailsModel.getItemDetailsBySerial(serial_no, (error, results) => {
+                      if (error) {
+                        console.error(`Error fetching itemdetails: ${error}`);
+                        failCount++;
+                      } else if (results.length > 0) {
+                        // Serial number already exists
+                        failedSerials.push(serial_no);
+                        failCount++;
+                        console.log(`Serial number already exists: ${serial_no}`);
+                        hasError = true;
+                      } else {
+                        ItemDetailsModel.addItemDetails(itemid, branch_id, serial_no, colorid, (insertError, insertId) => {
+                          if (insertError) {
+                            console.error(`Error inserting itemdetails: ${insertError}`);
+                            failCount++;
+                          } else {
+                            successCount++;
+                            insertIds.push(insertId);
+                            //console.log(`itemdetails added successfully`);
+                          }
+        
+                          // Check if all items have been processed
+                          if (successCount + failCount === tempitemdetails.length) {
+                            const totalCount = tempitemdetails.length;
+                            console.log(`total count:${totalCount},successCount:${successCount},failCountfailCount:${failedSerials},insertIds:${insertIds}`);
+                            processedCount++;
+                          sendSuccessResponse();
+        
+                          }
+                        });
+                      }
+        
+                      // Check if all items have been processed
+                      if (successCount + failCount === tempitemdetails.length) {
+                        const totalCount = tempitemdetails.length;
+                        console.log(`total count:${totalCount},successCount:${successCount},failCountfailCount:${failedSerials},insertIds:${insertIds}`);
+                        processedCount++;
+                        sendSuccessResponse();
+        
+        
+                      }
+                    });
+                  }
+                });
+
+                
+              
+                
 
         // update Item Price
+        ItemModel.getPriceBybranchId(itemid, branch_id, (error, results) => {
+          if (error) {
+            console.error(`Error fetching data from the database: ${error}`);
+            hasError = true; // Set the flag to true
+            processedCount++;
+            sendFailResponse();
+            return;
+          }
+
+          if (results.length > 0) {
+            ItemModel.updateItemPrices(
+              itemid,
+              detail.sell_price,
+              detail.purchase_price,
+              detail.wholesale_price,
+              detail.discount,
+              branch_id,
+              (error, grnId) => {
+                if (error) {
+                  console.error(`Error updating item prices: ${error}`);
+                  hasError = true; // Set the flag to true
+                }
+                processedCount++;
+                console.log('reahed to update price');
+                sendSuccessResponse();
+              }
+            );
+          } else {
+            const itemPrice = {
+              itemid: itemid,
+              sell_price: detail.sell_price,
+              purchase_price: detail.purchase_price,
+              wholesale_price: detail.wholesale_price,
+              discount: detail.discount,
+              branch_id: branch_id,
+            };
+
+            ItemModel.addNewitemPrice(itemPrice, (error, itempriceId) => {
+              if (error) {
+                console.error(`Error adding new item price: ${error}`);
+                hasError = true; // Set the flag to true
+              }
+              console.log("itempriceId", itempriceId);
+              processedCount++;
+              sendSuccessResponse();
+            });
+          }
+        });
+      } else {
+        // update only Item Price if item is non serial
         ItemModel.getPriceBybranchId(itemid, branch_id, (error, results) => {
           if (error) {
             console.error(`Error fetching data from the database: ${error}`);
@@ -137,6 +299,7 @@ const finishGrn = async (req, res) => {
             });
           }
         });
+      }//if end
       }
     }
   );

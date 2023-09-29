@@ -108,6 +108,7 @@ const addTempItemDetails = async (req, res) => {
           if (insertError) {
             console.error(`Error inserting tempitemdetails: ${insertError}`);
             failCount++;
+            
           } else {
             successCount++;
             insertIds.push(insertId);
