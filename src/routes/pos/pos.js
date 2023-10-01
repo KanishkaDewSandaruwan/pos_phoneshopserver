@@ -19,8 +19,8 @@ const {
 
 
     // Routes for TempposModel
-  router.post('/createwithSerial/:serial_no/:branch_id', authenticateToken, addTempPosbySerial);
-  router.post('/createwithNonSerial/:itemid/:branch_id', authenticateToken, addTempPosbyitemId);
+  router.post('/createwithSerial/:serial_no/:branch_id/:userid', authenticateToken, addTempPosbySerial);
+  router.post('/createwithNonSerial/:itemid/:branch_id/:userid', authenticateToken, addTempPosbyitemId);
   router.get('/alltemposbyBranch/:branch_id', authenticateToken, getallTempposbyBbrnch);
   router.get('/serials/:itemid/:branch_id', authenticateToken, getallSerialsOfitem);
   router.get('/finditem/:searchtext', authenticateToken, searchByItemnNameOrCodeorSerial);

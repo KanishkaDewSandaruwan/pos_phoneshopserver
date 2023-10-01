@@ -3,7 +3,7 @@ const StockModel = require('../stock/StockModel');
 
 
 const addTempPosbySerial = (req, res) => {
-    const { serial_no, branch_id } = req.params;
+    const { serial_no, branch_id, userid } = req.params;
 
     TempposModel.getAlldetailsToserialItems(serial_no, branch_id, (error, results) => {
         if (error) {
