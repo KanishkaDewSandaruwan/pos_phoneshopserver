@@ -283,6 +283,7 @@ const tableInfo = [
       { name: 'discount', type: 'FLOAT(10, 2)' },
       { name: 'qty', type: 'INT(255)' },
       { name: 'branch_id', type: 'INT(255)'},
+      { name: 'userid', type: 'INT(255)' },
       { name: 'trndate', type: 'DATETIME' },
       { name: 'status', type: 'INT(5)' },
       { name: 'is_delete', type: 'INT(5)' },

@@ -19,6 +19,7 @@ const {
 
 
     // Routes for TempposModel
+
   router.post('/createwithSerial/:serial_no/:branch_id/:userid', authenticateToken, addTempPosbySerial);
   router.post('/createwithNonSerial/:itemid/:branch_id/:userid', authenticateToken, addTempPosbyitemId);
   router.get('/alltemposbyBranch/:branch_id', authenticateToken, getallTempposbyBbrnch);

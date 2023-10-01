@@ -4,6 +4,7 @@ const StockModel = require('../stock/StockModel');
 
 const addTempPosbySerial = (req, res) => {
     const { serial_no, branch_id, userid } = req.params;
+    console.log(userid);
 
     TempposModel.getAlldetailsToserialItems(serial_no, branch_id, (error, results) => {
         if (error) {
@@ -24,7 +25,7 @@ const addTempPosbySerial = (req, res) => {
             return;
           }
 
-        TempposModel.addTemppos(details, (error, postempid) => {
+        TempposModel.addTemppos(details, userid, (error, postempid) => {
             if (error) {
               res.status(500).send({ error: 'Error fetching data from the database for add temp',error });
               return;
@@ -44,7 +45,7 @@ const addTempPosbySerial = (req, res) => {
   };
 
   const addTempPosbyitemId = (req, res) => {
-    const { itemid, branch_id } = req.params;
+    const { itemid, branch_id, userid } = req.params;
 
     TempposModel.getAlldetailsToNonserialItems(itemid, branch_id, (error, results) => {
         if (error) {
@@ -65,7 +66,7 @@ const addTempPosbySerial = (req, res) => {
             return;
           }
 
-        TempposModel.addTemppos(details, (error, postempid) => {
+        TempposModel.addTemppos(details, userid, (error, postempid) => {
             if (error) {
               res.status(500).send({ error: 'Error fetching data from the database for add temp',error });
               return;

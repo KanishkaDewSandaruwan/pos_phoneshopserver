@@ -30,19 +30,19 @@ const TempposModel = {
         connection.query('SELECT * FROM itemdetails WHERE itemid = ? AND branch_id = ? AND is_delete = 0',[itemid, branch_id], callback);
       },
 
-    addTemppos(details, callback) {
+    addTemppos(details, userid, callback) {
 
         if (details.serial_no) {
            
-        const { itemid, item_code, item_name, serial_no, sell_price, wholesale_price, discount, branch_id } = details;
+        const { itemid, item_code, item_name, serial_no, sell_price, wholesale_price, discount, branch_id} = details;
         const trndate = new Date().toISOString().slice(0, 19).replace('T', ' ');
         const defaultValues = 0;
         const activeValues =1;
         const defaultqty = 1;
        
     
-        const query = 'INSERT INTO pos_temp (itemid, item_code, item_name, serial_no, sell_price, wholesale_price, discount, qty, branch_id, status, trndate, is_delete) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
-        const values = [itemid, item_code, item_name, serial_no, sell_price, wholesale_price, discount, defaultqty, branch_id, activeValues, trndate, defaultValues];
+        const query = 'INSERT INTO pos_temp (itemid, item_code, item_name, serial_no, sell_price, wholesale_price, discount, qty, branch_id, userid, status, trndate, is_delete) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
+        const values = [itemid, item_code, item_name, serial_no, sell_price, wholesale_price, discount, defaultqty, branch_id, userid, activeValues, trndate, defaultValues];
     
         connection.query(query, values, (error, results) => {
           if (error) {
@@ -64,8 +64,8 @@ const TempposModel = {
         const serial_no = "";
        
     
-        const query = 'INSERT INTO pos_temp (itemid, item_code, item_name, serial_no, sell_price, wholesale_price, discount, qty, branch_id, status, trndate, is_delete) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
-        const values = [itemid, item_code, item_name, serial_no, sell_price, wholesale_price, discount, defaultqty, branch_id, activeValues, trndate, defaultValues];
+        const query = 'INSERT INTO pos_temp (itemid, item_code, item_name, serial_no, sell_price, wholesale_price, discount, qty, branch_id, userid, status, trndate, is_delete) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
+        const values = [itemid, item_code, item_name, serial_no, sell_price, wholesale_price, discount, defaultqty, branch_id, userid, activeValues, trndate, defaultValues];
     
         connection.query(query, values, (error, results) => {
           if (error) {
