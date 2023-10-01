@@ -26,12 +26,12 @@ const TempItemDetailsModel = {
     connection.query('SELECT * FROM temp_itemdetails WHERE grntempid = ? AND is_delete = 0', [grntempid,], callback);
   },
 
-  addTempItemDetails(grntempid, branch_id, serial_no, colorid, callback) {
+  addTempItemDetails(grntempid, serial_no, colorid, callback) {
     const trndate = new Date().toISOString().slice(0, 19).replace('T', ' ');
     const defaultValues = 0;
 
-    const query = 'INSERT INTO temp_itemdetails (grntempid, branch_id, serial_no, colorid, trndate, is_delete) VALUES (?, ?, ?, ?, ?, ?)';
-    const values = [grntempid, branch_id, serial_no, colorid, trndate, defaultValues];
+    const query = 'INSERT INTO temp_itemdetails (grntempid, serial_no, colorid, trndate, is_delete) VALUES (?, ?, ?, ?, ?)';
+    const values = [grntempid, serial_no, colorid, trndate, defaultValues];
 
     connection.query(query, values, (error, results) => {
       if (error) {

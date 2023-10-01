@@ -92,7 +92,7 @@ const addTempItemDetails = async (req, res) => {
   const insertIds = []; // Store inserted IDs
 
   for (const detail of tempitemdetails) {
-    const { grntempid, branch_id, serial_no, colorid } = detail;
+    const { grntempid, serial_no, colorid } = detail;
 
     TempItemDetailsModel.getTempItemDetailsBySerial(serial_no, (error, results) => {
       if (error) {
@@ -104,7 +104,7 @@ const addTempItemDetails = async (req, res) => {
         failCount++;
         console.log(`Serial number already exists: ${serial_no}`);
       } else {
-        TempItemDetailsModel.addTempItemDetails(grntempid, branch_id, serial_no, colorid, (insertError, insertId) => {
+        TempItemDetailsModel.addTempItemDetails(grntempid, serial_no, colorid, (insertError, insertId) => {
           if (insertError) {
             console.error(`Error inserting tempitemdetails: ${insertError}`);
             failCount++;

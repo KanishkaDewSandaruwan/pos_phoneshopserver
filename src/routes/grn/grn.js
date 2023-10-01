@@ -2,6 +2,9 @@ const express = require('express');
 const {
   getAllGrns,
   getGrnById,
+  getAllGrnsbyBranch,
+  getAllGrnPayment,
+  getAllGrnPaymentbyGrnno,
   addGrn,
   updateGrn,
   updateGrnStatus,
@@ -46,11 +49,14 @@ module.exports = (config) => {
   // Routes for Grn Model
   router.get('/all', authenticateToken, getAllGrns);
   router.get('/:grnId', authenticateToken, getGrnById);
+  router.get('/allbyBranch/:branch_id', authenticateToken,getAllGrnsbyBranch);
   router.post('/create', authenticateToken, addGrn);
   router.put('/update/status/:grnId', authenticateToken, updateGrnStatus);
   router.put('/update/:grnId', authenticateToken, updateGrn);
   router.put('/delete/:grnId', authorizeAccessControll, deleteGrn);
   router.put('/delete', authorizeAccessControll, deleteGrns);
+  router.get('/all/grnPayments', authenticateToken, getAllGrnPayment);
+  router.get('/allgrnPaymentsbyGrnno/:grnno', authenticateToken, getAllGrnPaymentbyGrnno);
   router.delete('/permanent-delete/:grnId', authenticateToken, permanentDeleteGrn);
 
   // Routes for GrnTemp Model

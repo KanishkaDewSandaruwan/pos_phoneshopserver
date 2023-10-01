@@ -124,7 +124,7 @@ const finishGrn = async (req, res) => {
         const itemid = detail.itemid;
         const serial_status = detail.temp_serial_status;
 
-        console.log(serial_status);
+        
 
         if (serial_status == 1) {
           
@@ -310,6 +310,45 @@ const getAllGrns = (req, res) => {
   GrnModel.getAllGrns((error, results) => {
     if (error) {
       res.status(500).send({ error: "Error fetching data from the database" });
+      return;
+    }
+
+    res.status(200).send(results);
+  });
+};
+//get all grn by branch
+
+const getAllGrnsbyBranch = (req, res) => {
+  const { branch_id } = req.params;
+  GrnModel.getAllGrnsbyBranch(branch_id,(error, results) => {
+    if (error) {
+      res.status(500).send({ error: 'Error fetching data from the database' });
+      return;
+    }
+
+    res.status(200).send(results);
+  });
+};
+//get all grnpayement
+
+const getAllGrnPayment = (req, res) => {
+  GrnModel.getAllGrnPayment((error, results) => {
+    if (error) {
+      res.status(500).send({ error: 'Error fetching data from the database' });
+      return;
+    }
+
+    res.status(200).send(results);
+  });
+};
+
+//get all grnpayement by branch
+
+const getAllGrnPaymentbyGrnno = (req, res) => {
+  const { grnno } = req.params;
+  GrnModel.getAllGrnPaymentbyGrnno(grnno,(error, results) => {
+    if (error) {
+      res.status(500).send({ error: 'Error fetching data from the database' });
       return;
     }
 
@@ -953,12 +992,16 @@ module.exports = {
   // Grn Model
   getAllGrns,
   getGrnById,
+  getAllGrnsbyBranch,
+  getAllGrnPayment,
+  getAllGrnPaymentbyGrnno,
   addGrn,
   updateGrn,
   updateGrnStatus,
   deleteGrn,
   permanentDeleteGrn,
   deleteGrns,
+  
 
   // GrnTemp Model
   getAllGrnTemp,
