@@ -7,7 +7,9 @@ const {
     deleteTemppos,
     searchByItemnNameOrCodeorSerial,
     getallSerialsOfitem,
-    addTempPosbyitemId
+    addTempPosbyitemId,
+
+    finishSales
 
   } = require('../../mvc/pos/posController');
   
@@ -18,7 +20,7 @@ const {
     const router = express.Router();
 
 
-    // Routes for TempposModel
+    // Routes for Temppos
 
   router.post('/createwithSerial/:serial_no/:branch_id/:userid', authenticateToken, addTempPosbySerial);
   router.post('/createwithNonSerial/:itemid/:branch_id/:userid', authenticateToken, addTempPosbyitemId);
@@ -27,6 +29,10 @@ const {
   router.get('/finditem/:searchtext', authenticateToken, searchByItemnNameOrCodeorSerial);
   router.put('/updateqty/:postempid/:qty', authenticateToken, updateTempposqty);
   router.delete('/delete/:postempid', authenticateToken, deleteTemppos);
+
+    // Routes for finish Sales
+
+  router.get('/finish/:branch_id/:userid', authenticateToken, finishSales);
 
 
 

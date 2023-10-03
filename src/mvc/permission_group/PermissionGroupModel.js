@@ -17,14 +17,13 @@ const AssignPermissionModel = {
     connection.query('SELECT * FROM userrole WHERE userroleid = ? AND is_delete = 0', [userRoleId], callback);
   },
 
-  addAssignPermission(assignPermission, callback) {
-    const { permission_code, userroleid } = assignPermission;
+  addAssignPermission( userRoleId, permission, callback) {
     const adddate = new Date().toISOString().slice(0, 19).replace('T', ' ');
     const defaultValues = 0;
     const activeValues = 1;
 
     const query = 'INSERT INTO assign_permission (permission_code, userroleid, status, trndate, is_delete) VALUES (?, ?, ?, ?, ?)';
-    const values = [permission_code, userroleid, activeValues, adddate, defaultValues];
+    const values = [permission, userRoleId, activeValues, adddate, defaultValues];
 
     connection.query(query, values, (error, results) => {
       if (error) {

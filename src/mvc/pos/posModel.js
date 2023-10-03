@@ -14,6 +14,11 @@ const TempposModel = {
     getallTempposbyBbrnch(branch_id,callback) {
         connection.query('SELECT * FROM pos_temp WHERE is_delete = 0 AND branch_id = ? ',[branch_id], callback);
       },
+
+      getallTempposbyBbrnchAnduser( branch_id, userid, callback ) {
+        connection.query('SELECT * FROM pos_temp WHERE is_delete = 0 AND branch_id = ? AND userid = ? ',[ branch_id, userid ], callback);
+      },
+
       getTempposbyId(postempid,callback) {
         connection.query('SELECT * FROM pos_temp WHERE postempid = ? AND is_delete = 0',[postempid], callback);
       },
@@ -95,7 +100,63 @@ const TempposModel = {
       },
 };
 
-const posModel = {};
+const posModel = {
+
+      addSalesItem(details, salesid, callback) {
+
+          
+        const { itemid, item_code, item_name, serial_no, sell_price, wholesale_price, discount, branch_id, userid, qty} = details;
+        const trndate = new Date().toISOString().slice(0, 19).replace('T', ' ');
+        const defaultValues = 0;
+        const activeValues =1;
+        
+        
+      
+
+        const query = 'INSERT INTO sales_item (itemid, item_code, item_name, serial_no, sell_price, wholesale_price, discount, qty, branch_id, userid, salesid, status, trndate, is_delete) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
+        const values = [itemid, item_code, item_name, serial_no, sell_price, wholesale_price, discount, qty, branch_id, userid, salesid, activeValues, trndate, defaultValues];
+
+        connection.query(query, values, (error, results) => {
+          if (error) {
+            callback(error, null);
+            return;
+          }
+
+          const sales_item_id = results.insertId;
+          callback(null, sales_item_id);
+
+        });
+
+    },
+
+      addSales(salesdetails, userid, branch_id, callback) {
+
+            
+        const { sub_total, discount_total, net_total, cash_amount, card_amount, sales_type, customer_id } = salesdetails;
+        const trndate = new Date().toISOString().slice(0, 19).replace('T', ' ');
+        const defaultValues = 0;
+        const activeValues =1;
+        
+      
+
+        const query = 'INSERT INTO sales (sub_total, discount_total, net_total, cash_amount, card_amount, sales_type, branch_id, userid, customer_id, status, trndate, is_delete) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
+        const values = [sub_total, discount_total, net_total, cash_amount, card_amount, sales_type, branch_id, userid, customer_id, activeValues, trndate, defaultValues];
+
+        connection.query(query, values, (error, results) => {
+          if (error) {
+            callback(error, null);
+            return;
+          }
+
+          const salesid = results.insertId;
+          callback(null, salesid);
+
+        });
+
+      },
+
+
+};
 
 module.exports = {
     posModel,

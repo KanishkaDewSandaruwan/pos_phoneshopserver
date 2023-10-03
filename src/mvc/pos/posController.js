@@ -1,6 +1,109 @@
 const {posModel, TempposModel } = require('./posModel');
 const StockModel = require('../stock/StockModel');
 
+//POS sales part
+
+const finishSales = (req, res) => {
+  const { branch_id,userid } = req.params;
+  const salesdetails = req.body;
+  let hasError = false
+
+
+  TempposModel.getallTempposbyBbrnchAnduser( branch_id, userid, (error, postempdetails) => {
+    if (error) {
+      console.error(`Error fetching postempdetails: ${error}`);
+      res.status(500).send({ error: "Failed to fetch postempdetails" });
+      hasError = true; // Set the flag to true
+      return;
+    }
+    if (!postempdetails || postempdetails.length === 0) {
+      res.status(404).send({ error: "postempdetails not found" });
+      hasError = true; // Set the flag to true
+      return;
+    }
+
+    let processedCount = 0;
+    const totalCount = postempdetails.length;
+
+      const sendFailResponse = () => {
+        res.status(500).send({ message: "sales save failed" });
+      };
+
+      const sendSuccessResponse = () => {
+
+        if (processedCount === totalCount) {
+          if (hasError) {
+            sendFailResponse();
+          } else {
+
+            res.status(200).send({ message: 'sales save Success' });
+
+          }
+        };
+      };
+
+      posModel.addSales(salesdetails, userid, branch_id, (error, salesid) => {
+        if (error) {
+          res.status(500).send({ error: 'Error fetching data from the database for add temp',error });
+          return;
+        }
+    
+        if (!salesid) {
+          res.status(404).send({ error: 'Failed to create temp pos' });
+          return;
+    
+        }
+    
+
+      
+
+
+      
+      let successCount = 0;
+      let failCount = 0;
+      const insertIds = []; // Store inserted IDs
+
+      for (const detail of postempdetails) {
+
+        posModel.addSalesItem( detail,salesid, (insertError, insertId) => {
+          if (insertError) {
+            console.error(`Error inserting sales item: ${insertError}`);
+            failCount++;
+            processedCount++;
+          } else {
+            successCount++;
+            processedCount++;
+            insertIds.push(insertId);
+            //console.log(`itemdetails added successfully`);
+          }
+
+
+          // Check if all items have been processed
+          if (successCount + failCount === postempdetails.length) {
+            console.log(`total count:${totalCount},successCount:${successCount},failCount:${failCount},insertIds:${insertIds}`);
+          sendSuccessResponse();
+
+          }
+        });
+
+        // Check if all items have been processed
+        if (successCount + failCount === postempdetails.length) {
+          console.log(`total count:${totalCount},successCount:${successCount},failCount:${failCount},insertIds:${insertIds}`);
+          sendSuccessResponse();
+
+
+        }
+
+      }
+
+    });
+
+  });
+};
+
+
+
+//POS temp cart controlers
 
 const addTempPosbySerial = (req, res) => {
     const { serial_no, branch_id, userid } = req.params;
@@ -233,6 +336,8 @@ module.exports = {
     searchByItemnNameOrCodeorSerial,
     getallSerialsOfitem,
     addTempPosbySerial,
-    addTempPosbyitemId
+    addTempPosbyitemId,
+
+    finishSales
 
 }
