@@ -22,13 +22,27 @@ const TempposModel = {
       getTempposbyId(postempid,callback) {
         connection.query('SELECT * FROM pos_temp WHERE postempid = ? AND is_delete = 0',[postempid], callback);
       },
-      searchByItemnNameOrCode(searchtext,callback) {
+      searchByItemnNameOrCode(searchtext, branch_id, callback) {
         const searchTextWithWildcards = '%' + searchtext + '%';
-        connection.query('SELECT * FROM item WHERE item_code LIKE ? OR item_name LIKE ? AND is_delete = 0',[searchTextWithWildcards, searchTextWithWildcards], callback);
+        const query = `
+          SELECT * 
+          FROM item 
+          INNER JOIN item_price ON item.itemid = item_price.itemid
+          INNER JOIN stock ON item_price.itemid = stock.itemid
+          WHERE (item.item_code LIKE ? OR item.item_name LIKE ?) AND item.is_delete = 0 AND item_price.branch_id = ? AND stock.branch_id = ?`;
+      
+        connection.query(query, [searchTextWithWildcards, searchTextWithWildcards, branch_id, branch_id], (error, results) => {
+          if (error) {
+            console.error('Error executing database query:', error);
+            callback(error, null);
+          } else {
+            callback(null, results);
+          }
+        });
       },
-
-      searchItemBySerial(searchtext,callback) {
-        connection.query('SELECT * FROM itemdetails WHERE serial_no LIKE ? AND is_delete = 0',['%' + searchtext + '%'], callback);
+      
+      searchItemBySerial(searchtext, branch_id,callback) {
+        connection.query('SELECT * FROM itemdetails INNER JOIN item_price ON itemdetails.itemid = item_price.itemid INNER JOIN item ON item_price.itemid = item.itemid INNER JOIN stock ON item.itemid = stock.itemid WHERE serial_no LIKE ? AND itemdetails.is_delete = 0 AND item_price.branch_id = ? AND stock.branch_id = ?',['%' + searchtext + '%', branch_id, branch_id], callback);
       },
 
       getallSerialsOfitem(itemid, branch_id,callback) {

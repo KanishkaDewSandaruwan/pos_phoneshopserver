@@ -1,5 +1,6 @@
 const {posModel, TempposModel } = require('./posModel');
 const StockModel = require('../stock/StockModel');
+const SearchView  = require('./searchView');
 
 //POS sales part
 
@@ -207,28 +208,32 @@ const addTempPosbySerial = (req, res) => {
   };
 
   const searchByItemnNameOrCodeorSerial = (req, res) => {
-    const { searchtext } = req.params;
+    const { searchtext, branch_id } = req.params;
   
-    TempposModel.searchItemBySerial(searchtext, (error, results1) => {
+    TempposModel.searchItemBySerial(searchtext, branch_id, (error, results1) => {
       if (error) {
         res.status(500).send({ error: 'Error fetching data from the database' });
         return;
       }
   
-      if (results1.length > 0) {
-        res.status(200).send(results1);
-      } else {
-        TempposModel.searchByItemnNameOrCode(searchtext, (error, results2) => {
+      if (Array.isArray(results1) && results1.length > 0) {
+        const modifiedSearchItemsArray = SearchView.renderSearchItemsArray(results1);
+        res.status(200).send(modifiedSearchItemsArray);
+    } else {
+        TempposModel.searchByItemnNameOrCode(searchtext, branch_id, (error, results2) => {
           if (error) {
             res.status(500).send({ error: 'Error fetching data from the database' });
             return;
           }
   
-          if (results2.length === 0) {
-            res.status(404).send({ error: 'Item not found' });
-          } else {
-            res.status(200).send(results2);
-          }
+          if (Array.isArray(results2) && results2.length > 0) {
+            const modifiedSearchItemsArray = SearchView.renderSearchItemsArray(results2);
+            res.status(200).send(modifiedSearchItemsArray);
+        } else {
+            // Handle empty results case
+            res.status(404).send({ message: "item not found" });
+        }
+
         });
       }
     });

@@ -26,7 +26,7 @@ const {
   router.post('/createwithNonSerial/:itemid/:branch_id/:userid', authenticateToken, addTempPosbyitemId);
   router.get('/alltemposbyBranch/:branch_id', authenticateToken, getallTempposbyBbrnch);
   router.get('/serials/:itemid/:branch_id', authenticateToken, getallSerialsOfitem);
-  router.get('/finditem/:searchtext', authenticateToken, searchByItemnNameOrCodeorSerial);
+  router.get('/finditem/:searchtext/:branch_id', authenticateToken, searchByItemnNameOrCodeorSerial);
   router.put('/updateqty/:postempid/:qty', authenticateToken, updateTempposqty);
   router.delete('/delete/:postempid', authenticateToken, deleteTemppos);
 
